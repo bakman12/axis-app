@@ -9,6 +9,8 @@ import { format, parseISO, isToday, startOfDay, endOfDay } from 'date-fns';
 import AddMedicationDialog from '../components/AddMedicationDialog';
 import TodaySchedule from '../components/TodaySchedule';
 import MedicationList from '../components/MedicationList';
+import DailyCheckIn from '../components/DailyCheckIn';
+import PredictiveInsights from '../components/PredictiveInsights';
 
 export default function Home() {
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -114,6 +116,12 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Daily Check-In & AI Insights */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <DailyCheckIn />
+          <PredictiveInsights medications={medications} />
         </div>
 
         {/* Today's Schedule */}
