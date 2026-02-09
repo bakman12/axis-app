@@ -18,7 +18,9 @@ export default function AddMedicationDialog({ open, onClose }) {
     frequency: 'daily',
     times: ['08:00'],
     critical: false,
-    notes: ''
+    notes: '',
+    quantity_remaining: 30,
+    refill_reminder_days: 7
   });
 
   const queryClient = useQueryClient();
@@ -162,6 +164,29 @@ export default function AddMedicationDialog({ open, onClose }) {
               placeholder="Special instructions, take with food, etc."
               rows={3}
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="quantity">Quantity Remaining</Label>
+              <Input
+                id="quantity"
+                type="number"
+                value={formData.quantity_remaining}
+                onChange={(e) => setFormData({ ...formData, quantity_remaining: parseInt(e.target.value) || 0 })}
+                placeholder="30"
+              />
+            </div>
+            <div>
+              <Label htmlFor="refill_days">Refill Reminder (days before)</Label>
+              <Input
+                id="refill_days"
+                type="number"
+                value={formData.refill_reminder_days}
+                onChange={(e) => setFormData({ ...formData, refill_reminder_days: parseInt(e.target.value) || 7 })}
+                placeholder="7"
+              />
+            </div>
           </div>
 
           <div className="flex gap-3 pt-4">

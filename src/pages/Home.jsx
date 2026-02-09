@@ -11,6 +11,9 @@ import TodaySchedule from '../components/TodaySchedule';
 import MedicationList from '../components/MedicationList';
 import DailyCheckIn from '../components/DailyCheckIn';
 import PredictiveInsights from '../components/PredictiveInsights';
+import AIAssistant from '../components/AIAssistant';
+import RefillReminders from '../components/RefillReminders';
+import SmartNotifications from '../components/SmartNotifications';
 
 export default function Home() {
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -31,6 +34,19 @@ export default function Home() {
         const takenTime = new Date(log.taken_time || log.created_date);
         return takenTime >= new Date(start) && takenTime <= new Date(end);
       });
+    }
+  });
+
+  const { data: allLogs = [] } = useQuery({
+    queryKey: ['logs'],
+    queryFn: () => base44.entities.MedicationLog.list('-created_date', 100)
+  });
+
+  const { data: todayCheckIn } = useQuery({
+    queryKey: ['checkin', format(new Date(), 'yyyy-MM-dd')],
+    queryFn: async () => {
+      const checkIns = await base44.entities.CheckIn.filter({ date: format(new Date(), 'yyyy-MM-dd') });
+      return checkIns[0] || null;
     }
   });
 
@@ -118,14 +134,25 @@ export default function Home() {
           </Card>
         </div>
 
-        {/* Daily Check-In & AI Insights */}
+        {/* Daily Check-In & Smart Features */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <DailyCheckIn />
+          <SmartNotifications schedule={todaySchedule} checkIn={todayCheckIn} />
+        </div>
+
+        {/* AI Features */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <PredictiveInsights medications={medications} />
+          <RefillReminders medications={medications} />
         </div>
 
         {/* Today's Schedule */}
         <TodaySchedule schedule={todaySchedule} />
+
+        {/* AI Assistant */}
+        <div className="mt-8">
+          <AIAssistant medications={medications} logs={allLogs} />
+        </div>
 
         {/* All Medications */}
         <Card className="mt-8 shadow-md">
