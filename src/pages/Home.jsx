@@ -14,6 +14,8 @@ import PredictiveInsights from '../components/PredictiveInsights';
 import AIAssistant from '../components/AIAssistant';
 import RefillReminders from '../components/RefillReminders';
 import SmartNotifications from '../components/SmartNotifications';
+import AdherenceAnalytics from '../components/AdherenceAnalytics';
+import ActivityDetector from '../components/ActivityDetector';
 
 export default function Home() {
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -49,6 +51,16 @@ export default function Home() {
       return checkIns[0] || null;
     }
   });
+
+  const { data: allCheckIns = [] } = useQuery({
+    queryKey: ['checkins'],
+    queryFn: () => base44.entities.CheckIn.list('-created_date', 30)
+  });
+
+  const handleActivityChange = (activityData) => {
+    console.log('Activity detected:', activityData);
+    // Could trigger additional AI analysis or notifications here
+  };
 
   // Calculate today's schedule
   const todaySchedule = medications.flatMap(med => 
@@ -135,9 +147,10 @@ export default function Home() {
         </div>
 
         {/* Daily Check-In & Smart Features */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <DailyCheckIn />
           <SmartNotifications schedule={todaySchedule} checkIn={todayCheckIn} />
+          <ActivityDetector onActivityChange={handleActivityChange} />
         </div>
 
         {/* AI Features */}
@@ -148,6 +161,15 @@ export default function Home() {
 
         {/* Today's Schedule */}
         <TodaySchedule schedule={todaySchedule} />
+
+        {/* Analytics Dashboard */}
+        <div className="mt-8">
+          <AdherenceAnalytics 
+            medications={medications} 
+            logs={allLogs} 
+            checkIns={allCheckIns} 
+          />
+        </div>
 
         {/* AI Assistant */}
         <div className="mt-8">
