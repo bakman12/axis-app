@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import SnoozeButton from './SnoozeButton';
 
 export default function TodaySchedule({ schedule }) {
   const [contextNotes, setContextNotes] = React.useState({});
@@ -172,6 +173,10 @@ export default function TodaySchedule({ schedule }) {
                           <CheckCircle className="w-4 h-4 mr-1" />
                           Taken
                         </Button>
+                        <SnoozeButton
+                          medication={item.medication}
+                          scheduledTime={item.scheduledTime}
+                        />
                         <Button
                           onClick={() => handleLog(item, 'missed')}
                           variant="outline"
