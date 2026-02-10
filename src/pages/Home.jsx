@@ -104,51 +104,59 @@ export default function Home() {
       <MedicalDisclaimer />
 
       {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-white dark:bg-gray-800 shadow-sm border-l-4 border-l-green-500">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+          <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Taken Today</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Taken Today</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{takenCount}</p>
                 </div>
-                <CheckCircle className="w-8 h-8 text-green-500" />
+                <div className="p-2 bg-green-50 dark:bg-green-950/30 rounded-lg">
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-gray-800 shadow-sm border-l-4 border-l-blue-500">
+          <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Pending</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Pending</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingCount}</p>
                 </div>
-                <Clock className="w-8 h-8 text-blue-500" />
+                <div className="p-2 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+                  <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-gray-800 shadow-sm border-l-4 border-l-red-500">
+          <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Missed</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Missed</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{missedCount}</p>
                 </div>
-                <AlertTriangle className="w-8 h-8 text-red-500" />
+                <div className="p-2 bg-red-50 dark:bg-red-950/30 rounded-lg">
+                  <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white dark:bg-gray-800 shadow-sm border-l-4 border-l-purple-500">
+          <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Day Streak</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Day Streak</p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">{calculateStreak()}</p>
                 </div>
-                <TrendingUp className="w-8 h-8 text-purple-500" />
+                <div className="p-2 bg-purple-50 dark:bg-purple-950/30 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -190,7 +198,7 @@ export default function Home() {
       </div>
 
       {/* All Medications */}
-      <Card className="mt-8 shadow-md dark:bg-gray-800 dark:border-gray-700 mb-20">
+      <Card className="mt-8 bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm mb-20">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="dark:text-white">My Medications</CardTitle>
           <Button onClick={() => setShowAddDialog(true)} className="bg-blue-600 hover:bg-blue-700 h-11 select-none">
