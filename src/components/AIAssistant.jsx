@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 
 export default function AIAssistant({ medications, logs }) {
   const [question, setQuestion] = useState('');
-  const [response, setResponse] = useState('');
+  const [conversation, setConversation] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const quickQuestions = [
@@ -19,8 +19,13 @@ export default function AIAssistant({ medications, logs }) {
   ];
 
   const askAI = async (q) => {
-    setQuestion(q);
+    if (!q.trim()) return;
+    
+    const userMessage = { role: 'user', content: q };
+    setConversation(prev => [...prev, userMessage]);
+    setQuestion('');
     setLoading(true);
+    
     try {
       const context = {
         medications: medications.map(m => ({
@@ -37,6 +42,10 @@ export default function AIAssistant({ medications, logs }) {
           context: l.context
         }))
       };
+
+      const conversationHistory = conversation.length > 0 
+        ? `\n\nPrevious conversation:\n${conversation.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n')}\n`
+        : '';
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `You are a supportive AI assistant helping with medication adherence and routine management.
@@ -68,16 +77,17 @@ WHAT YOU CANNOT DO:
 - Answer "what if I miss a dose" (medical question)
 - Explain drug interactions (medical question)
 - Interpret how medications work (medical question)
-
-User question: ${q}
+${conversationHistory}
+User: ${q}
 
 Respond helpfully within these boundaries. If it's a medical question, politely decline and suggest they contact their GP or pharmacist.`,
         add_context_from_internet: false
       });
 
-      setResponse(result);
+      setConversation(prev => [...prev, { role: 'assistant', content: result }]);
     } catch (error) {
       toast.error('Failed to get AI response');
+      setConversation(prev => prev.slice(0, -1));
     } finally {
       setLoading(false);
     }
@@ -134,21 +144,39 @@ Respond helpfully within these boundaries. If it's a medical question, politely 
           </Button>
         </div>
 
-        {response && (
-          <div className="p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
-            <div className="flex items-start gap-2 mb-2">
-              <MessageSquare className="w-5 h-5 text-indigo-600 mt-0.5" />
-              <p className="text-sm font-medium text-indigo-900">AI Response:</p>
-            </div>
-            <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
-              {response}
+        {conversation.length > 0 && (
+          <div className="space-y-3 max-h-96 overflow-y-auto p-2">
+            {conversation.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`p-3 rounded-lg ${
+                  msg.role === 'user'
+                    ? 'bg-gray-100 ml-8'
+                    : 'bg-indigo-50 border border-indigo-200 mr-8'
+                }`}
+              >
+                <p className="text-sm font-medium text-gray-900 mb-1">
+                  {msg.role === 'user' ? 'You' : 'AI Assistant'}
+                </p>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
+                  {msg.content}
+                </p>
+              </div>
+            ))}
+            {loading && (
+              <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg mr-8">
+                <p className="text-sm text-gray-600">Thinking...</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {conversation.length > 0 && (
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-xs text-gray-700">
+              <strong>⚠️ Not Medical Advice:</strong> This provides adherence support only. 
+              For medical questions about your medications, symptoms, or health, always consult your GP or pharmacist.
             </p>
-            <div className="mt-3 pt-3 border-t border-indigo-200">
-              <p className="text-xs text-gray-700">
-                <strong>⚠️ Not Medical Advice:</strong> This provides adherence support only. 
-                For medical questions about your medications, symptoms, or health, always consult your GP or pharmacist.
-              </p>
-            </div>
           </div>
         )}
       </CardContent>
