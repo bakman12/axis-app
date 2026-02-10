@@ -95,7 +95,7 @@ export default function Home() {
         </p>
       </div>
 
-        {/* Stats Overview */}
+      {/* Stats Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card className="bg-white dark:bg-gray-800 shadow-sm border-l-4 border-l-green-500">
             <CardContent className="p-4">
@@ -144,64 +144,63 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Daily Check-In & Smart Features */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <DailyCheckIn />
-          <SmartNotifications schedule={todaySchedule} checkIn={todayCheckIn} />
-          <ActivityDetector onActivityChange={handleActivityChange} />
-        </div>
-
-        {/* AI Features */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <PredictiveInsights medications={medications} />
-          <RefillReminders medications={medications} />
-        </div>
-
-        {/* Gamification Dashboard */}
-        <div className="mb-8">
-          <GamificationDashboard logs={allLogs} medications={medications} />
-        </div>
-
-        {/* Today's Schedule */}
-        <TodaySchedule schedule={todaySchedule} />
-
-        {/* Analytics Dashboard */}
-        <div className="mt-8">
-          <AdherenceAnalytics 
-            medications={medications} 
-            logs={allLogs} 
-            checkIns={allCheckIns} 
-          />
-        </div>
-
-        {/* AI Assistant */}
-        <div className="mt-8">
-          <AIAssistant medications={medications} logs={allLogs} />
-        </div>
-
-        {/* All Medications */}
-        <Card className="mt-8 shadow-md dark:bg-gray-800 dark:border-gray-700 mb-20">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="dark:text-white">My Medications</CardTitle>
-            <Button onClick={() => setShowAddDialog(true)} className="bg-blue-600 hover:bg-blue-700 h-11 select-none">
-              <Plus className="w-4 h-4 mr-2" />
-              Add
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <MedicationList medications={medications} isLoading={medsLoading} />
-          </CardContent>
-        </Card>
-
-        {showAddDialog && (
-          <AddMedicationDialog
-            open={showAddDialog}
-            onClose={() => setShowAddDialog(false)}
-          />
-        )}
       </div>
+
+      {/* Daily Check-In & Smart Features */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <DailyCheckIn />
+        <SmartNotifications schedule={todaySchedule} checkIn={todayCheckIn} />
+        <ActivityDetector onActivityChange={handleActivityChange} />
+      </div>
+
+      {/* AI Features */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <PredictiveInsights medications={medications} />
+        <RefillReminders medications={medications} />
+      </div>
+
+      {/* Gamification Dashboard */}
+      <div className="mb-8">
+        <GamificationDashboard logs={allLogs} medications={medications} />
+      </div>
+
+      {/* Today's Schedule */}
+      <TodaySchedule schedule={todaySchedule} />
+
+      {/* Analytics Dashboard */}
+      <div className="mt-8">
+        <AdherenceAnalytics 
+          medications={medications} 
+          logs={allLogs} 
+          checkIns={allCheckIns} 
+        />
+      </div>
+
+      {/* AI Assistant */}
+      <div className="mt-8">
+        <AIAssistant medications={medications} logs={allLogs} />
+      </div>
+
+      {/* All Medications */}
+      <Card className="mt-8 shadow-md dark:bg-gray-800 dark:border-gray-700 mb-20">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="dark:text-white">My Medications</CardTitle>
+          <Button onClick={() => setShowAddDialog(true)} className="bg-blue-600 hover:bg-blue-700 h-11 select-none">
+            <Plus className="w-4 h-4 mr-2" />
+            Add
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <MedicationList medications={medications} isLoading={medsLoading} />
+        </CardContent>
+      </Card>
+
+      {showAddDialog && (
+        <AddMedicationDialog
+          open={showAddDialog}
+          onClose={() => setShowAddDialog(false)}
+        />
+      )}
     </div>
   );
 }
