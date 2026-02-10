@@ -118,17 +118,25 @@ export default function RefillReminders({ medications }) {
                           {days === 0 ? 'Out today!' : days === 1 ? '1 day left' : `${days} days left`}
                         </Badge>
                       </div>
-                      <Button
-                        onClick={() => {
-                          const quantity = prompt(`How many doses did you refill for ${med.name}?`, '30');
-                          if (quantity && !isNaN(quantity)) {
-                            markRefilledMutation.mutate({ id: med.id, quantity: parseInt(quantity) });
-                          }
-                        }}
-                        className="bg-green-600 hover:bg-green-700 h-11 select-none"
-                      >
-                        Mark Refilled
-                      </Button>
+                      <div className="flex flex-col gap-2">
+                        <Button
+                          onClick={() => {
+                            const quantity = prompt(`How many doses did you refill for ${med.name}?`, '30');
+                            if (quantity && !isNaN(quantity)) {
+                              markRefilledMutation.mutate({ id: med.id, quantity: parseInt(quantity) });
+                            }
+                          }}
+                          className="bg-green-600 hover:bg-green-700 h-11 select-none whitespace-nowrap"
+                          size="sm"
+                        >
+                          Mark Refilled
+                        </Button>
+                        {med.critical && (
+                          <p className="text-xs text-red-700 font-semibold">
+                            ⚠️ Critical Medication
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );

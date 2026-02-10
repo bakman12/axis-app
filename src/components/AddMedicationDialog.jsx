@@ -8,8 +8,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { MobileSelect } from '@/components/ui/mobile-select';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, Scan } from 'lucide-react';
 import { toast } from 'sonner';
+import BarcodeScanner from './BarcodeScanner';
+import MedicationImageUpload from './MedicationImageUpload';
+import MedicationDatabaseLookup from './MedicationDatabaseLookup';
 import { AlertTriangle } from 'lucide-react';
 
 export default function AddMedicationDialog({ open, onClose }) {
