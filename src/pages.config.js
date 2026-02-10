@@ -49,14 +49,18 @@
  */
 import Home from './pages/Home';
 import Settings from './pages/Settings';
+import Analytics from './pages/Analytics';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Home": Home,
     "Settings": Settings,
+    "Analytics": Analytics,
 }
 
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
+    Layout: __Layout,
 };
