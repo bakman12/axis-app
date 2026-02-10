@@ -29,7 +29,7 @@ export default function PredictiveInsights({ medications }) {
         const recentLogs = logs.slice(0, 50);
         const recentCheckIns = checkIns.slice(0, 14);
         
-        const prompt = `You are analyzing medication adherence patterns for a patient with panhypopituitarism who takes critical hormone replacement medications.
+        const prompt = `You are analyzing medication adherence behavioral patterns to provide reminder support.
 
 Historical Data:
 - Medication Logs (last 50): ${JSON.stringify(recentLogs.map(l => ({
@@ -54,21 +54,18 @@ Historical Data:
   critical: m.critical
 })))}
 
-ETHICAL & SAFETY GUIDELINES:
-- This is a REMINDER TOOL only, not medical decision-making
-- Predictions are based on behavioral patterns, not medical assessment
-- Never suggest medication changes or medical interventions
-- Focus on adherence support and reminders, not health outcomes
-- Maintain patient privacy - use only provided anonymized data
-- If critical patterns emerge, recommend consulting healthcare provider
+CRITICAL SAFETY RULES:
+- This is a BEHAVIORAL REMINDER TOOL ONLY - not medical advice
+- You analyze ADHERENCE PATTERNS, not health conditions or medical needs
+- NEVER suggest starting, stopping, or changing medications
+- NEVER interpret symptoms or medical conditions
+- NEVER make predictions about health outcomes or medical risks
+- Focus ONLY on behavioral patterns (time of day, day of week, context like "traveling")
+- If you identify concerning adherence patterns, suggest "discussing this pattern with your healthcare provider" - nothing more specific
 
-Analyze the patterns and provide predictions for today. Consider:
-1. Times of day when medications are most likely to be missed
-2. Contexts (traveling, busy, poor sleep) that correlate with missed doses
-3. Day of week patterns
-4. Delay patterns (consistently late at certain times)
+Your role: Identify when the user is most likely to forget based on PAST BEHAVIOR, and suggest practical reminders like "Set an alarm for mornings" or "Check medication before leaving for work."
 
-Provide actionable adherence insights only - no medical advice.`;
+Analyze behavioral patterns and provide adherence reminders only.`;
 
         const response = await base44.integrations.Core.InvokeLLM({
           prompt,
@@ -159,7 +156,7 @@ Provide actionable adherence insights only - no medical advice.`;
             AI Predictive Insights
           </CardTitle>
           <p className="text-sm text-gray-600 mt-1">
-            Adherence reminders based on your patterns (not medical advice)
+            Behavioral reminders based on your patterns
           </p>
         </div>
         <Button
@@ -262,10 +259,11 @@ Provide actionable adherence insights only - no medical advice.`;
             )}
 
             {/* Disclaimer */}
-            <div className="p-3 bg-gray-50 border border-gray-300 rounded-lg">
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-xs text-gray-700">
-                <strong>Privacy & Safety:</strong> Predictions are generated from your adherence patterns using AI. 
-                This tool provides reminders only, not medical advice. Consult your healthcare provider for any health concerns.
+                <strong>⚠️ Not Medical Advice:</strong> This analyzes your behavioral patterns to help with reminders. 
+                It does not provide medical advice or assess your health. For any medical concerns or questions about your medications, 
+                always consult your GP or healthcare provider.
               </p>
             </div>
           </div>
