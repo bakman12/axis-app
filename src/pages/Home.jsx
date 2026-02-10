@@ -160,6 +160,11 @@ export default function Home() {
           <RefillReminders medications={medications} />
         </div>
 
+        {/* Gamification Dashboard */}
+        <div className="mb-8">
+          <GamificationDashboard logs={allLogs} medications={medications} />
+        </div>
+
         {/* Today's Schedule */}
         <TodaySchedule schedule={todaySchedule} />
 
