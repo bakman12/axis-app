@@ -24,8 +24,13 @@ export default function AddMedicationDialog({ open, onClose }) {
     critical: false,
     notes: '',
     quantity_remaining: 30,
-    refill_reminder_days: 7
+    refill_reminder_days: 7,
+    barcode: '',
+    image_url: '',
+    dosage_form: '',
+    manufacturer: ''
   });
+  const [showScanner, setShowScanner] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -74,6 +79,34 @@ export default function AddMedicationDialog({ open, onClose }) {
     createMutation.mutate(formData);
   };
 
+  const handleBarcodeScanned = (result) => {
+    setFormData({
+      ...formData,
+      barcode: result.barcode || '',
+      name: result.medication_name || formData.name,
+      dosage: result.dosage || formData.dosage
+    });
+    setShowScanner(false);
+  };
+
+  const handleMedicationFound = (result) => {
+    setFormData({
+      ...formData,
+      name: result.name || formData.name,
+      dosage_form: result.dosage_forms?.[0] || '',
+      manufacturer: result.manufacturer || '',
+      notes: result.instructions ? `${result.instructions}${result.warnings ? '\n\nWarnings: ' + result.warnings : ''}` : formData.notes
+    });
+  };
+
+  const handleImageUploaded = (url) => {
+    setFormData({ ...formData, image_url: url });
+  };
+
+  const handleImageRemoved = () => {
+    setFormData({ ...formData, image_url: '' });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto dark:bg-gray-800 dark:border-gray-700" style={{ overscrollBehavior: 'contain' }}>
@@ -93,6 +126,47 @@ export default function AddMedicationDialog({ open, onClose }) {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          {/* Database Lookup */}
+          <MedicationDatabaseLookup onMedicationFound={handleMedicationFound} />
+
+          {/* Barcode Scanner */}
+          {showScanner ? (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="dark:text-white">Scan Barcode</Label>
+                <Button
+                  type="button"
+                  onClick={() => setShowScanner(false)}
+                  variant="ghost"
+                  size="sm"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              <BarcodeScanner 
+                onBarcodeScanned={handleBarcodeScanned}
+                onClose={() => setShowScanner(false)}
+              />
+            </div>
+          ) : (
+            <Button
+              type="button"
+              onClick={() => setShowScanner(true)}
+              variant="outline"
+              className="w-full h-11"
+            >
+              <Scan className="w-4 h-4 mr-2" />
+              Scan Barcode
+            </Button>
+          )}
+
+          {/* Medication Image */}
+          <MedicationImageUpload
+            imageUrl={formData.image_url}
+            onImageUploaded={handleImageUploaded}
+            onRemove={handleImageRemoved}
+          />
+
           <div>
             <Label htmlFor="name" className="text-sm dark:text-white">Medication Name *</Label>
             <Input
@@ -115,6 +189,29 @@ export default function AddMedicationDialog({ open, onClose }) {
               className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               required
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="dosage_form" className="text-sm dark:text-white">Form</Label>
+              <Input
+                id="dosage_form"
+                value={formData.dosage_form}
+                onChange={(e) => setFormData({ ...formData, dosage_form: e.target.value })}
+                placeholder="Tablet, Capsule..."
+                className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+            <div>
+              <Label htmlFor="manufacturer" className="text-sm dark:text-white">Manufacturer</Label>
+              <Input
+                id="manufacturer"
+                value={formData.manufacturer}
+                onChange={(e) => setFormData({ ...formData, manufacturer: e.target.value })}
+                placeholder="Optional"
+                className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
           </div>
 
           <div>
