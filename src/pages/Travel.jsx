@@ -11,7 +11,6 @@ import TripCard from '../components/TripCard';
 import EventCard from '../components/EventCard';
 import PackingCalculator from '../components/PackingCalculator';
 import { AlertTriangle } from 'lucide-react';
-import { Card as InfoCard, CardContent } from '@/components/ui/card';
 
 export default function Travel() {
   const [showAddTrip, setShowAddTrip] = useState(false);
@@ -48,7 +47,7 @@ export default function Travel() {
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         
         {/* Travel Safety Notice */}
-        <InfoCard className="bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700">
+        <Card className="bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700">
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
@@ -66,7 +65,7 @@ export default function Travel() {
               </div>
             </div>
           </CardContent>
-        </InfoCard>
+        </Card>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-3">
