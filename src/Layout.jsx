@@ -27,6 +27,16 @@ export default function Layout({ children, currentPageName }) {
       document.documentElement.classList.toggle('dark', theme === 'dark');
     }
   }, [user?.theme]);
+
+  useEffect(() => {
+    if (user?.disable_system_gestures) {
+      document.body.style.overscrollBehavior = 'none';
+      document.documentElement.style.overscrollBehavior = 'none';
+    } else {
+      document.body.style.overscrollBehavior = 'auto';
+      document.documentElement.style.overscrollBehavior = 'auto';
+    }
+  }, [user?.disable_system_gestures]);
   
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },

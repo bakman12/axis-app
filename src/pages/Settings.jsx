@@ -36,7 +36,8 @@ export default function Settings() {
     target_streak: 30,
     target_adherence: 95,
     time_format: '12h',
-    theme: 'light'
+    theme: 'light',
+    disable_system_gestures: false
   });
   const [saved, setSaved] = useState(false);
 
@@ -57,7 +58,8 @@ export default function Settings() {
         target_streak: user.target_streak ?? 30,
         target_adherence: user.target_adherence ?? 95,
         time_format: user.time_format ?? '12h',
-        theme: user.theme ?? 'light'
+        theme: user.theme ?? 'light',
+        disable_system_gestures: user.disable_system_gestures ?? false
       });
     }
   }, [user]);
@@ -368,6 +370,18 @@ export default function Settings() {
                   ]}
                 />
                 <p className="text-sm text-gray-500 dark:text-gray-400">Theme applies automatically</p>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
+                <div>
+                  <Label className="dark:text-white text-sm">Disable System Gestures</Label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Prevent pull-to-refresh and swipe gestures</p>
+                </div>
+                <Switch
+                  checked={formData.disable_system_gestures}
+                  onCheckedChange={(checked) => setFormData({ ...formData, disable_system_gestures: checked })}
+                  className="select-none"
+                />
               </div>
             </CardContent>
           </Card>
