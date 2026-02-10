@@ -32,9 +32,11 @@ export default function Layout({ children, currentPageName }) {
     if (user?.disable_system_gestures) {
       document.body.style.overscrollBehavior = 'none';
       document.documentElement.style.overscrollBehavior = 'none';
+      document.body.style.webkitOverflowScrolling = 'auto';
     } else {
       document.body.style.overscrollBehavior = 'auto';
       document.documentElement.style.overscrollBehavior = 'auto';
+      document.body.style.webkitOverflowScrolling = 'touch';
     }
   }, [user?.disable_system_gestures]);
   
