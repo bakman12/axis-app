@@ -22,6 +22,7 @@ export default function AddTripDialog({ open, onOpenChange }) {
     timezone_offset: 0,
     notes: ''
   });
+  const [calculatingTimezone, setCalculatingTimezone] = useState(false);
 
   const createTripMutation = useMutation({
     mutationFn: (data) => base44.entities.Trip.create(data),
@@ -42,6 +43,24 @@ export default function AddTripDialog({ open, onOpenChange }) {
     }
   });
 
+  const calculateTimezone = async (destination) => {
+    if (!destination || destination.length < 3) return;
+    
+    setCalculatingTimezone(true);
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `What is the timezone offset difference between ${destination} and London, UK? Return ONLY a number representing hours difference (e.g., +5, -3, 0). If ${destination} is ahead of London return positive, if behind return negative.`,
+      });
+      const offset = parseFloat(result) || 0;
+      setFormData(prev => ({ ...prev, timezone_offset: offset }));
+      toast.success(`Timezone calculated: ${offset > 0 ? '+' : ''}${offset} hours`);
+    } catch (error) {
+      toast.error('Could not calculate timezone');
+    } finally {
+      setCalculatingTimezone(false);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.destination || !formData.start_date || !formData.end_date) {
@@ -60,13 +79,23 @@ export default function AddTripDialog({ open, onOpenChange }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="destination" className="dark:text-white">Destination *</Label>
-            <Input
-              id="destination"
-              value={formData.destination}
-              onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
-              placeholder="e.g., Paris, France"
-              className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-            />
+            <div className="flex gap-2">
+              <Input
+                id="destination"
+                value={formData.destination}
+                onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
+                placeholder="e.g., Paris, France"
+                className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+              <Button
+                type="button"
+                onClick={() => calculateTimezone(formData.destination)}
+                disabled={!formData.destination || calculatingTimezone}
+                className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
+              >
+                {calculatingTimezone ? 'Calculating...' : 'Auto TZ'}
+              </Button>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -93,7 +122,7 @@ export default function AddTripDialog({ open, onOpenChange }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="timezone_offset" className="dark:text-white">Time Zone Difference</Label>
+            <Label htmlFor="timezone_offset" className="dark:text-white">Time Zone Difference (from London)</Label>
             <Input
               id="timezone_offset"
               type="number"
@@ -101,8 +130,9 @@ export default function AddTripDialog({ open, onOpenChange }) {
               onChange={(e) => setFormData({ ...formData, timezone_offset: parseFloat(e.target.value) || 0 })}
               placeholder="e.g., +5 or -3"
               className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              readOnly
             />
-            <p className="text-xs text-gray-500 dark:text-gray-400">Hours ahead (+) or behind (-) your home timezone</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Click "Auto TZ" to calculate automatically</p>
           </div>
 
           <div className="space-y-2">
