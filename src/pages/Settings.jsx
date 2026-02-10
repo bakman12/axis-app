@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import MobileHeader from '../components/MobileHeader';
+import RootPageHeader from '../components/RootPageHeader';
 
 export default function Settings() {
   const [formData, setFormData] = useState({
@@ -154,7 +154,7 @@ export default function Settings() {
 
   return (
     <div style={{ overscrollBehavior: 'none' }}>
-      <MobileHeader title="Settings" subtitle="Customize your experience" />
+      <RootPageHeader title="Settings" subtitle="Customize your experience" />
       <div className="p-4 md:p-8 max-w-4xl mx-auto" style={{ overscrollBehavior: 'none' }}>
 
         <div className="space-y-6">

@@ -4,6 +4,7 @@ import AdherenceAnalytics from '../components/AdherenceAnalytics';
 import GamificationDashboard from '../components/GamificationDashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
+import RootPageHeader from '../components/RootPageHeader';
 
 export default function Analytics() {
   const { data: medications = [] } = useQuery({
@@ -22,16 +23,12 @@ export default function Analytics() {
   });
 
   return (
-    <div className="p-4 md:p-8 max-w-6xl mx-auto" style={{ overscrollBehavior: 'none' }}>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-          <TrendingUp className="w-8 h-8" />
-          Analytics
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-1">
-          Track your progress and achievements
-        </p>
-      </div>
+    <div style={{ overscrollBehavior: 'none' }}>
+      <RootPageHeader 
+        title="Analytics" 
+        subtitle="Track your progress and achievements" 
+      />
+      <div className="p-4 md:p-8 max-w-6xl mx-auto" style={{ overscrollBehavior: 'none' }}>
 
       {/* Gamification Dashboard */}
       <div className="mb-6">
@@ -39,13 +36,14 @@ export default function Analytics() {
       </div>
 
       {/* Adherence Analytics */}
-      <div>
+      <div className="mb-20">
         <AdherenceAnalytics 
           medications={medications} 
           logs={allLogs} 
           checkIns={allCheckIns} 
         />
       </div>
+    </div>
     </div>
   );
 }
