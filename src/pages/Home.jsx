@@ -4,9 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, AlertTriangle, CheckCircle, Clock, TrendingUp, Settings as SettingsIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '../utils';
+import { Plus, AlertTriangle, CheckCircle, Clock, TrendingUp } from 'lucide-react';
 import { format, parseISO, isToday, startOfDay, endOfDay } from 'date-fns';
 import AddMedicationDialog from '../components/AddMedicationDialog';
 import TodaySchedule from '../components/TodaySchedule';
@@ -87,71 +85,62 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      <div className="max-w-6xl mx-auto p-4 md:p-8">
-        <div className="mb-8 flex items-start justify-between">
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Medication Tracker
-            </h1>
-            <p className="text-gray-600">
-              Stay on track with your medication schedule
-            </p>
-          </div>
-          <Link to={createPageUrl('Settings')}>
-            <Button variant="outline" size="sm">
-              <SettingsIcon className="w-4 h-4 mr-2" />
-              Settings
-            </Button>
-          </Link>
-        </div>
+    <div className="max-w-6xl mx-auto p-4 md:p-8" style={{ overscrollBehaviorY: 'none' }}>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          MedMind
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Stay on track with your medication schedule
+        </p>
+      </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-white shadow-sm border-l-4 border-l-green-500">
-            <CardContent className="p-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <Card className="bg-white dark:bg-gray-800 shadow-sm border-l-4 border-l-green-500">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Taken Today</p>
-                  <p className="text-3xl font-bold text-gray-900">{takenCount}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Taken Today</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{takenCount}</p>
                 </div>
-                <CheckCircle className="w-10 h-10 text-green-500" />
+                <CheckCircle className="w-8 h-8 text-green-500" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white shadow-sm border-l-4 border-l-blue-500">
-            <CardContent className="p-6">
+          <Card className="bg-white dark:bg-gray-800 shadow-sm border-l-4 border-l-blue-500">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Pending</p>
-                  <p className="text-3xl font-bold text-gray-900">{pendingCount}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Pending</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingCount}</p>
                 </div>
-                <Clock className="w-10 h-10 text-blue-500" />
+                <Clock className="w-8 h-8 text-blue-500" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white shadow-sm border-l-4 border-l-red-500">
-            <CardContent className="p-6">
+          <Card className="bg-white dark:bg-gray-800 shadow-sm border-l-4 border-l-red-500">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Missed</p>
-                  <p className="text-3xl font-bold text-gray-900">{missedCount}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Missed</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{missedCount}</p>
                 </div>
-                <AlertTriangle className="w-10 h-10 text-red-500" />
+                <AlertTriangle className="w-8 h-8 text-red-500" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white shadow-sm border-l-4 border-l-purple-500">
-            <CardContent className="p-6">
+          <Card className="bg-white dark:bg-gray-800 shadow-sm border-l-4 border-l-purple-500">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Day Streak</p>
-                  <p className="text-3xl font-bold text-gray-900">{calculateStreak()}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Day Streak</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{calculateStreak()}</p>
                 </div>
-                <TrendingUp className="w-10 h-10 text-purple-500" />
+                <TrendingUp className="w-8 h-8 text-purple-500" />
               </div>
             </CardContent>
           </Card>
@@ -193,12 +182,12 @@ export default function Home() {
         </div>
 
         {/* All Medications */}
-        <Card className="mt-8 shadow-md">
+        <Card className="mt-8 shadow-md dark:bg-gray-800 dark:border-gray-700 mb-20">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>My Medications</CardTitle>
-            <Button onClick={() => setShowAddDialog(true)} className="bg-blue-600 hover:bg-blue-700">
+            <CardTitle className="dark:text-white">My Medications</CardTitle>
+            <Button onClick={() => setShowAddDialog(true)} className="bg-blue-600 hover:bg-blue-700 h-11 select-none">
               <Plus className="w-4 h-4 mr-2" />
-              Add Medication
+              Add
             </Button>
           </CardHeader>
           <CardContent>

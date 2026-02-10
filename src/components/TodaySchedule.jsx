@@ -32,6 +32,41 @@ export default function TodaySchedule({ schedule }) {
         context: context || undefined
       });
     },
+    onMutate: async ({ medication, scheduledTime, status, context }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries(['logs', 'today']);
+
+      // Snapshot previous value
+      const previousLogs = queryClient.getQueryData(['logs', 'today']);
+
+      // Optimistically update
+      const now = new Date();
+      const [hours, minutes] = scheduledTime.split(':');
+      const scheduledDate = new Date();
+      scheduledDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      const delayMinutes = Math.floor((now - scheduledDate) / 60000);
+
+      const optimisticLog = {
+        id: `temp-${Date.now()}`,
+        medication_id: medication.id,
+        medication_name: medication.name,
+        scheduled_time: scheduledTime,
+        taken_time: now.toISOString(),
+        status,
+        delay_minutes: delayMinutes > 0 ? delayMinutes : 0,
+        context: context || undefined,
+        created_date: now.toISOString()
+      };
+
+      queryClient.setQueryData(['logs', 'today'], (old = []) => [...old, optimisticLog]);
+
+      return { previousLogs };
+    },
+    onError: (err, variables, context) => {
+      // Rollback on error
+      queryClient.setQueryData(['logs', 'today'], context.previousLogs);
+      toast.error('Failed to log medication');
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['logs']);
       toast.success('Logged successfully');
@@ -131,7 +166,7 @@ export default function TodaySchedule({ schedule }) {
                       <div className="flex flex-col gap-2">
                         <Button
                           onClick={() => handleLog(item, 'taken')}
-                          className="bg-green-600 hover:bg-green-700"
+                          className="bg-green-600 hover:bg-green-700 h-11 select-none"
                           size="sm"
                         >
                           <CheckCircle className="w-4 h-4 mr-1" />
@@ -140,7 +175,7 @@ export default function TodaySchedule({ schedule }) {
                         <Button
                           onClick={() => handleLog(item, 'missed')}
                           variant="outline"
-                          className="border-red-300 text-red-600 hover:bg-red-50"
+                          className="border-red-300 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20 h-11 select-none"
                           size="sm"
                         >
                           <XCircle className="w-4 h-4 mr-1" />
