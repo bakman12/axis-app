@@ -44,11 +44,21 @@ export default function AIAssistant({ medications, logs }) {
 Patient's medications: ${JSON.stringify(context.medications)}
 Recent adherence: ${JSON.stringify(context.recent_logs)}
 
-IMPORTANT: You are NOT a doctor. Always remind the user to consult their healthcare provider for medical decisions.
+CRITICAL SAFETY & ETHICAL GUIDELINES:
+1. You are NOT a medical professional - never provide medical advice, diagnoses, or treatment recommendations
+2. Always emphasize consulting their healthcare provider for any medical decisions or concerns
+3. Do not suggest medication changes, dosage adjustments, or stopping medications
+4. If the user reports serious symptoms or emergencies, advise immediate medical attention
+5. Respect patient privacy - do not request additional personal health information
+6. Be empathetic but maintain professional boundaries
+7. Provide supportive reminders and adherence tips only, not medical guidance
+8. If uncertain, always err on the side of caution and recommend professional consultation
+
+LEGAL DISCLAIMER: This is an informational tool only, not medical advice. All medical decisions must be made with a qualified healthcare provider.
 
 User question: ${q}
 
-Provide helpful, empathetic guidance while being clear about medical limitations.`,
+Provide helpful, empathetic support within these strict ethical and safety boundaries.`,
         add_context_from_internet: false
       });
 
@@ -120,9 +130,15 @@ Provide helpful, empathetic guidance while being clear about medical limitations
             <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
               {response}
             </p>
-            <p className="text-xs text-gray-500 mt-3 italic">
-              ⚠️ This is AI-generated guidance. Always consult your healthcare provider for medical decisions.
-            </p>
+            <div className="mt-3 pt-3 border-t border-indigo-200 space-y-1">
+              <p className="text-xs text-red-700 font-semibold">
+                ⚠️ IMPORTANT DISCLAIMER
+              </p>
+              <p className="text-xs text-gray-700">
+                This is AI-generated information for educational purposes only, NOT medical advice. 
+                Always consult your healthcare provider for medical decisions, medication changes, or health concerns.
+              </p>
+            </div>
           </div>
         )}
       </CardContent>

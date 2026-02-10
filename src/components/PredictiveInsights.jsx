@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -54,13 +54,21 @@ Historical Data:
   critical: m.critical
 })))}
 
+ETHICAL & SAFETY GUIDELINES:
+- This is a REMINDER TOOL only, not medical decision-making
+- Predictions are based on behavioral patterns, not medical assessment
+- Never suggest medication changes or medical interventions
+- Focus on adherence support and reminders, not health outcomes
+- Maintain patient privacy - use only provided anonymized data
+- If critical patterns emerge, recommend consulting healthcare provider
+
 Analyze the patterns and provide predictions for today. Consider:
 1. Times of day when medications are most likely to be missed
 2. Contexts (traveling, busy, poor sleep) that correlate with missed doses
 3. Day of week patterns
 4. Delay patterns (consistently late at certain times)
 
-Provide actionable insights and specific risk predictions for today.`;
+Provide actionable adherence insights only - no medical advice.`;
 
         const response = await base44.integrations.Core.InvokeLLM({
           prompt,
@@ -151,7 +159,7 @@ Provide actionable insights and specific risk predictions for today.`;
             AI Predictive Insights
           </CardTitle>
           <p className="text-sm text-gray-600 mt-1">
-            Personalized predictions based on your patterns
+            Adherence reminders based on your patterns (not medical advice)
           </p>
         </div>
         <Button
@@ -241,7 +249,7 @@ Provide actionable insights and specific risk predictions for today.`;
             {/* Recommendations */}
             {predictions.recommendations?.length > 0 && (
               <div>
-                <Label className="text-sm text-gray-600 mb-3 block">Recommendations</Label>
+                <Label className="text-sm text-gray-600 mb-3 block">Adherence Suggestions</Label>
                 <ul className="space-y-2">
                   {predictions.recommendations.map((rec, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
@@ -252,6 +260,14 @@ Provide actionable insights and specific risk predictions for today.`;
                 </ul>
               </div>
             )}
+
+            {/* Disclaimer */}
+            <div className="p-3 bg-gray-50 border border-gray-300 rounded-lg">
+              <p className="text-xs text-gray-700">
+                <strong>Privacy & Safety:</strong> Predictions are generated from your adherence patterns using AI. 
+                This tool provides reminders only, not medical advice. Consult your healthcare provider for any health concerns.
+              </p>
+            </div>
           </div>
         ) : (
           <div className="text-center py-6 text-gray-500">

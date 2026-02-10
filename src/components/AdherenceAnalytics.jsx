@@ -36,6 +36,12 @@ Daily Check-ins: ${JSON.stringify(checkIns.map(c => ({
   location_changed: c.location_changed
 })))}
 
+ETHICAL GUIDELINES:
+- Analyze adherence patterns only, not medical outcomes
+- Maintain data privacy - use only anonymized behavioral data
+- Provide insights for self-management support, not medical recommendations
+- Statistical correlations are for awareness, not clinical decisions
+
 Identify:
 1. Which contexts correlate with missed doses (e.g., traveling, poor sleep, busy days)
 2. Which times of day have highest miss rates
@@ -43,7 +49,7 @@ Identify:
 4. Impact of routine disruptions
 5. Medication-specific adherence patterns
 
-Provide statistical correlations with confidence levels.`;
+Provide statistical correlations with confidence levels for adherence support only.`;
 
         const result = await base44.integrations.Core.InvokeLLM({
           prompt,
