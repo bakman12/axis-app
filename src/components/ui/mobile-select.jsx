@@ -26,7 +26,7 @@ export function MobileSelect({ value, onValueChange, options, placeholder, disab
         disabled={disabled}
         className={`w-full justify-between h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white select-none ${className || ''}`}
       >
-        <span className={selectedOption ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}>
+        <span className="text-gray-900 dark:text-white">
           {selectedOption?.label || placeholder || 'Select...'}
         </span>
         <ChevronDown className="w-4 h-4 opacity-50" />
