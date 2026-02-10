@@ -3,10 +3,30 @@ import { Home, TrendingUp, Settings, Heart } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { createPageUrl } from './utils';
 import PageTransition from './components/PageTransition';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { useEffect } from 'react';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
+  
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+    staleTime: 1000 * 60 * 5
+  });
+  
+  useEffect(() => {
+    const theme = user?.theme || 'light';
+    
+    if (theme === 'auto') {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.classList.toggle('dark', isDark);
+    } else {
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    }
+  }, [user?.theme]);
   
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
