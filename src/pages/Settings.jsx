@@ -150,9 +150,9 @@ export default function Settings() {
   }
 
   return (
-    <div>
+    <div style={{ overscrollBehaviorY: 'none' }}>
       <MobileHeader title="Settings" subtitle="Customize your experience" />
-      <div className="p-4 md:p-8 max-w-4xl mx-auto"  style={{ overscrollBehaviorY: 'none' }}>
+      <div className="p-4 md:p-8 max-w-4xl mx-auto">
 
         <div className="space-y-6">
           {/* Notification Preferences */}

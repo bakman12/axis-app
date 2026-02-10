@@ -22,7 +22,7 @@ export default function Analytics() {
   });
 
   return (
-    <div className="p-4 md:p-8 max-w-6xl mx-auto">
+    <div className="p-4 md:p-8 max-w-6xl mx-auto" style={{ overscrollBehaviorY: 'none' }}>
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
           <TrendingUp className="w-8 h-8" />
