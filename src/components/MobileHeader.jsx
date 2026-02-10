@@ -12,7 +12,8 @@ export default function MobileHeader({ title, subtitle }) {
           variant="ghost"
           size="icon"
           onClick={() => navigate(-1)}
-          className="h-11 w-11 shrink-0"
+          className="h-11 w-11 min-w-[44px] min-h-[44px] shrink-0 select-none"
+          aria-label="Go back"
         >
           <ArrowLeft className="w-5 h-5" />
         </Button>

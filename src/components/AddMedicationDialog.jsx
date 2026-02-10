@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MobileSelect } from '@/components/ui/mobile-select';
 import { Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -27,6 +27,16 @@ export default function AddMedicationDialog({ open, onClose }) {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Medication.create(data),
+    onMutate: async (newMed) => {
+      await queryClient.cancelQueries(['medications']);
+      const previousMeds = queryClient.getQueryData(['medications']);
+      queryClient.setQueryData(['medications'], (old = []) => [...old, { ...newMed, id: `temp-${Date.now()}` }]);
+      return { previousMeds };
+    },
+    onError: (err, newMed, context) => {
+      queryClient.setQueryData(['medications'], context.previousMeds);
+      toast.error('Failed to add medication');
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['medications']);
       toast.success('Medication added');
@@ -62,54 +72,53 @@ export default function AddMedicationDialog({ open, onClose }) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto dark:bg-gray-800 dark:border-gray-700" style={{ overscrollBehavior: 'contain' }}>
         <DialogHeader>
-          <DialogTitle>Add New Medication</DialogTitle>
+          <DialogTitle className="dark:text-white">Add New Medication</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
-            <Label htmlFor="name">Medication Name *</Label>
+            <Label htmlFor="name" className="text-sm dark:text-white">Medication Name *</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="e.g., Hydrocortisone"
+              className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="dosage">Dosage *</Label>
+            <Label htmlFor="dosage" className="text-sm dark:text-white">Dosage *</Label>
             <Input
               id="dosage"
               value={formData.dosage}
               onChange={(e) => setFormData({ ...formData, dosage: e.target.value })}
               placeholder="e.g., 10mg"
+              className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               required
             />
           </div>
 
           <div>
-            <Label htmlFor="frequency">Frequency</Label>
-            <Select
+            <Label htmlFor="frequency" className="text-sm">Frequency</Label>
+            <MobileSelect
               value={formData.frequency}
               onValueChange={(value) => setFormData({ ...formData, frequency: value })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="twice_daily">Twice Daily</SelectItem>
-                <SelectItem value="three_times_daily">Three Times Daily</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="as_needed">As Needed</SelectItem>
-              </SelectContent>
-            </Select>
+              placeholder="Select frequency"
+              options={[
+                { value: 'daily', label: 'Daily' },
+                { value: 'twice_daily', label: 'Twice Daily' },
+                { value: 'three_times_daily', label: 'Three Times Daily' },
+                { value: 'weekly', label: 'Weekly' },
+                { value: 'as_needed', label: 'As Needed' }
+              ]}
+            />
           </div>
 
           <div>
-            <Label>Times *</Label>
+            <Label className="text-sm dark:text-white">Times *</Label>
             <div className="space-y-2 mt-2">
               {formData.times.map((time, index) => (
                 <div key={index} className="flex gap-2">
@@ -117,7 +126,7 @@ export default function AddMedicationDialog({ open, onClose }) {
                     type="time"
                     value={time}
                     onChange={(e) => updateTime(index, e.target.value)}
-                    className="flex-1"
+                    className="flex-1 h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                   {formData.times.length > 1 && (
                     <Button
@@ -125,6 +134,7 @@ export default function AddMedicationDialog({ open, onClose }) {
                       variant="outline"
                       size="icon"
                       onClick={() => removeTime(index)}
+                      className="h-11 w-11 dark:bg-gray-700 dark:border-gray-600 select-none"
                     >
                       <X className="w-4 h-4" />
                     </Button>
@@ -135,7 +145,7 @@ export default function AddMedicationDialog({ open, onClose }) {
                 type="button"
                 variant="outline"
                 onClick={addTime}
-                className="w-full"
+                className="w-full h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white select-none"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Time
@@ -143,57 +153,61 @@ export default function AddMedicationDialog({ open, onClose }) {
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
             <div>
-              <Label htmlFor="critical">Critical Medication</Label>
-              <p className="text-xs text-gray-500">Time-sensitive, requires immediate attention</p>
+              <Label htmlFor="critical" className="text-sm dark:text-white">Critical Medication</Label>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Time-sensitive, requires immediate attention</p>
             </div>
             <Switch
               id="critical"
               checked={formData.critical}
               onCheckedChange={(checked) => setFormData({ ...formData, critical: checked })}
+              className="select-none"
             />
           </div>
 
           <div>
-            <Label htmlFor="notes">Notes</Label>
+            <Label htmlFor="notes" className="text-sm dark:text-white">Notes</Label>
             <Textarea
               id="notes"
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               placeholder="Special instructions, take with food, etc."
               rows={3}
+              className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="quantity">Quantity Remaining</Label>
+              <Label htmlFor="quantity" className="text-sm dark:text-white">Quantity Remaining</Label>
               <Input
                 id="quantity"
                 type="number"
                 value={formData.quantity_remaining}
                 onChange={(e) => setFormData({ ...formData, quantity_remaining: parseInt(e.target.value) || 0 })}
                 placeholder="30"
+                className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
             </div>
             <div>
-              <Label htmlFor="refill_days">Refill Reminder (days before)</Label>
+              <Label htmlFor="refill_days" className="text-sm dark:text-white">Refill Reminder (days)</Label>
               <Input
                 id="refill_days"
                 type="number"
                 value={formData.refill_reminder_days}
                 onChange={(e) => setFormData({ ...formData, refill_reminder_days: parseInt(e.target.value) || 7 })}
                 placeholder="7"
+                className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
             </div>
           </div>
 
           <div className="flex gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+            <Button type="button" variant="outline" onClick={onClose} className="flex-1 h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white select-none">
               Cancel
             </Button>
-            <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700">
+            <Button type="submit" className="flex-1 h-11 bg-blue-600 hover:bg-blue-700 select-none">
               Add Medication
             </Button>
           </div>

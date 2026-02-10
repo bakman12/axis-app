@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MobileSelect } from '@/components/ui/mobile-select';
 import { Separator } from '@/components/ui/separator';
 import { Settings as SettingsIcon, Bell, Shield, Target, Download, User, Save, CheckCircle, Trash2 } from 'lucide-react';
 import {
@@ -63,12 +63,15 @@ export default function Settings() {
 
   const updateSettingsMutation = useMutation({
     mutationFn: (data) => base44.auth.updateMe(data),
-    onSuccess: () => {
+    onMutate: () => {
       setSaved(true);
+    },
+    onSuccess: () => {
       toast.success('Settings saved successfully');
       setTimeout(() => setSaved(false), 2000);
     },
     onError: () => {
+      setSaved(false);
       toast.error('Failed to save settings');
     }
   });
@@ -150,9 +153,9 @@ export default function Settings() {
   }
 
   return (
-    <div style={{ overscrollBehaviorY: 'none' }}>
+    <div style={{ overscrollBehavior: 'none' }}>
       <MobileHeader title="Settings" subtitle="Customize your experience" />
-      <div className="p-4 md:p-8 max-w-4xl mx-auto">
+      <div className="p-4 md:p-8 max-w-4xl mx-auto" style={{ overscrollBehavior: 'none' }}>
 
         <div className="space-y-6">
           {/* Notification Preferences */}
@@ -169,8 +172,8 @@ export default function Settings() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white">Enable Notifications</Label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Receive medication reminders</p>
+                  <Label className="dark:text-white text-sm">Enable Notifications</Label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Receive medication reminders</p>
                 </div>
                 <Switch
                   checked={formData.notification_enabled}
@@ -180,30 +183,27 @@ export default function Settings() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="timing" className="dark:text-white">Notification Timing</Label>
-                <Select
+                <Label htmlFor="timing" className="dark:text-white text-sm">Notification Timing</Label>
+                <MobileSelect
                   value={formData.notification_timing.toString()}
                   onValueChange={(value) => setFormData({ ...formData, notification_timing: parseInt(value) })}
                   disabled={!formData.notification_enabled}
-                >
-                  <SelectTrigger className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
-                    <SelectItem value="0" className="dark:text-white h-11">At scheduled time</SelectItem>
-                    <SelectItem value="5" className="dark:text-white h-11">5 minutes before</SelectItem>
-                    <SelectItem value="10" className="dark:text-white h-11">10 minutes before</SelectItem>
-                    <SelectItem value="15" className="dark:text-white h-11">15 minutes before</SelectItem>
-                    <SelectItem value="30" className="dark:text-white h-11">30 minutes before</SelectItem>
-                    <SelectItem value="60" className="dark:text-white h-11">1 hour before</SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder="Select timing"
+                  options={[
+                    { value: '0', label: 'At scheduled time' },
+                    { value: '5', label: '5 minutes before' },
+                    { value: '10', label: '10 minutes before' },
+                    { value: '15', label: '15 minutes before' },
+                    { value: '30', label: '30 minutes before' },
+                    { value: '60', label: '1 hour before' }
+                  ]}
+                />
               </div>
 
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white">Notification Sound</Label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Play sound with notifications</p>
+                  <Label className="dark:text-white text-sm">Notification Sound</Label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Play sound with notifications</p>
                 </div>
                 <Switch
                   checked={formData.notification_sound}
@@ -215,8 +215,8 @@ export default function Settings() {
 
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white">Critical Medications Only</Label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Only notify for critical time-sensitive meds</p>
+                  <Label className="dark:text-white text-sm">Critical Medications Only</Label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Only notify for critical time-sensitive meds</p>
                 </div>
                 <Switch
                   checked={formData.critical_only_notifications}
@@ -242,8 +242,8 @@ export default function Settings() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white">AI Pattern Analysis</Label>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Allow AI to analyze adherence patterns for predictions</p>
+                  <Label className="dark:text-white text-sm">AI Pattern Analysis</Label>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Allow AI to analyze adherence patterns for predictions</p>
                 </div>
                 <Switch
                   checked={formData.ai_data_sharing}
@@ -254,8 +254,8 @@ export default function Settings() {
 
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white">Personalized AI Challenges</Label>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Get AI-generated personalized adherence challenges</p>
+                  <Label className="dark:text-white text-sm">Personalized AI Challenges</Label>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Get AI-generated personalized adherence challenges</p>
                 </div>
                 <Switch
                   checked={formData.ai_personalization}
@@ -287,7 +287,7 @@ export default function Settings() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="target_streak" className="dark:text-white">Target Streak (days)</Label>
+                <Label htmlFor="target_streak" className="dark:text-white text-sm">Target Streak (days)</Label>
                 <Input
                   id="target_streak"
                   type="number"
@@ -301,7 +301,7 @@ export default function Settings() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="target_adherence" className="dark:text-white">Target Adherence Rate (%)</Label>
+                <Label htmlFor="target_adherence" className="dark:text-white text-sm">Target Adherence Rate (%)</Label>
                 <Input
                   id="target_adherence"
                   type="number"
@@ -337,37 +337,31 @@ export default function Settings() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="time_format" className="dark:text-white">Time Format</Label>
-                <Select
+                <Label htmlFor="time_format" className="dark:text-white text-sm">Time Format</Label>
+                <MobileSelect
                   value={formData.time_format}
                   onValueChange={(value) => setFormData({ ...formData, time_format: value })}
-                >
-                  <SelectTrigger className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
-                    <SelectItem value="12h" className="dark:text-white h-11">12-hour (e.g., 3:00 PM)</SelectItem>
-                    <SelectItem value="24h" className="dark:text-white h-11">24-hour (e.g., 15:00)</SelectItem>
-                  </SelectContent>
-                </Select>
+                  placeholder="Time format"
+                  options={[
+                    { value: '12h', label: '12-hour (e.g., 3:00 PM)' },
+                    { value: '24h', label: '24-hour (e.g., 15:00)' }
+                  ]}
+                />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="theme" className="dark:text-white">App Theme</Label>
-                <Select
+                <Label htmlFor="theme" className="dark:text-white text-sm">App Theme</Label>
+                <MobileSelect
                   value={formData.theme}
                   onValueChange={(value) => setFormData({ ...formData, theme: value })}
-                >
-                  <SelectTrigger className="h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="dark:bg-gray-700 dark:border-gray-600">
-                    <SelectItem value="light" className="dark:text-white h-11">Light</SelectItem>
-                    <SelectItem value="dark" className="dark:text-white h-11">Dark</SelectItem>
-                    <SelectItem value="auto" className="dark:text-white h-11">Auto (system)</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Theme applies automatically</p>
+                  placeholder="App theme"
+                  options={[
+                    { value: 'light', label: 'Light' },
+                    { value: 'dark', label: 'Dark' },
+                    { value: 'auto', label: 'Auto (system)' }
+                  ]}
+                />
+                <p className="text-sm text-gray-500 dark:text-gray-400">Theme applies automatically</p>
               </div>
             </CardContent>
           </Card>

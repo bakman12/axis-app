@@ -19,7 +19,9 @@ export default function Layout({ children, currentPageName }) {
   const handleNavClick = (e, path) => {
     if (isActive(path)) {
       e.preventDefault();
+      // Reset to top and reload the route to reset state
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      navigate(path, { replace: true });
     }
   };
 
@@ -45,14 +47,14 @@ export default function Layout({ children, currentPageName }) {
                 key={item.name}
                 to={item.path}
                 onClick={(e) => handleNavClick(e, item.path)}
-                className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
+                className={`flex flex-col items-center justify-center flex-1 h-full transition-colors min-h-[44px] ${
                   active
                     ? 'text-blue-600 dark:text-blue-400'
                     : 'text-gray-600 dark:text-gray-400'
                 }`}
               >
                 <Icon className={`w-6 h-6 ${active ? 'scale-110' : ''} transition-transform`} />
-                <span className="text-xs mt-1 font-medium">{item.name}</span>
+                <span className="text-sm mt-1 font-medium">{item.name}</span>
               </Link>
             );
           })}

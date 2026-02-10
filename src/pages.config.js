@@ -50,6 +50,7 @@
 import Home from './pages/Home';
 import Settings from './pages/Settings';
 import Analytics from './pages/Analytics';
+import LazyRoutes from './pages/LazyRoutes';
 import __Layout from './Layout.jsx';
 
 
@@ -57,6 +58,7 @@ export const PAGES = {
     "Home": Home,
     "Settings": Settings,
     "Analytics": Analytics,
+    "LazyRoutes": LazyRoutes,
 }
 
 export const pagesConfig = {

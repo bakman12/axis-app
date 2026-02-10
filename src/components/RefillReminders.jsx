@@ -17,6 +17,18 @@ export default function RefillReminders({ medications }) {
         quantity_remaining: quantity,
         last_refill_date: format(new Date(), 'yyyy-MM-dd')
       }),
+    onMutate: async ({ id, quantity }) => {
+      await queryClient.cancelQueries(['medications']);
+      const previousMeds = queryClient.getQueryData(['medications']);
+      queryClient.setQueryData(['medications'], (old = []) =>
+        old.map(med => med.id === id ? { ...med, quantity_remaining: quantity, last_refill_date: format(new Date(), 'yyyy-MM-dd') } : med)
+      );
+      return { previousMeds };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(['medications'], context.previousMeds);
+      toast.error('Failed to record refill');
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['medications']);
       toast.success('Refill recorded');
@@ -107,14 +119,13 @@ export default function RefillReminders({ medications }) {
                         </Badge>
                       </div>
                       <Button
-                        size="sm"
                         onClick={() => {
                           const quantity = prompt(`How many doses did you refill for ${med.name}?`, '30');
                           if (quantity && !isNaN(quantity)) {
                             markRefilledMutation.mutate({ id: med.id, quantity: parseInt(quantity) });
                           }
                         }}
-                        className="bg-green-600 hover:bg-green-700"
+                        className="bg-green-600 hover:bg-green-700 h-11 select-none"
                       >
                         Mark Refilled
                       </Button>

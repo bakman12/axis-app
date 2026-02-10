@@ -91,7 +91,7 @@ export default function Home() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="max-w-6xl mx-auto p-4 md:p-8" style={{ overscrollBehaviorY: 'none' }}>
+      <div className="max-w-6xl mx-auto p-4 md:p-8" style={{ overscrollBehavior: 'none' }}>
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
             MedMind
