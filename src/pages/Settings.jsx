@@ -30,7 +30,11 @@ export default function Settings() {
     notification_enabled: true,
     notification_timing: 15,
     notification_sound: true,
+    reminder_sound_type: 'default',
     critical_only_notifications: false,
+    snooze_enabled: true,
+    snooze_duration: 10,
+    priority_notifications: true,
     ai_data_sharing: true,
     ai_personalization: true,
     target_streak: 30,
@@ -52,7 +56,11 @@ export default function Settings() {
         notification_enabled: user.notification_enabled ?? true,
         notification_timing: user.notification_timing ?? 15,
         notification_sound: user.notification_sound ?? true,
+        reminder_sound_type: user.reminder_sound_type ?? 'default',
         critical_only_notifications: user.critical_only_notifications ?? false,
+        snooze_enabled: user.snooze_enabled ?? true,
+        snooze_duration: user.snooze_duration ?? 10,
+        priority_notifications: user.priority_notifications ?? true,
         ai_data_sharing: user.ai_data_sharing ?? true,
         ai_personalization: user.ai_personalization ?? true,
         target_streak: user.target_streak ?? 30,
@@ -231,6 +239,68 @@ export default function Settings() {
                   className="select-none"
                 />
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="reminder_sound" className="dark:text-white text-sm">Reminder Sound</Label>
+                <MobileSelect
+                  value={formData.reminder_sound_type}
+                  onValueChange={(value) => setFormData({ ...formData, reminder_sound_type: value })}
+                  disabled={!formData.notification_enabled || !formData.notification_sound}
+                  placeholder="Select sound"
+                  options={[
+                    { value: 'default', label: 'Default' },
+                    { value: 'gentle', label: 'Gentle (Soft tone)' },
+                    { value: 'chime', label: 'Chime (Pleasant bell)' },
+                    { value: 'bell', label: 'Bell (Clear alert)' },
+                    { value: 'alert', label: 'Alert (Urgent tone)' }
+                  ]}
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
+                <div>
+                  <Label className="dark:text-white text-sm">Dynamic Priority</Label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Higher priority for critical medications</p>
+                </div>
+                <Switch
+                  checked={formData.priority_notifications}
+                  onCheckedChange={(checked) => setFormData({ ...formData, priority_notifications: checked })}
+                  disabled={!formData.notification_enabled}
+                  className="select-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
+                <div>
+                  <Label className="dark:text-white text-sm">Snooze Functionality</Label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Enable snooze for pending reminders</p>
+                </div>
+                <Switch
+                  checked={formData.snooze_enabled}
+                  onCheckedChange={(checked) => setFormData({ ...formData, snooze_enabled: checked })}
+                  disabled={!formData.notification_enabled}
+                  className="select-none"
+                />
+              </div>
+
+              {formData.snooze_enabled && (
+                <div className="space-y-2">
+                  <Label htmlFor="snooze_duration" className="dark:text-white text-sm">Snooze Duration</Label>
+                  <MobileSelect
+                    value={formData.snooze_duration.toString()}
+                    onValueChange={(value) => setFormData({ ...formData, snooze_duration: parseInt(value) })}
+                    disabled={!formData.notification_enabled}
+                    placeholder="Select duration"
+                    options={[
+                      { value: '5', label: '5 minutes' },
+                      { value: '10', label: '10 minutes' },
+                      { value: '15', label: '15 minutes' },
+                      { value: '20', label: '20 minutes' },
+                      { value: '30', label: '30 minutes' }
+                    ]}
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
 
