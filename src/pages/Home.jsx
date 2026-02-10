@@ -16,6 +16,7 @@ import RefillReminders from '../components/RefillReminders';
 import SmartNotifications from '../components/SmartNotifications';
 import AdherenceAnalytics from '../components/AdherenceAnalytics';
 import ActivityDetector from '../components/ActivityDetector';
+import GamificationDashboard from '../components/GamificationDashboard';
 
 export default function Home() {
   const [showAddDialog, setShowAddDialog] = useState(false);
