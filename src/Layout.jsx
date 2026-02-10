@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, TrendingUp, Settings, Heart } from 'lucide-react';
+import { Home, TrendingUp, Settings, Plane } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { createPageUrl } from './utils';
 import PageTransition from './components/PageTransition';
@@ -30,7 +30,7 @@ export default function Layout({ children, currentPageName }) {
   
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
-    { name: 'NHS Info', icon: Heart, path: createPageUrl('NHSGuidelines') },
+    { name: 'Travel', icon: Plane, path: createPageUrl('Travel') },
     { name: 'Analytics', icon: TrendingUp, path: createPageUrl('Analytics') },
     { name: 'Settings', icon: Settings, path: createPageUrl('Settings') }
   ];

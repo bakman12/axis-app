@@ -51,6 +51,7 @@ import Analytics from './pages/Analytics';
 import Home from './pages/Home';
 import NHSGuidelines from './pages/NHSGuidelines';
 import Settings from './pages/Settings';
+import Travel from './pages/Travel';
 import __Layout from './Layout.jsx';
 
 
@@ -59,6 +60,7 @@ export const PAGES = {
     "Home": Home,
     "NHSGuidelines": NHSGuidelines,
     "Settings": Settings,
+    "Travel": Travel,
 }
 
 export const pagesConfig = {
