@@ -77,6 +77,18 @@ export default function AddMedicationDialog({ open, onClose }) {
         <DialogHeader>
           <DialogTitle className="dark:text-white">Add New Medication</DialogTitle>
         </DialogHeader>
+        
+        {/* Safety Notice */}
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 rounded-lg p-3">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-amber-800 dark:text-amber-200">
+              <strong>Important:</strong> Only add medications prescribed by your doctor or recommended by your pharmacist. 
+              Enter exactly as prescribed. For dosage questions, consult your healthcare provider.
+            </p>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
             <Label htmlFor="name" className="text-sm dark:text-white">Medication Name *</Label>
