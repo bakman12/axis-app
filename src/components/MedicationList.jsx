@@ -43,27 +43,39 @@ export default function MedicationList({ medications, isLoading }) {
           key={med.id}
           className="flex items-start justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
         >
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-lg font-semibold text-gray-900">{med.name}</h3>
-              {med.critical && (
-                <Badge className="bg-red-500 text-white">
-                  <AlertTriangle className="w-3 h-3 mr-1" />
-                  Critical
-                </Badge>
+          <div className="flex gap-3 flex-1">
+            {med.image_url && (
+              <img
+                src={med.image_url}
+                alt={med.name}
+                className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200 flex-shrink-0"
+              />
+            )}
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-lg font-semibold text-gray-900">{med.name}</h3>
+                {med.critical && (
+                  <Badge className="bg-red-500 text-white">
+                    <AlertTriangle className="w-3 h-3 mr-1" />
+                    Critical
+                  </Badge>
+                )}
+              </div>
+              <p className="text-gray-600 mb-1">{med.dosage}</p>
+              {med.dosage_form && (
+                <p className="text-sm text-gray-500 mb-2">{med.dosage_form}</p>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {med.times.map((time, idx) => (
+                  <Badge key={idx} variant="outline" className="bg-white">
+                    {time}
+                  </Badge>
+                ))}
+              </div>
+              {med.notes && (
+                <p className="text-sm text-gray-500 mt-2">{med.notes}</p>
               )}
             </div>
-            <p className="text-gray-600 mb-2">{med.dosage}</p>
-            <div className="flex flex-wrap gap-2">
-              {med.times.map((time, idx) => (
-                <Badge key={idx} variant="outline" className="bg-white">
-                  {time}
-                </Badge>
-              ))}
-            </div>
-            {med.notes && (
-              <p className="text-sm text-gray-500 mt-2">{med.notes}</p>
-            )}
           </div>
           <Button
             variant="ghost"
