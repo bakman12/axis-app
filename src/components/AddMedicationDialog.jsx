@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { MobileSelect } from '@/components/ui/mobile-select';
 import { Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { AlertTriangle } from 'lucide-react';
 
 export default function AddMedicationDialog({ open, onClose }) {
   const [formData, setFormData] = useState({

@@ -87,7 +87,7 @@ export default function TripCard({ trip, medications }) {
         <div className="bg-white dark:bg-gray-700 rounded-lg p-3 border border-gray-200 dark:border-gray-600">
           <div className="flex items-center gap-2 mb-2">
             <Package className="w-4 h-4 text-green-600 dark:text-green-400" />
-            <span className="font-medium text-sm dark:text-white">Packing Guide</span>
+            <span className="font-medium text-sm dark:text-white">Packing Guide (Estimates Only)</span>
           </div>
           <div className="space-y-2">
             {packingList.map((item, idx) => (
@@ -102,7 +102,7 @@ export default function TripCard({ trip, medications }) {
               </div>
             ))}
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              💡 Recommendations include 20% buffer for safety
+              💡 Estimates include 20% buffer. Always verify quantities with your pharmacist, especially for international travel or timezone changes.
             </p>
           </div>
         </div>

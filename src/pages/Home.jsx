@@ -19,6 +19,7 @@ import ActivityDetector from '../components/ActivityDetector';
 import GamificationDashboard from '../components/GamificationDashboard';
 import PullToRefresh from '../components/PullToRefresh';
 import RootPageHeader from '../components/RootPageHeader';
+import MedicalDisclaimer from '../components/MedicalDisclaimer';
 
 export default function Home() {
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -98,6 +99,9 @@ export default function Home() {
       />
       <PullToRefresh onRefresh={handleRefresh}>
         <div className="max-w-6xl mx-auto p-4 md:p-8" style={{ overscrollBehavior: 'none' }}>
+
+      {/* Medical Disclaimer */}
+      <MedicalDisclaimer />
 
       {/* Stats Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">

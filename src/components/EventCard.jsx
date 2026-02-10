@@ -36,7 +36,16 @@ export default function EventCard({ event }) {
     setLoadingTip(true);
     try {
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Given this event: "${event.title}" (${event.event_type}) on ${event.date} at ${event.time || 'unspecified time'}, provide a brief, practical medication reminder tip (1-2 sentences). Focus on timing strategy to ensure they don't forget during this important event. Be encouraging and specific.`,
+        prompt: `Given this event: "${event.title}" (${event.event_type}) on ${event.date} at ${event.time || 'unspecified time'}, provide a brief, practical ADHERENCE REMINDER tip (1-2 sentences).
+
+STRICT SAFETY RULES:
+- Provide REMINDER STRATEGIES ONLY - not medical advice
+- Focus ONLY on timing and routine (e.g., "Set a phone alarm 2 hours before" or "Take medication with breakfast before leaving")
+- NEVER suggest dosage changes, skipping doses, or taking extra doses
+- NEVER provide medical advice about the medications themselves
+- If the event might conflict with medication timing, suggest: "Speak with your pharmacist about adjusting your schedule for this day"
+
+Focus on practical, non-medical adherence tips to help them not forget during this important event.`,
       });
       setAiTip(result);
     } catch (error) {
@@ -140,11 +149,16 @@ export default function EventCard({ event }) {
         )}
 
         {aiTip && (
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 border border-purple-200 dark:border-purple-700">
-            <div className="flex items-start gap-2">
-              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400 mt-0.5" />
-              <p className="text-sm text-gray-700 dark:text-gray-300">{aiTip}</p>
+          <div className="space-y-2">
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 border border-purple-200 dark:border-purple-700">
+              <div className="flex items-start gap-2">
+                <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400 mt-0.5" />
+                <p className="text-sm text-gray-700 dark:text-gray-300">{aiTip}</p>
+              </div>
             </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              ⚠️ This is a reminder strategy only, not medical advice
+            </p>
           </div>
         )}
 

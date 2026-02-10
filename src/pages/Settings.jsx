@@ -23,6 +23,7 @@ import {
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import RootPageHeader from '../components/RootPageHeader';
+import { PrivacyNotice } from '../components/MedicalDisclaimer';
 
 export default function Settings() {
   const [formData, setFormData] = useState({
@@ -157,7 +158,10 @@ export default function Settings() {
       <RootPageHeader title="Settings" subtitle="Customize your experience" />
       <div className="p-4 md:p-8 max-w-4xl mx-auto" style={{ overscrollBehavior: 'none' }}>
 
-        <div className="space-y-6">
+        {/* Privacy Notice */}
+        <PrivacyNotice />
+
+              <div className="space-y-6">
           {/* Notification Preferences */}
           <Card className="shadow-md dark:bg-gray-800 dark:border-gray-700">
             <CardHeader>
@@ -266,8 +270,10 @@ export default function Settings() {
 
               <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
                 <p className="text-sm text-blue-900 dark:text-blue-200">
-                  <strong>🔒 Your Privacy:</strong> All data is encrypted and stored securely. 
-                  AI analysis happens within your private account. We never share your health data with third parties. 
+                  <strong>🔒 Your Privacy & Consent:</strong> All data is encrypted and stored securely. 
+                  AI analysis happens within your private account and only uses data you've explicitly entered. 
+                  We never share your health data with third parties or use it for advertising. 
+                  By enabling AI features, you consent to automated pattern analysis for adherence support only - not medical diagnosis or advice.
                   You can export or delete your data at any time.
                 </p>
               </div>

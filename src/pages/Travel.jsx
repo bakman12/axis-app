@@ -10,6 +10,8 @@ import AddEventDialog from '../components/AddEventDialog';
 import TripCard from '../components/TripCard';
 import EventCard from '../components/EventCard';
 import PackingCalculator from '../components/PackingCalculator';
+import { AlertTriangle } from 'lucide-react';
+import { Card as InfoCard, CardContent } from '@/components/ui/card';
 
 export default function Travel() {
   const [showAddTrip, setShowAddTrip] = useState(false);
@@ -45,6 +47,27 @@ export default function Travel() {
       
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         
+        {/* Travel Safety Notice */}
+        <InfoCard className="bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+              <div className="text-sm">
+                <p className="font-semibold text-amber-900 dark:text-amber-100 mb-1">
+                  Travel Medication Safety
+                </p>
+                <ul className="space-y-1 text-amber-800 dark:text-amber-200 ml-4 list-disc text-xs">
+                  <li>Keep medications in original labeled containers</li>
+                  <li>Carry prescriptions or a letter from your doctor when traveling internationally</li>
+                  <li>Pack medications in carry-on luggage, not checked bags</li>
+                  <li>For timezone changes affecting medication timing, consult your pharmacist BEFORE traveling</li>
+                  <li>Pack extra doses in case of delays - our recommendations include a safety buffer</li>
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </InfoCard>
+
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-3">
           <Button
