@@ -12,10 +12,10 @@ export default function AIAssistant({ medications, logs }) {
   const [loading, setLoading] = useState(false);
 
   const quickQuestions = [
-    "What should I do if I miss a critical dose?",
-    "Can I take my medications together?",
-    "What are signs I should contact my doctor?",
-    "How can I improve my adherence?"
+    "How can I improve my adherence?",
+    "What are good reminder strategies?",
+    "How do I track my medications better?",
+    "Tips for staying consistent?"
   ];
 
   const askAI = async (q) => {
@@ -39,26 +39,39 @@ export default function AIAssistant({ medications, logs }) {
       };
 
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a helpful AI assistant for a patient with panhypopituitarism managing hormone replacement therapy. 
+        prompt: `You are a supportive AI assistant helping with medication adherence and routine management.
 
 Patient's medications: ${JSON.stringify(context.medications)}
 Recent adherence: ${JSON.stringify(context.recent_logs)}
 
-CRITICAL SAFETY & ETHICAL GUIDELINES:
-1. You are NOT a medical professional - never provide medical advice, diagnoses, or treatment recommendations
-2. Always emphasize consulting their healthcare provider for any medical decisions or concerns
-3. Do not suggest medication changes, dosage adjustments, or stopping medications
-4. If the user reports serious symptoms or emergencies, advise immediate medical attention
-5. Respect patient privacy - do not request additional personal health information
-6. Be empathetic but maintain professional boundaries
-7. Provide supportive reminders and adherence tips only, not medical guidance
-8. If uncertain, always err on the side of caution and recommend professional consultation
+STRICT SAFETY & PRIVACY RULES:
+1. You provide ADHERENCE SUPPORT ONLY - not medical advice, diagnosis, or treatment
+2. NEVER suggest starting, stopping, changing doses, or switching medications
+3. NEVER interpret symptoms, side effects, or lab results
+4. NEVER diagnose conditions or assess medical risk
+5. If asked medical questions, decline politely and redirect to healthcare provider
+6. If user reports symptoms/emergencies, immediately advise: "Please contact your GP or call NHS 111"
+7. Do NOT ask for additional personal health information beyond what's provided
+8. Keep responses focused on practical adherence strategies (reminders, routines, tracking)
 
-LEGAL DISCLAIMER: This is an informational tool only, not medical advice. All medical decisions must be made with a qualified healthcare provider.
+PRIVACY: User data is confidential and only used for this conversation.
+
+WHAT YOU CAN HELP WITH:
+- Setting up reminder systems
+- Building consistent routines
+- Tracking strategies
+- Overcoming forgetfulness
+- Time management for medication schedules
+
+WHAT YOU CANNOT DO:
+- Provide medical advice or health guidance
+- Answer "what if I miss a dose" (medical question)
+- Explain drug interactions (medical question)
+- Interpret how medications work (medical question)
 
 User question: ${q}
 
-Provide helpful, empathetic support within these strict ethical and safety boundaries.`,
+Respond helpfully within these boundaries. If it's a medical question, politely decline and suggest they contact their GP or pharmacist.`,
         add_context_from_internet: false
       });
 
@@ -78,7 +91,7 @@ Provide helpful, empathetic support within these strict ethical and safety bound
           AI Medication Assistant
         </CardTitle>
         <p className="text-sm text-gray-600">
-          Ask questions about your medications and adherence
+          Get help with adherence strategies and routines
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -108,7 +121,7 @@ Provide helpful, empathetic support within these strict ethical and safety bound
           <Textarea
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="e.g., What happens if I take my dose 2 hours late?"
+            placeholder="e.g., How can I remember to take my evening dose?"
             rows={3}
           />
           <Button
@@ -130,13 +143,10 @@ Provide helpful, empathetic support within these strict ethical and safety bound
             <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
               {response}
             </p>
-            <div className="mt-3 pt-3 border-t border-indigo-200 space-y-1">
-              <p className="text-xs text-red-700 font-semibold">
-                ⚠️ IMPORTANT DISCLAIMER
-              </p>
+            <div className="mt-3 pt-3 border-t border-indigo-200">
               <p className="text-xs text-gray-700">
-                This is AI-generated information for educational purposes only, NOT medical advice. 
-                Always consult your healthcare provider for medical decisions, medication changes, or health concerns.
+                <strong>⚠️ Not Medical Advice:</strong> This provides adherence support only. 
+                For medical questions about your medications, symptoms, or health, always consult your GP or pharmacist.
               </p>
             </div>
           </div>
