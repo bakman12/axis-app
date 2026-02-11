@@ -5,6 +5,7 @@ import { Copy, Zap, CheckCircle2, AlertCircle, Loader2, ChevronRight, Clock, Vol
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import WorkoutTile from './WorkoutTile';
+import RecipeTile from './RecipeTile';
 import AdherenceChart from './AdherenceChart';
 
 const FunctionDisplay = ({ toolCall }) => {
@@ -131,7 +132,32 @@ export default function MessageBubble({ message }) {
         return null;
     };
 
+    // Parse recipe data from message
+    const parseRecipes = (content) => {
+        try {
+            // Look for all JSON blocks
+            const jsonBlocks = content.match(/```json\s*(\[[\s\S]*?\])\s*```/g);
+            if (!jsonBlocks) return null;
+
+            // Parse all blocks and find the one with recipe data
+            for (const block of jsonBlocks) {
+                const jsonMatch = block.match(/```json\s*(\[[\s\S]*?\])\s*```/);
+                if (jsonMatch) {
+                    const parsed = JSON.parse(jsonMatch[1]);
+                    // Check if it's recipes (has ingredients/instructions) vs workouts (has duration/exercises)
+                    if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].ingredients && parsed[0].instructions) {
+                        return parsed;
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Failed to parse recipes:', e);
+        }
+        return null;
+    };
+
     const workouts = !isUser ? parseWorkouts(message.content || '') : null;
+    const recipes = !isUser ? parseRecipes(message.content || '') : null;
     const chartData = !isUser ? parseChartData(message.content || '') : null;
 
     // Remove JSON blocks from displayed text
@@ -275,6 +301,20 @@ export default function MessageBubble({ message }) {
                         <div className="grid grid-cols-1 gap-3">
                             {workouts.map((workout, idx) => (
                                 <WorkoutTile key={idx} workout={workout} index={idx + 1} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Recipe Tiles */}
+                {recipes && recipes.length > 0 && (
+                    <div className="mt-3 w-full space-y-2">
+                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                            🍽️ Personalized Recipes
+                        </p>
+                        <div className="grid grid-cols-1 gap-3">
+                            {recipes.map((recipe, idx) => (
+                                <RecipeTile key={idx} recipe={recipe} index={idx + 1} />
                             ))}
                         </div>
                     </div>
