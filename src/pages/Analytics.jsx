@@ -7,6 +7,7 @@ import { TrendingUp } from 'lucide-react';
 import RootPageHeader from '../components/RootPageHeader';
 import PremiumGate from '../components/PremiumGate';
 import AdvancedInsights from '../components/AdvancedInsights';
+import HealthReportGenerator from '../components/HealthReportGenerator';
 
 export default function Analytics() {
   const { data: medications = [] } = useQuery({
@@ -45,6 +46,11 @@ export default function Analytics() {
       {/* Gamification Dashboard */}
       <div className="mb-6">
         <GamificationDashboard logs={allLogs} medications={medications} />
+      </div>
+
+      {/* Health Report Generator */}
+      <div className="mb-6">
+        <HealthReportGenerator />
       </div>
 
       {/* Advanced Insights - Premium Only */}
