@@ -36,32 +36,106 @@ export default function GamificationDashboard({ logs, medications }) {
     queryFn: () => base44.entities.Achievement.list('-earned_date', 50)
   });
 
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
+  const { data: previousChallenges = [] } = useQuery({
+    queryKey: ['previousChallenges'],
+    queryFn: () => base44.entities.Challenge.list('-created_date', 10)
+  });
+
   const { data: personalizedChallenge, refetch: refetchChallenge } = useQuery({
     queryKey: ['challenge'],
     queryFn: async () => {
       setAnalyzing(true);
       try {
-        const recentLogs = logs.slice(0, 30);
-        const prompt = `Based on this user's medication adherence data, create a personalized, achievable challenge.
+        const stats = calculateStats();
+        const recentLogs = logs.slice(0, 50);
+        
+        // Analyze missed medication patterns
+        const missedLogs = logs.filter(l => l.status === 'missed');
+        const missedByTime = missedLogs.reduce((acc, log) => {
+          const hour = parseInt(log.scheduled_time?.split(':')[0] || '0');
+          const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+          acc[timeOfDay] = (acc[timeOfDay] || 0) + 1;
+          return acc;
+        }, {});
+        
+        const missedByMedication = missedLogs.reduce((acc, log) => {
+          acc[log.medication_name] = (acc[log.medication_name] || 0) + 1;
+          return acc;
+        }, {});
 
-Recent adherence: ${JSON.stringify(recentLogs.map(l => ({
+        // Analyze previous challenge feedback
+        const completedChallenges = previousChallenges.filter(c => c.status === 'completed');
+        const avgCompletionRate = completedChallenges.length > 0 
+          ? completedChallenges.reduce((sum, c) => sum + (c.completion_rate || 0), 0) / completedChallenges.length 
+          : null;
+        
+        const feedbackCounts = previousChallenges.reduce((acc, c) => {
+          if (c.user_feedback) acc[c.user_feedback] = (acc[c.user_feedback] || 0) + 1;
+          return acc;
+        }, {});
+
+        const prompt = `You are a compassionate health coach creating a personalized medication adherence challenge.
+
+USER'S CURRENT STATUS:
+- Current adherence rate: ${stats.adherenceRate}%
+- Current streak: ${stats.currentStreak} days
+- Total medications taken: ${stats.totalTaken}
+- Target adherence goal: ${user?.target_adherence || 95}%
+- Target streak goal: ${user?.target_streak || 30} days
+
+MISSED MEDICATION PATTERNS:
+- Total missed: ${missedLogs.length}
+- By time of day: ${JSON.stringify(missedByTime)}
+- By medication: ${JSON.stringify(missedByMedication)}
+- Most problematic time: ${Object.keys(missedByTime).sort((a, b) => missedByTime[b] - missedByTime[a])[0] || 'none'}
+
+RECENT ADHERENCE DATA (last 50 entries):
+${JSON.stringify(recentLogs.map(l => ({
   medication: l.medication_name,
   status: l.status,
-  delay: l.delay_minutes
-})))}
+  delay: l.delay_minutes,
+  date: format(new Date(l.created_date), 'yyyy-MM-dd')
+})).slice(0, 20))}
+
+PREVIOUS CHALLENGES HISTORY:
+- Total challenges attempted: ${previousChallenges.length}
+- Completed: ${completedChallenges.length}
+- Average completion rate: ${avgCompletionRate ? Math.round(avgCompletionRate) + '%' : 'N/A'}
+- User feedback: ${JSON.stringify(feedbackCounts)}
+${previousChallenges.length > 0 ? `- Recent challenges: ${JSON.stringify(previousChallenges.slice(0, 3).map(c => ({
+  title: c.challenge_title,
+  status: c.status,
+  feedback: c.user_feedback,
+  target: c.target_metric
+})))}` : ''}
 
 ETHICAL GUIDELINES:
-- Challenges should be supportive and achievable, not punitive
-- Focus on positive reinforcement and gradual improvement
-- Respect that health challenges may impact adherence
-- Never pressure or shame for missed doses
-- Promote self-compassion and realistic goals
+- Challenges MUST be supportive and achievable, not punitive or overwhelming
+- Focus on positive reinforcement and gradual, sustainable improvement
+- Respect that health challenges, life events, and circumstances affect adherence
+- NEVER pressure, shame, or create anxiety about missed doses
+- Promote self-compassion, realistic goals, and celebrate small wins
+- If adherence is already high (>90%), focus on maintaining consistency, not perfection
+
+ADAPTATION RULES:
+${feedbackCounts.too_hard > 2 ? '- User found recent challenges too difficult. Make this one EASIER and more achievable.' : ''}
+${feedbackCounts.too_easy > 2 ? '- User found recent challenges too easy. Make this one slightly more ambitious.' : ''}
+${avgCompletionRate && avgCompletionRate < 50 ? '- Low completion rate detected. Create a SIMPLER, more achievable challenge.' : ''}
+${stats.adherenceRate < 70 ? '- Low adherence detected. Focus on ONE specific, small improvement area.' : ''}
+${stats.currentStreak > 14 ? '- Strong streak! Focus on maintaining momentum, not perfection.' : ''}
 
 Create ONE specific challenge for this week that:
-1. Is achievable based on their current patterns
-2. Focuses on a specific improvement area
-3. Has a clear, measurable goal
-4. Is motivating but not overwhelming`;
+1. Is REALISTICALLY achievable based on their current patterns and history
+2. Addresses their most significant improvement opportunity (based on missed patterns)
+3. Has a clear, measurable goal with specific metrics
+4. Builds on previous challenge feedback and completion patterns
+5. Is appropriately challenging (not too easy if they complete everything, not too hard if they struggle)
+6. Focuses on ONE target metric: streak, adherence, timing, consistency, or specific medication`;
 
         const result = await base44.integrations.Core.InvokeLLM({
           prompt,
@@ -72,17 +146,39 @@ Create ONE specific challenge for this week that:
               challenge_description: { type: "string" },
               goal: { type: "string" },
               reward_points: { type: "number" },
-              encouragement: { type: "string" }
+              encouragement: { type: "string" },
+              target_metric: { 
+                type: "string",
+                enum: ["streak", "adherence", "timing", "consistency", "specific_medication"]
+              }
             }
           }
         });
+
+        // Save challenge to database
+        const weekFromNow = new Date();
+        weekFromNow.setDate(weekFromNow.getDate() + 7);
+        
+        await base44.entities.Challenge.create({
+          challenge_title: result.challenge_title,
+          challenge_description: result.challenge_description,
+          goal: result.goal,
+          reward_points: result.reward_points,
+          encouragement: result.encouragement,
+          target_metric: result.target_metric,
+          start_date: format(new Date(), 'yyyy-MM-dd'),
+          end_date: format(weekFromNow, 'yyyy-MM-dd'),
+          status: 'active'
+        });
+
+        queryClient.invalidateQueries(['previousChallenges']);
 
         return result;
       } finally {
         setAnalyzing(false);
       }
     },
-    enabled: logs.length > 5,
+    enabled: logs.length > 5 && !!user,
     staleTime: 1000 * 60 * 60 * 24, // 1 day
     refetchOnWindowFocus: false
   });
@@ -262,7 +358,7 @@ Create ONE specific challenge for this week that:
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-indigo-500" />
-              Your Weekly Challenge
+              Your Personalized Challenge
             </CardTitle>
             <Button
               variant="ghost"
@@ -276,14 +372,60 @@ Create ONE specific challenge for this week that:
           <CardContent>
             <div className="space-y-3">
               <div>
-                <h3 className="font-semibold text-gray-900">{personalizedChallenge.challenge_title}</h3>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold text-gray-900">{personalizedChallenge.challenge_title}</h3>
+                  <Badge variant="outline" className="text-xs">
+                    {personalizedChallenge.target_metric?.replace('_', ' ')}
+                  </Badge>
+                </div>
                 <p className="text-sm text-gray-600 mt-1">{personalizedChallenge.challenge_description}</p>
               </div>
               <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
-                <p className="text-sm font-medium text-indigo-900">Goal: {personalizedChallenge.goal}</p>
-                <p className="text-xs text-indigo-700 mt-1">Reward: +{personalizedChallenge.reward_points} points</p>
+                <p className="text-sm font-medium text-indigo-900">🎯 Goal: {personalizedChallenge.goal}</p>
+                <p className="text-xs text-indigo-700 mt-1">🏆 Reward: +{personalizedChallenge.reward_points} points</p>
               </div>
               <p className="text-sm text-gray-700 italic">💪 {personalizedChallenge.encouragement}</p>
+              
+              {/* Challenge Feedback */}
+              <div className="flex gap-2 pt-2 border-t">
+                <p className="text-xs text-gray-500 flex-1">How's this challenge?</p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs h-7"
+                  onClick={async () => {
+                    const activeChallenges = await base44.entities.Challenge.filter({ 
+                      status: 'active' 
+                    });
+                    if (activeChallenges[0]) {
+                      await base44.entities.Challenge.update(activeChallenges[0].id, {
+                        user_feedback: 'too_easy'
+                      });
+                      toast.success('Feedback saved! Next challenge will be more ambitious.');
+                    }
+                  }}
+                >
+                  Too easy
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs h-7"
+                  onClick={async () => {
+                    const activeChallenges = await base44.entities.Challenge.filter({ 
+                      status: 'active' 
+                    });
+                    if (activeChallenges[0]) {
+                      await base44.entities.Challenge.update(activeChallenges[0].id, {
+                        user_feedback: 'too_hard'
+                      });
+                      toast.success('Feedback saved! Next challenge will be easier.');
+                    }
+                  }}
+                >
+                  Too hard
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
