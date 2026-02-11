@@ -38,6 +38,9 @@ export default function Settings() {
     priority_notifications: true,
     ai_data_sharing: true,
     ai_personalization: true,
+    ai_health_coach: true,
+    ai_assistant: true,
+    ai_insights: true,
     target_streak: 30,
     target_adherence: 95,
     time_format: '12h',
@@ -64,6 +67,9 @@ export default function Settings() {
         priority_notifications: user.priority_notifications ?? true,
         ai_data_sharing: user.ai_data_sharing ?? true,
         ai_personalization: user.ai_personalization ?? true,
+        ai_health_coach: user.ai_health_coach ?? true,
+        ai_assistant: user.ai_assistant ?? true,
+        ai_insights: user.ai_insights ?? true,
         target_streak: user.target_streak ?? 30,
         target_adherence: user.target_adherence ?? 95,
         time_format: user.time_format ?? '12h',
@@ -349,6 +355,42 @@ export default function Settings() {
                 <Switch
                   checked={formData.ai_personalization}
                   onCheckedChange={(checked) => setFormData({ ...formData, ai_personalization: checked })}
+                  className="select-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
+                <div>
+                  <Label className="dark:text-white text-sm">AI Health Coach</Label>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Enable conversational AI health coach chat feature</p>
+                </div>
+                <Switch
+                  checked={formData.ai_health_coach}
+                  onCheckedChange={(checked) => setFormData({ ...formData, ai_health_coach: checked })}
+                  className="select-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
+                <div>
+                  <Label className="dark:text-white text-sm">AI Assistant</Label>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Show AI assistant on home page for quick help</p>
+                </div>
+                <Switch
+                  checked={formData.ai_assistant}
+                  onCheckedChange={(checked) => setFormData({ ...formData, ai_assistant: checked })}
+                  className="select-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
+                <div>
+                  <Label className="dark:text-white text-sm">Predictive Insights</Label>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Enable AI-powered predictive insights and analysis</p>
+                </div>
+                <Switch
+                  checked={formData.ai_insights}
+                  onCheckedChange={(checked) => setFormData({ ...formData, ai_insights: checked })}
                   className="select-none"
                 />
               </div>

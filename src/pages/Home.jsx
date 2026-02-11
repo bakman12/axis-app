@@ -50,6 +50,11 @@ export default function Home() {
     }
   });
 
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
   const handleActivityChange = (activityData) => {
     console.log('Activity detected:', activityData);
     // Could trigger additional AI analysis or notifications here
@@ -133,10 +138,12 @@ export default function Home() {
       <TodaySchedule schedule={todaySchedule} />
 
       {/* AI Features */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
-        <PredictiveInsights medications={medications} />
-        <AIAssistant medications={medications} logs={todayLogs} />
-      </div>
+      {(user?.ai_insights || user?.ai_assistant) && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
+          {user?.ai_insights && <PredictiveInsights medications={medications} />}
+          {user?.ai_assistant && <AIAssistant medications={medications} logs={todayLogs} />}
+        </div>
+      )}
         </div>
         </PullToRefresh>
         </div>

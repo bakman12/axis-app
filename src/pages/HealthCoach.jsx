@@ -146,6 +146,27 @@ export default function HealthCoach() {
     );
   }
 
+  if (user.ai_health_coach === false) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-8 text-center">
+        <div className="max-w-md">
+          <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">AI Health Coach Disabled</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            The AI Health Coach feature is currently turned off in your settings.
+          </p>
+          <Button
+            onClick={() => window.location.href = '/Settings'}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Go to Settings
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen" style={{ height: '100dvh' }}>
       <RootPageHeader title="AI Health Coach" subtitle="Personalized wellness guidance" />

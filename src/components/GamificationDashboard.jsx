@@ -50,7 +50,7 @@ export default function GamificationDashboard({ logs, medications }) {
 
   const { data: personalizedChallenge, refetch: refetchChallenge } = useQuery({
     queryKey: ['challenge'],
-    enabled: logs.length > 5 && !!user && isPremium,
+    enabled: logs.length > 5 && !!user && isPremium && (user.personalized_challenges ?? true),
     queryFn: async () => {
       setAnalyzing(true);
       try {
@@ -355,7 +355,7 @@ Create ONE specific challenge for this week that:
       </div>
 
       {/* Personalized Challenge */}
-      {personalizedChallenge && (
+      {personalizedChallenge && (user?.personalized_challenges ?? true) && (
         <Card className="shadow-md border-l-4 border-l-indigo-500">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2">
