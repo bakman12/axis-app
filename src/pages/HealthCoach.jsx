@@ -150,7 +150,7 @@ export default function HealthCoach() {
     <div className="flex flex-col h-screen" style={{ height: '100dvh' }}>
       <RootPageHeader title="AI Health Coach" subtitle="Personalized wellness guidance" />
 
-      <div className="flex-1 overflow-hidden px-4 pt-4 pb-2 flex flex-col">
+      <div className="flex-1 overflow-hidden px-4 md:px-6 lg:px-8 pt-4 pb-2 flex flex-col max-w-5xl mx-auto w-full">
         {/* Health Profile Status */}
         <Card className="mb-4 border-l-4 border-l-green-500">
           <CardContent className="p-4">
@@ -200,7 +200,7 @@ export default function HealthCoach() {
                   I'm here to support your wellness journey with personalized advice on exercise, nutrition, 
                   and staying motivated with your medication routine.
                 </p>
-                <div className="grid grid-cols-2 gap-2 mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-6">
                   {quickActions.map((action, idx) => (
                     <Button
                       key={idx}
@@ -237,7 +237,7 @@ export default function HealthCoach() {
 
         {/* Input */}
         <div className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 p-4 pb-safe">
-          <div className="flex gap-2">
+          <div className="flex gap-2 max-w-4xl mx-auto">
             <Input
               value={input}
               onChange={(e) => setInput(e.target.value)}

@@ -31,7 +31,7 @@ export default function Progress() {
         subtitle="Track achievements, challenges, and compete on the leaderboard" 
       />
       <PullToRefresh onRefresh={handleRefresh}>
-        <div className="max-w-6xl mx-auto p-4 md:p-8 pb-24" style={{ overscrollBehavior: 'none' }}>
+        <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 pb-24" style={{ overscrollBehavior: 'none' }}>
           <GamificationDashboard logs={allLogs} medications={medications} />
         </div>
       </PullToRefresh>

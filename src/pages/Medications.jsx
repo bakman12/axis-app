@@ -31,7 +31,7 @@ export default function Medications() {
         subtitle="Manage your medication list and refill reminders" 
       />
       <PullToRefresh onRefresh={handleRefresh}>
-        <div className="max-w-6xl mx-auto p-4 md:p-8 pb-24" style={{ overscrollBehavior: 'none' }}>
+        <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 pb-24" style={{ overscrollBehavior: 'none' }}>
           
           {/* Refill Reminders */}
           <div className="mb-6">
