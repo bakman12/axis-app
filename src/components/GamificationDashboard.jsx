@@ -4,17 +4,27 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Flame, Star, Target, Sparkles, RefreshCw, Award } from 'lucide-react';
+import { Trophy, Flame, Star, Target, Sparkles, RefreshCw, Award, TrendingUp } from 'lucide-react';
+import ProgressTracker from './ProgressTracker';
+import Leaderboard from './Leaderboard';
 import { format, differenceInDays, startOfDay } from 'date-fns';
 import { toast } from 'sonner';
 
 const BADGE_DEFINITIONS = [
   { id: 'first_dose', name: 'Getting Started', icon: '🌟', description: 'Logged your first medication', category: 'milestone', threshold: 1 },
   { id: 'week_streak', name: 'Week Warrior', icon: '🔥', description: '7-day perfect streak', category: 'streak', threshold: 7 },
+  { id: 'two_week_streak', name: 'Fortnight Fighter', icon: '⚡', description: '14-day perfect streak', category: 'streak', threshold: 14 },
   { id: 'month_streak', name: 'Monthly Master', icon: '💪', description: '30-day perfect streak', category: 'streak', threshold: 30 },
+  { id: 'quarter_streak', name: 'Quarter Champion', icon: '🏆', description: '90-day perfect streak', category: 'streak', threshold: 90 },
+  { id: 'consistent_50', name: 'Halfway Hero', icon: '🎯', description: '50 medications taken', category: 'milestone', threshold: 50 },
   { id: 'consistent_100', name: 'Century Club', icon: '💯', description: '100 medications taken', category: 'milestone', threshold: 100 },
+  { id: 'consistent_250', name: 'Quarter Master', icon: '🌟', description: '250 medications taken', category: 'milestone', threshold: 250 },
+  { id: 'consistent_500', name: 'Elite Achiever', icon: '👑', description: '500 medications taken', category: 'milestone', threshold: 500 },
   { id: 'perfect_week', name: 'Flawless Week', icon: '✨', description: 'Zero missed doses in a week', category: 'consistency', threshold: 7 },
-  { id: 'early_bird', name: 'Early Bird', icon: '🌅', description: 'All morning doses on time for a week', category: 'consistency', threshold: 7 }
+  { id: 'perfect_month', name: 'Perfect Month', icon: '🎊', description: 'Zero missed doses in 30 days', category: 'consistency', threshold: 30 },
+  { id: 'early_bird', name: 'Early Bird', icon: '🌅', description: 'All morning doses on time for a week', category: 'consistency', threshold: 7 },
+  { id: 'night_owl', name: 'Night Owl', icon: '🦉', description: 'All evening doses on time for a week', category: 'consistency', threshold: 7 },
+  { id: 'comeback_king', name: 'Comeback King', icon: '💫', description: 'Restarted streak after a miss', category: 'challenge', threshold: 1 }
 ];
 
 export default function GamificationDashboard({ logs, medications }) {
@@ -139,25 +149,44 @@ Create ONE specific challenge for this week that:
     const earnedBadgeIds = achievements.map(a => a.badge_id);
 
     BADGE_DEFINITIONS.forEach(badge => {
-      if (earnedBadgeIds.includes(badge.id)) return;
+    if (earnedBadgeIds.includes(badge.id)) return;
 
-      let shouldAward = false;
+    let shouldAward = false;
 
-      if (badge.id === 'first_dose' && logs.length >= 1) {
-        shouldAward = true;
-      } else if (badge.id === 'week_streak' && stats.currentStreak >= 7) {
-        shouldAward = true;
-      } else if (badge.id === 'month_streak' && stats.currentStreak >= 30) {
-        shouldAward = true;
-      } else if (badge.id === 'consistent_100' && stats.totalTaken >= 100) {
-        shouldAward = true;
-      } else if (badge.id === 'perfect_week' && stats.currentStreak >= 7) {
-        shouldAward = true;
-      }
+    // Milestone badges
+    if (badge.id === 'first_dose' && logs.length >= 1) {
+      shouldAward = true;
+    } else if (badge.id === 'consistent_50' && stats.totalTaken >= 50) {
+      shouldAward = true;
+    } else if (badge.id === 'consistent_100' && stats.totalTaken >= 100) {
+      shouldAward = true;
+    } else if (badge.id === 'consistent_250' && stats.totalTaken >= 250) {
+      shouldAward = true;
+    } else if (badge.id === 'consistent_500' && stats.totalTaken >= 500) {
+      shouldAward = true;
+    }
 
-      if (shouldAward) {
-        createAchievementMutation.mutate(badge);
-      }
+    // Streak badges
+    else if (badge.id === 'week_streak' && stats.currentStreak >= 7) {
+      shouldAward = true;
+    } else if (badge.id === 'two_week_streak' && stats.currentStreak >= 14) {
+      shouldAward = true;
+    } else if (badge.id === 'month_streak' && stats.currentStreak >= 30) {
+      shouldAward = true;
+    } else if (badge.id === 'quarter_streak' && stats.currentStreak >= 90) {
+      shouldAward = true;
+    }
+
+    // Consistency badges
+    else if (badge.id === 'perfect_week' && stats.currentStreak >= 7) {
+      shouldAward = true;
+    } else if (badge.id === 'perfect_month' && stats.currentStreak >= 30) {
+      shouldAward = true;
+    }
+
+    if (shouldAward) {
+      createAchievementMutation.mutate(badge);
+    }
     });
   }, [logs.length]);
 
@@ -165,6 +194,9 @@ Create ONE specific challenge for this week that:
 
   return (
     <div className="space-y-6">
+      {/* Visual Progress Tracker */}
+      <ProgressTracker logs={logs} medications={medications} stats={stats} />
+
       {/* Stats Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="bg-gradient-to-br from-yellow-50 to-white border-yellow-200">
@@ -288,6 +320,9 @@ Create ONE specific challenge for this week that:
           )}
         </CardContent>
       </Card>
+
+      {/* Leaderboard */}
+      <Leaderboard stats={stats} achievements={achievements} />
 
       {/* Privacy Notice */}
       <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
