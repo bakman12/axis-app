@@ -20,6 +20,8 @@ import GamificationDashboard from '../components/GamificationDashboard';
 import PullToRefresh from '../components/PullToRefresh';
 import RootPageHeader from '../components/RootPageHeader';
 import MedicalDisclaimer from '../components/MedicalDisclaimer';
+import MedicationCalendar from '../components/MedicationCalendar';
+import MedicationHeatMap from '../components/MedicationHeatMap';
 
 export default function Home() {
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -190,6 +192,12 @@ export default function Home() {
           logs={allLogs} 
           checkIns={allCheckIns} 
         />
+      </div>
+
+      {/* Visual Tracking */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+        <MedicationCalendar logs={allLogs} />
+        <MedicationHeatMap logs={allLogs} />
       </div>
 
       {/* AI Assistant */}
