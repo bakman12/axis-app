@@ -74,7 +74,7 @@ export default function SmartNotifications({ schedule, checkIn }) {
         { enableHighAccuracy: false, maximumAge: 300000 } // 5 min cache
       );
 
-      return () => navigator.geolocation.clearPosition(watchId);
+      return () => navigator.geolocation.clearWatch(watchId);
     }
   }, [preferences.enableLocationReminders]);
 
