@@ -145,10 +145,21 @@ button:active,
   transition: transform 0.1s ease;
 }
 
-/* Android Chrome address bar handling */
+/* Better viewport handling for mobile browsers */
 @supports (height: 100dvh) {
   .min-h-screen {
     min-height: 100dvh;
+  }
+  
+  html, body {
+    min-height: 100dvh;
+  }
+}
+
+/* Fallback for browsers without dvh support */
+@supports not (height: 100dvh) {
+  html, body {
+    min-height: 100vh;
   }
 }
 

@@ -55,25 +55,20 @@ export default function Layout({ children, currentPageName }) {
   const handleNavClick = (e, path) => {
     if (isActive(path)) {
       e.preventDefault();
-      // Reset to top and reload the route to reset state
+      // Scroll to top when tapping active tab
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      navigate(path, { replace: true });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/50 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/50 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950" style={{ minHeight: '100dvh', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {/* Offline Support */}
       <OfflineDataManager />
       <OfflineIndicator />
       
       {/* Main Content */}
-      <div className="pb-20">
-        <AnimatePresence mode="wait">
-          <PageTransition key={location.pathname}>
-            {children}
-          </PageTransition>
-        </AnimatePresence>
+      <div className="pb-20" style={{ minHeight: '100dvh' }}>
+        {children}
       </div>
 
       {/* Bottom Navigation */}
@@ -87,6 +82,7 @@ export default function Layout({ children, currentPageName }) {
                 key={item.name}
                 to={item.path}
                 onClick={(e) => handleNavClick(e, item.path)}
+                preventScrollReset={true}
                 className={`flex flex-col items-center justify-center flex-1 h-full transition-colors min-h-[44px] ${
                   active
                     ? 'text-blue-600 dark:text-blue-400'
