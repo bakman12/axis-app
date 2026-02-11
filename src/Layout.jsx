@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Home, TrendingUp, Settings, Plane } from 'lucide-react';
+import { Home, TrendingUp, Settings, Pill, Trophy } from 'lucide-react';
 import { AnimatePresence } from 'framer-motion';
 import { createPageUrl } from './utils';
 import PageTransition from './components/PageTransition';
@@ -44,7 +44,8 @@ export default function Layout({ children, currentPageName }) {
   
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
-    { name: 'Travel', icon: Plane, path: createPageUrl('Travel') },
+    { name: 'Meds', icon: Pill, path: createPageUrl('Medications') },
+    { name: 'Progress', icon: Trophy, path: createPageUrl('Progress') },
     { name: 'Analytics', icon: TrendingUp, path: createPageUrl('Analytics') },
     { name: 'Settings', icon: Settings, path: createPageUrl('Settings') }
   ];
@@ -76,8 +77,8 @@ export default function Layout({ children, currentPageName }) {
       </div>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-t border-gray-200/50 dark:border-gray-800/50 z-50 select-none shadow-lg dark:shadow-gray-950/50" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)' }}>
-        <div className="flex items-center justify-around h-16">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-t border-gray-200/50 dark:border-gray-800/50 z-50 select-none shadow-lg dark:shadow-gray-950/50 overflow-x-auto" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)' }}>
+        <div className="flex items-center justify-around h-16 min-w-max px-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -92,8 +93,8 @@ export default function Layout({ children, currentPageName }) {
                     : 'text-gray-600 dark:text-gray-400'
                 }`}
               >
-                <Icon className={`w-6 h-6 ${active ? 'scale-110' : ''} transition-transform`} />
-                <span className="text-sm mt-1 font-medium">{item.name}</span>
+                <Icon className={`w-5 h-5 ${active ? 'scale-110' : ''} transition-transform`} />
+                <span className="text-xs mt-1 font-medium">{item.name}</span>
               </Link>
             );
           })}

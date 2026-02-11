@@ -52,6 +52,8 @@ import Home from './pages/Home';
 import NHSGuidelines from './pages/NHSGuidelines';
 import Settings from './pages/Settings';
 import Travel from './pages/Travel';
+import Medications from './pages/Medications';
+import Progress from './pages/Progress';
 import __Layout from './Layout.jsx';
 
 
@@ -61,6 +63,8 @@ export const PAGES = {
     "NHSGuidelines": NHSGuidelines,
     "Settings": Settings,
     "Travel": Travel,
+    "Medications": Medications,
+    "Progress": Progress,
 }
 
 export const pagesConfig = {

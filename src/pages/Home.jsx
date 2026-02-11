@@ -1,34 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Plus, AlertTriangle, CheckCircle, Clock, TrendingUp } from 'lucide-react';
-import { format, parseISO, isToday, startOfDay, endOfDay } from 'date-fns';
-import AddMedicationDialog from '../components/AddMedicationDialog';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Card, CardContent } from '@/components/ui/card';
+import { AlertTriangle, CheckCircle, Clock, TrendingUp } from 'lucide-react';
+import { format, startOfDay, endOfDay } from 'date-fns';
 import TodaySchedule from '../components/TodaySchedule';
-import MedicationList from '../components/MedicationList';
 import DailyCheckIn from '../components/DailyCheckIn';
 import PredictiveInsights from '../components/PredictiveInsights';
 import AIAssistant from '../components/AIAssistant';
-import RefillReminders from '../components/RefillReminders';
 import SmartNotifications from '../components/SmartNotifications';
-import AdherenceAnalytics from '../components/AdherenceAnalytics';
 import ActivityDetector from '../components/ActivityDetector';
-import GamificationDashboard from '../components/GamificationDashboard';
 import PullToRefresh from '../components/PullToRefresh';
 import RootPageHeader from '../components/RootPageHeader';
 import MedicalDisclaimer from '../components/MedicalDisclaimer';
-import MedicationCalendar from '../components/MedicationCalendar';
-import MedicationHeatMap from '../components/MedicationHeatMap';
 
 export default function Home() {
-  const [showAddDialog, setShowAddDialog] = useState(false);
   const queryClient = useQueryClient();
 
   const handleRefresh = async () => {
-    await queryClient.invalidateQueries();
+    await queryClient.invalidateQueries(['medications']);
+    await queryClient.invalidateQueries(['logs']);
+    await queryClient.invalidateQueries(['checkin']);
   };
 
   const { data: medications = [], isLoading: medsLoading } = useQuery({
@@ -49,22 +41,12 @@ export default function Home() {
     }
   });
 
-  const { data: allLogs = [] } = useQuery({
-    queryKey: ['logs'],
-    queryFn: () => base44.entities.MedicationLog.list('-created_date', 100)
-  });
-
   const { data: todayCheckIn } = useQuery({
     queryKey: ['checkin', format(new Date(), 'yyyy-MM-dd')],
     queryFn: async () => {
       const checkIns = await base44.entities.CheckIn.filter({ date: format(new Date(), 'yyyy-MM-dd') });
       return checkIns[0] || null;
     }
-  });
-
-  const { data: allCheckIns = [] } = useQuery({
-    queryKey: ['checkins'],
-    queryFn: () => base44.entities.CheckIn.list('-created_date', 30)
   });
 
   const handleActivityChange = (activityData) => {
@@ -86,12 +68,7 @@ export default function Home() {
   const pendingCount = todaySchedule.filter(item => !item.log).length;
   const takenCount = todaySchedule.filter(item => item.log?.status === 'taken').length;
   const missedCount = todaySchedule.filter(item => item.log?.status === 'missed').length;
-
-  // Calculate streak
-  const calculateStreak = () => {
-    // Simple streak calculation - days with all medications taken
-    return 7; // Placeholder
-  };
+  const totalCount = todaySchedule.length;
 
   return (
     <div style={{ overscrollBehavior: 'none' }}>
@@ -105,126 +82,60 @@ export default function Home() {
       {/* Medical Disclaimer */}
       <MedicalDisclaimer />
 
-      {/* Stats Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
-          <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Taken Today</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{takenCount}</p>
-                </div>
-                <div className="p-2 bg-green-50 dark:bg-green-950/30 rounded-lg">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                </div>
+      {/* Today's Progress */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Taken</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{takenCount}</p>
               </div>
-            </CardContent>
-          </Card>
+              <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Pending</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{pendingCount}</p>
-                </div>
-                <div className="p-2 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
-                  <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                </div>
+        <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Pending</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{pendingCount}</p>
               </div>
-            </CardContent>
-          </Card>
+              <Clock className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Missed</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{missedCount}</p>
-                </div>
-                <div className="p-2 bg-red-50 dark:bg-red-950/30 rounded-lg">
-                  <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
-                </div>
+        <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Total</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalCount}</p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm hover:shadow-md transition-shadow">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Day Streak</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{calculateStreak()}</p>
-                </div>
-                <div className="p-2 bg-purple-50 dark:bg-purple-950/30 rounded-lg">
-                  <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              <TrendingUp className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Daily Check-In & Smart Features */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <DailyCheckIn />
         <SmartNotifications schedule={todaySchedule} checkIn={todayCheckIn} />
         <ActivityDetector onActivityChange={handleActivityChange} />
       </div>
 
-      {/* AI Features */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <PredictiveInsights medications={medications} />
-        <RefillReminders medications={medications} />
-      </div>
-
-      {/* Gamification Dashboard */}
-      <div className="mb-8">
-        <GamificationDashboard logs={allLogs} medications={medications} />
-      </div>
-
       {/* Today's Schedule */}
       <TodaySchedule schedule={todaySchedule} />
 
-      {/* Analytics Dashboard */}
-      <div className="mt-8">
-        <AdherenceAnalytics 
-          medications={medications} 
-          logs={allLogs} 
-          checkIns={allCheckIns} 
-        />
+      {/* AI Features */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <PredictiveInsights medications={medications} />
+        <AIAssistant medications={medications} logs={todayLogs} />
       </div>
-
-      {/* Visual Tracking */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
-        <MedicationCalendar logs={allLogs} />
-        <MedicationHeatMap logs={allLogs} />
-      </div>
-
-      {/* AI Assistant */}
-      <div className="mt-8">
-        <AIAssistant medications={medications} logs={allLogs} />
-      </div>
-
-      {/* All Medications */}
-      <Card className="mt-8 bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm mb-20">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="dark:text-white">My Medications</CardTitle>
-          <Button onClick={() => setShowAddDialog(true)} className="bg-blue-600 hover:bg-blue-700 h-11 select-none">
-            <Plus className="w-4 h-4 mr-2" />
-            Add
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <MedicationList medications={medications} isLoading={medsLoading} />
-        </CardContent>
-      </Card>
-
-        {showAddDialog && (
-          <AddMedicationDialog
-            open={showAddDialog}
-            onClose={() => setShowAddDialog(false)}
-          />
-        )}
         </div>
         </PullToRefresh>
         </div>
