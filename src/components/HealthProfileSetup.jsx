@@ -102,7 +102,7 @@ export default function HealthProfileSetup({ onComplete }) {
         <p className="text-xs text-gray-500 mb-2">
           Help your coach create safe workout plans
         </p>
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-2">
           {commonConditions.map(condition => (
             <Badge
               key={condition}
@@ -173,7 +173,7 @@ export default function HealthProfileSetup({ onComplete }) {
         <p className="text-xs text-gray-500 mb-2">
           What types of exercise do you enjoy?
         </p>
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-2">
           {exerciseTypes.map(type => (
             <Badge
               key={type}
@@ -213,7 +213,7 @@ export default function HealthProfileSetup({ onComplete }) {
       {/* Dietary Restrictions */}
       <div>
         <Label>Dietary Restrictions</Label>
-        <div className="flex flex-wrap gap-2 mb-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-2">
           {commonDietaryRestrictions.map(diet => (
             <Badge
               key={diet}

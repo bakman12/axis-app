@@ -78,13 +78,13 @@ export default function Home() {
         subtitle="Stay on track with your medication schedule" 
       />
       <PullToRefresh onRefresh={handleRefresh}>
-        <div className="max-w-6xl mx-auto p-4 md:p-8" style={{ overscrollBehavior: 'none' }}>
+        <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 pb-24" style={{ overscrollBehavior: 'none' }}>
 
       {/* Medical Disclaimer */}
       <MedicalDisclaimer />
 
       {/* Today's Progress */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-3 md:gap-4 mb-6">
         <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -123,7 +123,7 @@ export default function Home() {
       </div>
 
       {/* Daily Check-In & Smart Features */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
         <DailyCheckIn />
         <SmartNotifications schedule={todaySchedule} checkIn={todayCheckIn} />
         <DailyMoodCheckIn />
@@ -133,7 +133,7 @@ export default function Home() {
       <TodaySchedule schedule={todaySchedule} />
 
       {/* AI Features */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mt-6">
         <PredictiveInsights medications={medications} />
         <AIAssistant medications={medications} logs={todayLogs} />
       </div>

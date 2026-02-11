@@ -296,7 +296,7 @@ Create ONE specific challenge for this week that:
       <ProgressTracker logs={logs} medications={medications} stats={stats} />
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <Card className="bg-gradient-to-br from-yellow-50 to-white border-yellow-200">
           <CardContent className="pt-6">
             <div className="flex items-center gap-3">
@@ -448,7 +448,7 @@ Create ONE specific challenge for this week that:
               <p className="text-gray-600">Start taking your medications to earn badges!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {achievements.map((achievement) => (
                 <div
                   key={achievement.id}
