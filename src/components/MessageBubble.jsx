@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Button } from "@/components/ui/button";
-import { Copy, Zap, CheckCircle2, AlertCircle, Loader2, ChevronRight, Clock } from 'lucide-react';
+import { Copy, Zap, CheckCircle2, AlertCircle, Loader2, ChevronRight, Clock, Volume2, VolumeX } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import WorkoutTile from './WorkoutTile';
+import AdherenceChart from './AdherenceChart';
 
 const FunctionDisplay = ({ toolCall }) => {
     const [expanded, setExpanded] = useState(false);
@@ -98,22 +100,110 @@ const FunctionDisplay = ({ toolCall }) => {
 
 export default function MessageBubble({ message }) {
     const isUser = message.role === 'user';
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [speech, setSpeech] = useState(null);
+
+    // Parse workout data from message
+    const parseWorkouts = (content) => {
+        try {
+            // Look for workout JSON in the message
+            const workoutMatch = content.match(/```json\s*(\[[\s\S]*?\])\s*```/);
+            if (workoutMatch) {
+                const workouts = JSON.parse(workoutMatch[1]);
+                return Array.isArray(workouts) ? workouts : null;
+            }
+        } catch (e) {
+            console.error('Failed to parse workouts:', e);
+        }
+        return null;
+    };
+
+    // Parse chart data from message
+    const parseChartData = (content) => {
+        try {
+            const chartMatch = content.match(/```chart\s*(\{[\s\S]*?\})\s*```/);
+            if (chartMatch) {
+                return JSON.parse(chartMatch[1]);
+            }
+        } catch (e) {
+            console.error('Failed to parse chart:', e);
+        }
+        return null;
+    };
+
+    const workouts = !isUser ? parseWorkouts(message.content || '') : null;
+    const chartData = !isUser ? parseChartData(message.content || '') : null;
+
+    // Remove JSON blocks from displayed text
+    const cleanContent = message.content
+        ?.replace(/```json[\s\S]*?```/g, '')
+        ?.replace(/```chart[\s\S]*?```/g, '')
+        ?.trim();
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+            setSpeech(window.speechSynthesis);
+        }
+        
+        return () => {
+            if (speech && isSpeaking) {
+                speech.cancel();
+            }
+        };
+    }, []);
+
+    const toggleSpeech = () => {
+        if (!speech) {
+            toast.error('Text-to-speech not supported');
+            return;
+        }
+
+        if (isSpeaking) {
+            speech.cancel();
+            setIsSpeaking(false);
+        } else {
+            const utterance = new SpeechSynthesisUtterance(cleanContent);
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            utterance.onend = () => setIsSpeaking(false);
+            utterance.onerror = () => {
+                setIsSpeaking(false);
+                toast.error('Speech failed');
+            };
+            speech.speak(utterance);
+            setIsSpeaking(true);
+        }
+    };
     
     return (
         <div className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
             {!isUser && (
-                <div className="h-7 w-7 rounded-lg bg-blue-100 flex items-center justify-center mt-0.5">
-                    <div className="text-sm">🏥</div>
+                <div className="h-7 w-7 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center mt-0.5">
+                    <div className="text-sm">💚</div>
                 </div>
             )}
             <div className={cn("max-w-[85%]", isUser && "flex flex-col items-end")}>
-                {message.content && (
+                {cleanContent && (
                     <div className={cn(
-                        "rounded-2xl px-4 py-2.5",
-                        isUser ? "bg-blue-600 text-white" : "bg-white border border-slate-200"
+                        "rounded-2xl px-4 py-2.5 relative group",
+                        isUser ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-800 border border-slate-200 dark:border-gray-700"
                     )}>
+                        {!isUser && speech && (
+                            <Button
+                                size="icon"
+                                variant="ghost"
+                                className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={toggleSpeech}
+                            >
+                                {isSpeaking ? (
+                                    <VolumeX className="h-3 w-3" />
+                                ) : (
+                                    <Volume2 className="h-3 w-3" />
+                                )}
+                            </Button>
+                        )}
                         {isUser ? (
-                            <p className="text-sm leading-relaxed">{message.content}</p>
+                            <p className="text-sm leading-relaxed">{cleanContent}</p>
                         ) : (
                             <ReactMarkdown 
                                 className="text-sm prose prose-sm prose-slate max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
@@ -160,14 +250,38 @@ export default function MessageBubble({ message }) {
                                     ),
                                 }}
                             >
-                                {message.content}
+                                {cleanContent}
                             </ReactMarkdown>
                         )}
                     </div>
                 )}
+
+                {/* Chart Display */}
+                {chartData && (
+                    <div className="mt-2 w-full">
+                        <AdherenceChart 
+                            data={chartData.data} 
+                            type={chartData.type || 'line'} 
+                        />
+                    </div>
+                )}
+
+                {/* Workout Tiles */}
+                {workouts && workouts.length > 0 && (
+                    <div className="mt-3 w-full space-y-2">
+                        <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">
+                            🏋️ Recommended Workouts
+                        </p>
+                        <div className="grid grid-cols-1 gap-3">
+                            {workouts.map((workout, idx) => (
+                                <WorkoutTile key={idx} workout={workout} index={idx + 1} />
+                            ))}
+                        </div>
+                    </div>
+                )}
                 
                 {message.tool_calls?.length > 0 && (
-                    <div className="space-y-1">
+                    <div className="space-y-1 mt-2">
                         {message.tool_calls.map((toolCall, idx) => (
                             <FunctionDisplay key={idx} toolCall={toolCall} />
                         ))}

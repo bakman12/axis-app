@@ -9,6 +9,7 @@ import { Loader2, Send, Sparkles, Heart, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import MessageBubble from '../components/MessageBubble';
 import RootPageHeader from '../components/RootPageHeader';
+import VoiceInput from '../components/VoiceInput';
 import HealthProfileSetup from '../components/HealthProfileSetup';
 import {
   Dialog,
@@ -94,10 +95,10 @@ export default function HealthCoach() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!input.trim() || !conversationId || isTyping) return;
+  const sendMessage = async (messageText = null) => {
+    const textToSend = messageText || input.trim();
+    if (!textToSend || !conversationId || isTyping) return;
 
-    const userMessage = input.trim();
     setInput('');
     setIsTyping(true);
 
@@ -105,13 +106,18 @@ export default function HealthCoach() {
       const conversation = await base44.agents.getConversation(conversationId);
       await base44.agents.addMessage(conversation, {
         role: 'user',
-        content: userMessage
+        content: textToSend
       });
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
       setIsTyping(false);
     }
+  };
+
+  const handleVoiceTranscript = (transcript) => {
+    setInput(transcript);
+    sendMessage(transcript);
   };
 
   const handleKeyPress = (e) => {
@@ -240,8 +246,12 @@ export default function HealthCoach() {
               disabled={isTyping || !conversationId}
               className="flex-1"
             />
+            <VoiceInput 
+              onTranscript={handleVoiceTranscript}
+              disabled={isTyping || !conversationId}
+            />
             <Button
-              onClick={sendMessage}
+              onClick={() => sendMessage()}
               disabled={!input.trim() || isTyping || !conversationId}
             >
               {isTyping ? (
