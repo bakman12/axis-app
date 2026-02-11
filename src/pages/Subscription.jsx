@@ -62,22 +62,23 @@ export default function SubscriptionPage() {
 
   const upgradeMutation = useMutation({
     mutationFn: async (tier) => {
-      // This will be handled by Stripe - for now just update locally
-      await base44.auth.updateMe({ subscription_tier: tier });
-      if (!subscription) {
-        await base44.entities.Subscription.create({
-          tier,
-          status: 'trial',
-          trial_end: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
-        });
-      } else {
-        await base44.entities.Subscription.update(subscription.id, { tier, status: 'trial' });
+      // Check if running in iframe
+      if (window.self !== window.top) {
+        throw new Error('Checkout only works in published app. Please open app in new tab.');
       }
+
+      const origin = window.location.origin;
+      const { url } = await base44.functions.invoke('createCheckout', {
+        tier,
+        successUrl: `${origin}?checkout=success`,
+        cancelUrl: `${origin}/subscription`
+      });
+      
+      // Redirect to Stripe checkout
+      window.location.href = url;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['currentUser'] });
-      queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
-      toast.success('14-day free trial started!');
+    onError: (error) => {
+      toast.error(error.message);
     }
   });
 

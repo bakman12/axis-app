@@ -5,6 +5,8 @@ import GamificationDashboard from '../components/GamificationDashboard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
 import RootPageHeader from '../components/RootPageHeader';
+import PremiumGate from '../components/PremiumGate';
+import AdvancedInsights from '../components/AdvancedInsights';
 
 export default function Analytics() {
   const { data: medications = [] } = useQuery({
@@ -12,9 +14,19 @@ export default function Analytics() {
     queryFn: () => base44.entities.Medication.filter({ active: true })
   });
 
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
+  const isPremium = user?.subscription_tier === 'pro' || user?.subscription_tier === 'family' ||
+                   (user?.trial_ends_at && new Date(user.trial_ends_at) > new Date());
+
+  const logLimit = isPremium ? 1000 : 30;
+
   const { data: allLogs = [] } = useQuery({
-    queryKey: ['logs'],
-    queryFn: () => base44.entities.MedicationLog.list('-created_date', 100)
+    queryKey: ['logs', logLimit],
+    queryFn: () => base44.entities.MedicationLog.list('-created_date', logLimit)
   });
 
   const { data: allCheckIns = [] } = useQuery({
@@ -35,13 +47,30 @@ export default function Analytics() {
         <GamificationDashboard logs={allLogs} medications={medications} />
       </div>
 
+      {/* Advanced Insights - Premium Only */}
+      {isPremium && allLogs.length > 0 && (
+        <div className="mb-6">
+          <AdvancedInsights logs={allLogs} medications={medications} />
+        </div>
+      )}
+
       {/* Adherence Analytics */}
       <div className="mb-20">
-        <AdherenceAnalytics 
-          medications={medications} 
-          logs={allLogs} 
-          checkIns={allCheckIns} 
-        />
+        {isPremium ? (
+          <AdherenceAnalytics 
+            medications={medications} 
+            logs={allLogs} 
+            checkIns={allCheckIns} 
+          />
+        ) : (
+          <PremiumGate feature="Extended Analytics & Insights" requiredTier="pro">
+            <AdherenceAnalytics 
+              medications={medications} 
+              logs={allLogs.slice(0, 30)} 
+              checkIns={allCheckIns} 
+            />
+          </PremiumGate>
+        )}
       </div>
     </div>
     </div>

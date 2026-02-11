@@ -30,6 +30,8 @@ const BADGE_DEFINITIONS = [
 export default function GamificationDashboard({ logs, medications }) {
   const [analyzing, setAnalyzing] = useState(false);
   const queryClient = useQueryClient();
+  
+  const isPremium = logs.length > 30; // Simple check - real check in Analytics page
 
   const { data: achievements = [] } = useQuery({
     queryKey: ['achievements'],
@@ -48,6 +50,7 @@ export default function GamificationDashboard({ logs, medications }) {
 
   const { data: personalizedChallenge, refetch: refetchChallenge } = useQuery({
     queryKey: ['challenge'],
+    enabled: logs.length > 5 && !!user && isPremium,
     queryFn: async () => {
       setAnalyzing(true);
       try {
@@ -178,7 +181,6 @@ Create ONE specific challenge for this week that:
         setAnalyzing(false);
       }
     },
-    enabled: logs.length > 5 && !!user,
     staleTime: 1000 * 60 * 60 * 24, // 1 day
     refetchOnWindowFocus: false
   });
