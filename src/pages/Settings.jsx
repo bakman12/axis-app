@@ -337,8 +337,8 @@ export default function Settings() {
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white text-sm">AI Pattern Analysis</Label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Allow AI to analyze adherence patterns for predictions</p>
+                  <Label className="text-purple-900 dark:text-white text-sm font-semibold">AI Pattern Analysis</Label>
+                  <p className="text-sm text-purple-700 dark:text-gray-400">Allow AI to analyze adherence patterns for predictions</p>
                 </div>
                 <Switch
                   checked={formData.ai_data_sharing}
@@ -349,8 +349,8 @@ export default function Settings() {
 
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white text-sm">Personalized AI Challenges</Label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Get AI-generated personalized adherence challenges</p>
+                  <Label className="text-purple-900 dark:text-white text-sm font-semibold">Personalized AI Challenges</Label>
+                  <p className="text-sm text-purple-700 dark:text-gray-400">Get AI-generated personalized adherence challenges</p>
                 </div>
                 <Switch
                   checked={formData.ai_personalization}
@@ -361,8 +361,8 @@ export default function Settings() {
 
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white text-sm">AI Health Coach</Label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Enable conversational AI health coach chat feature</p>
+                  <Label className="text-purple-900 dark:text-white text-sm font-semibold">AI Health Coach</Label>
+                  <p className="text-sm text-purple-700 dark:text-gray-400">Enable conversational AI health coach chat feature</p>
                 </div>
                 <Switch
                   checked={formData.ai_health_coach}
@@ -373,8 +373,8 @@ export default function Settings() {
 
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white text-sm">AI Assistant</Label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Show AI assistant on home page for quick help</p>
+                  <Label className="text-purple-900 dark:text-white text-sm font-semibold">AI Assistant</Label>
+                  <p className="text-sm text-purple-700 dark:text-gray-400">Show AI assistant on home page for quick help</p>
                 </div>
                 <Switch
                   checked={formData.ai_assistant}
@@ -385,8 +385,8 @@ export default function Settings() {
 
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
                 <div>
-                  <Label className="dark:text-white text-sm">Predictive Insights</Label>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Enable AI-powered predictive insights and analysis</p>
+                  <Label className="text-purple-900 dark:text-white text-sm font-semibold">Predictive Insights</Label>
+                  <p className="text-sm text-purple-700 dark:text-gray-400">Enable AI-powered predictive insights and analysis</p>
                 </div>
                 <Switch
                   checked={formData.ai_insights}
