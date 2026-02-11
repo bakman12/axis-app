@@ -9,9 +9,12 @@ import { CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import SnoozeButton from './SnoozeButton';
+import LogDoseDialog from './LogDoseDialog';
 
 export default function TodaySchedule({ schedule }) {
   const [contextNotes, setContextNotes] = React.useState({});
+  const [selectedMedication, setSelectedMedication] = React.useState(null);
+  const [selectedTime, setSelectedTime] = React.useState(null);
   const queryClient = useQueryClient();
 
   const logMedicationMutation = useMutation({
@@ -166,12 +169,15 @@ export default function TodaySchedule({ schedule }) {
                     {!item.log && (
                       <div className="flex flex-col gap-2">
                         <Button
-                          onClick={() => handleLog(item, 'taken')}
+                          onClick={() => {
+                            setSelectedMedication(item.medication);
+                            setSelectedTime(item.scheduledTime);
+                          }}
                           className="bg-green-600 hover:bg-green-700 h-11 select-none"
                           size="sm"
                         >
                           <CheckCircle className="w-4 h-4 mr-1" />
-                          Taken
+                          Log Dose
                         </Button>
                         <SnoozeButton
                           medication={item.medication}
@@ -212,6 +218,16 @@ export default function TodaySchedule({ schedule }) {
           </div>
         )}
       </CardContent>
+
+      <LogDoseDialog
+        open={!!selectedMedication}
+        onClose={() => {
+          setSelectedMedication(null);
+          setSelectedTime(null);
+        }}
+        medication={selectedMedication}
+        scheduledTime={selectedTime}
+      />
     </Card>
   );
 }
