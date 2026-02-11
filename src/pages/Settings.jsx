@@ -245,7 +245,19 @@ export default function Settings() {
                 <Label htmlFor="reminder_sound" className="dark:text-white text-sm">Reminder Sound</Label>
                 <MobileSelect
                   value={formData.reminder_sound_type}
-                  onValueChange={(value) => setFormData({ ...formData, reminder_sound_type: value })}
+                  onValueChange={(value) => {
+                    setFormData({ ...formData, reminder_sound_type: value });
+                    // Play sound preview
+                    const audio = new Audio(`https://assets.mixkit.co/active_storage/sfx/${
+                      value === 'gentle' ? '2568/preview.mp3' :
+                      value === 'chime' ? '2869/preview.mp3' :
+                      value === 'bell' ? '2000/preview.mp3' :
+                      value === 'alert' ? '2869/preview.mp3' :
+                      '2869/preview.mp3'
+                    }`);
+                    audio.volume = 0.5;
+                    audio.play().catch(() => {});
+                  }}
                   disabled={!formData.notification_enabled || !formData.notification_sound}
                   placeholder="Select sound"
                   options={[
