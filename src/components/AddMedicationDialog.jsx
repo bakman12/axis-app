@@ -218,14 +218,36 @@ export default function AddMedicationDialog({ open, onClose }) {
             <Label htmlFor="frequency" className="text-sm">Frequency</Label>
             <MobileSelect
               value={formData.frequency}
-              onValueChange={(value) => setFormData({ ...formData, frequency: value })}
+              onValueChange={(value) => {
+                setFormData({ ...formData, frequency: value });
+                // Auto-set default times based on frequency
+                if (value === 'daily' && formData.times.length === 0) {
+                  setFormData({ ...formData, frequency: value, times: ['08:00'] });
+                } else if (value === 'twice_daily') {
+                  setFormData({ ...formData, frequency: value, times: ['08:00', '20:00'] });
+                } else if (value === 'three_times_daily') {
+                  setFormData({ ...formData, frequency: value, times: ['08:00', '14:00', '20:00'] });
+                } else if (value === 'four_times_daily') {
+                  setFormData({ ...formData, frequency: value, times: ['08:00', '12:00', '16:00', '20:00'] });
+                } else if (value === 'every_6_hours') {
+                  setFormData({ ...formData, frequency: value, times: ['06:00', '12:00', '18:00', '00:00'] });
+                } else if (value === 'every_8_hours') {
+                  setFormData({ ...formData, frequency: value, times: ['08:00', '16:00', '00:00'] });
+                } else if (value === 'every_12_hours') {
+                  setFormData({ ...formData, frequency: value, times: ['08:00', '20:00'] });
+                }
+              }}
               placeholder="Select frequency"
               options={[
-                { value: 'daily', label: 'Daily' },
-                { value: 'twice_daily', label: 'Twice Daily' },
-                { value: 'three_times_daily', label: 'Three Times Daily' },
+                { value: 'daily', label: 'Once daily' },
+                { value: 'twice_daily', label: 'Twice daily' },
+                { value: 'three_times_daily', label: 'Three times daily' },
+                { value: 'four_times_daily', label: 'Four times daily' },
+                { value: 'every_6_hours', label: 'Every 6 hours' },
+                { value: 'every_8_hours', label: 'Every 8 hours' },
+                { value: 'every_12_hours', label: 'Every 12 hours' },
                 { value: 'weekly', label: 'Weekly' },
-                { value: 'as_needed', label: 'As Needed' }
+                { value: 'as_needed', label: 'As needed' }
               ]}
             />
           </div>
