@@ -13,6 +13,7 @@ import ActivityDetector from '../components/ActivityDetector';
 import PullToRefresh from '../components/PullToRefresh';
 import RootPageHeader from '../components/RootPageHeader';
 import MedicalDisclaimer from '../components/MedicalDisclaimer';
+import DailyMoodCheckIn from '../components/DailyMoodCheckIn';
 
 export default function Home() {
   const queryClient = useQueryClient();
@@ -125,7 +126,7 @@ export default function Home() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <DailyCheckIn />
         <SmartNotifications schedule={todaySchedule} checkIn={todayCheckIn} />
-        <ActivityDetector onActivityChange={handleActivityChange} />
+        <DailyMoodCheckIn />
       </div>
 
       {/* Today's Schedule */}
