@@ -336,62 +336,62 @@ export default function Settings() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
-                <div>
+                <div className="flex-1 pr-3">
                   <Label className="text-purple-900 dark:text-white text-sm font-semibold">AI Pattern Analysis</Label>
-                  <p className="text-sm text-purple-700 dark:text-gray-400">Allow AI to analyze adherence patterns for predictions</p>
+                  <p className="text-sm text-purple-700 dark:text-gray-400 mt-0.5">Analyzes your medication history to predict when you might need extra reminders or support</p>
                 </div>
                 <Switch
                   checked={formData.ai_data_sharing}
                   onCheckedChange={(checked) => setFormData({ ...formData, ai_data_sharing: checked })}
-                  className="select-none"
+                  className="select-none flex-shrink-0"
                 />
               </div>
 
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
-                <div>
+                <div className="flex-1 pr-3">
                   <Label className="text-purple-900 dark:text-white text-sm font-semibold">Personalized AI Challenges</Label>
-                  <p className="text-sm text-purple-700 dark:text-gray-400">Get AI-generated personalized adherence challenges</p>
+                  <p className="text-sm text-purple-700 dark:text-gray-400 mt-0.5">Creates weekly challenges on the Progress page based on your adherence patterns to keep you motivated</p>
                 </div>
                 <Switch
                   checked={formData.ai_personalization}
                   onCheckedChange={(checked) => setFormData({ ...formData, ai_personalization: checked })}
-                  className="select-none"
+                  className="select-none flex-shrink-0"
                 />
               </div>
 
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
-                <div>
+                <div className="flex-1 pr-3">
                   <Label className="text-purple-900 dark:text-white text-sm font-semibold">AI Health Coach</Label>
-                  <p className="text-sm text-purple-700 dark:text-gray-400">Enable conversational AI health coach chat feature</p>
+                  <p className="text-sm text-purple-700 dark:text-gray-400 mt-0.5">Chat with an AI coach for personalized workout plans, recipes, and wellness advice on the Coach page</p>
                 </div>
                 <Switch
                   checked={formData.ai_health_coach}
                   onCheckedChange={(checked) => setFormData({ ...formData, ai_health_coach: checked })}
-                  className="select-none"
+                  className="select-none flex-shrink-0"
                 />
               </div>
 
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
-                <div>
+                <div className="flex-1 pr-3">
                   <Label className="text-purple-900 dark:text-white text-sm font-semibold">AI Assistant</Label>
-                  <p className="text-sm text-purple-700 dark:text-gray-400">Show AI assistant on home page for quick help</p>
+                  <p className="text-sm text-purple-700 dark:text-gray-400 mt-0.5">Shows a quick-help AI assistant card on your home page for instant medication questions and tips</p>
                 </div>
                 <Switch
                   checked={formData.ai_assistant}
                   onCheckedChange={(checked) => setFormData({ ...formData, ai_assistant: checked })}
-                  className="select-none"
+                  className="select-none flex-shrink-0"
                 />
               </div>
 
               <div className="flex items-center justify-between p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700 min-h-[44px]">
-                <div>
+                <div className="flex-1 pr-3">
                   <Label className="text-purple-900 dark:text-white text-sm font-semibold">Predictive Insights</Label>
-                  <p className="text-sm text-purple-700 dark:text-gray-400">Enable AI-powered predictive insights and analysis</p>
+                  <p className="text-sm text-purple-700 dark:text-gray-400 mt-0.5">Displays AI-generated insights on your home page about potential adherence issues and helpful suggestions</p>
                 </div>
                 <Switch
                   checked={formData.ai_insights}
                   onCheckedChange={(checked) => setFormData({ ...formData, ai_insights: checked })}
-                  className="select-none"
+                  className="select-none flex-shrink-0"
                 />
               </div>
 
