@@ -1,17 +1,15 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Home, TrendingUp, Settings, Pill, Trophy } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
 import { createPageUrl } from './utils';
-import PageTransition from './components/PageTransition';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useEffect } from 'react';
 import OfflineIndicator from './components/OfflineIndicator';
 import OfflineDataManager from './components/OfflineDataManager';
+import NavigationManager from './components/NavigationManager';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
-  const navigate = useNavigate();
   
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -65,8 +63,9 @@ export default function Layout({ children, currentPageName }) {
       {/* Offline Support */}
       <OfflineDataManager />
       <OfflineIndicator />
+      <NavigationManager />
       
-      {/* Main Content */}
+      {/* Main Content - No transitions for instant native feel */}
       <div className="pb-20" style={{ minHeight: '100dvh' }}>
         {children}
       </div>

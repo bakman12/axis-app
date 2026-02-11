@@ -195,6 +195,12 @@ select {
   overflow-scrolling: touch;
 }
 
+/* Instant page transitions - no animation delay */
+.page-transition {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* Remove default Android styles */
 input,
 textarea,
@@ -285,8 +291,12 @@ select:focus {
   padding-right: env(safe-area-inset-right);
 }
 
-/* Better dark mode transition */
-* {
+/* Better dark mode transition - but not for page changes */
+:root {
+  color-scheme: light dark;
+}
+
+.dark-mode-transition {
   transition-property: background-color, border-color, color, fill, stroke;
   transition-duration: 200ms;
 }
