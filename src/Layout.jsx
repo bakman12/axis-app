@@ -6,6 +6,8 @@ import PageTransition from './components/PageTransition';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { useEffect } from 'react';
+import OfflineIndicator from './components/OfflineIndicator';
+import OfflineDataManager from './components/OfflineDataManager';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
@@ -60,6 +62,10 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/50 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      {/* Offline Support */}
+      <OfflineDataManager />
+      <OfflineIndicator />
+      
       {/* Main Content */}
       <div className="pb-20">
         <AnimatePresence mode="wait">
