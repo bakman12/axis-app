@@ -53,8 +53,9 @@ import Medications from './pages/Medications';
 import NHSGuidelines from './pages/NHSGuidelines';
 import Progress from './pages/Progress';
 import Settings from './pages/Settings';
-import Travel from './pages/Travel';
 import Subscription from './pages/Subscription';
+import Travel from './pages/Travel';
+import HealthCoach from './pages/HealthCoach';
 import __Layout from './Layout.jsx';
 
 
@@ -65,8 +66,9 @@ export const PAGES = {
     "NHSGuidelines": NHSGuidelines,
     "Progress": Progress,
     "Settings": Settings,
-    "Travel": Travel,
     "Subscription": Subscription,
+    "Travel": Travel,
+    "HealthCoach": HealthCoach,
 }
 
 export const pagesConfig = {

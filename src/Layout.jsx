@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, TrendingUp, Settings, Pill, Trophy } from 'lucide-react';
+import { Home, TrendingUp, Settings, Pill, Trophy, Heart } from 'lucide-react';
 import { createPageUrl } from './utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -43,8 +43,8 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Home', icon: Home, path: createPageUrl('Home') },
     { name: 'Meds', icon: Pill, path: createPageUrl('Medications') },
+    { name: 'Coach', icon: Heart, path: createPageUrl('HealthCoach') },
     { name: 'Progress', icon: Trophy, path: createPageUrl('Progress') },
-    { name: 'Analytics', icon: TrendingUp, path: createPageUrl('Analytics') },
     { name: 'Settings', icon: Settings, path: createPageUrl('Settings') }
   ];
 
