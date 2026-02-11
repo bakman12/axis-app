@@ -49,22 +49,24 @@
  */
 import Analytics from './pages/Analytics';
 import Home from './pages/Home';
+import Medications from './pages/Medications';
 import NHSGuidelines from './pages/NHSGuidelines';
+import Progress from './pages/Progress';
 import Settings from './pages/Settings';
 import Travel from './pages/Travel';
-import Medications from './pages/Medications';
-import Progress from './pages/Progress';
+import Subscription from './pages/Subscription';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Analytics": Analytics,
     "Home": Home,
+    "Medications": Medications,
     "NHSGuidelines": NHSGuidelines,
+    "Progress": Progress,
     "Settings": Settings,
     "Travel": Travel,
-    "Medications": Medications,
-    "Progress": Progress,
+    "Subscription": Subscription,
 }
 
 export const pagesConfig = {
