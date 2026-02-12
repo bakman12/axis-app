@@ -10,6 +10,7 @@ import { MobileSelect } from '@/components/ui/mobile-select';
 import { Separator } from '@/components/ui/separator';
 import { Settings as SettingsIcon, Bell, Shield, Target, Download, User, Save, CheckCircle, Trash2 } from 'lucide-react';
 import HealthDataExport from '@/components/HealthDataExport';
+import EnhancedDataExport from '@/components/EnhancedDataExport';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -641,6 +642,9 @@ export default function Settings() {
 
           {/* Health App Integration */}
           <HealthDataExport />
+
+          {/* Enhanced Data Export */}
+          <EnhancedDataExport user={user} />
 
           {/* Data Management */}
           <Card className="shadow-md border-l-4 border-l-orange-500 dark:bg-gray-800 dark:border-gray-700">
