@@ -29,13 +29,19 @@ import { PrivacyNotice } from '../components/MedicalDisclaimer';
 export default function Settings() {
   const [formData, setFormData] = useState({
     notification_enabled: true,
-    notification_timing: 15,
+    reminder_minutes_before: 15,
     notification_sound: true,
+    notification_sound_type: 'default',
+    critical_notification_sound: 'urgent',
+    vibration_pattern: 'medium',
+    notification_duration: 5,
+    critical_notification_duration: 30,
     reminder_sound_type: 'default',
     critical_only_notifications: false,
     snooze_enabled: true,
     snooze_duration: 10,
     priority_notifications: true,
+    critical_medication_alert: true,
     ai_data_sharing: true,
     ai_personalization: true,
     ai_health_coach: true,
@@ -58,13 +64,19 @@ export default function Settings() {
     if (user) {
       setFormData({
         notification_enabled: user.notification_enabled ?? true,
-        notification_timing: user.notification_timing ?? 15,
+        reminder_minutes_before: user.reminder_minutes_before ?? 15,
         notification_sound: user.notification_sound ?? true,
+        notification_sound_type: user.notification_sound_type ?? 'default',
+        critical_notification_sound: user.critical_notification_sound ?? 'urgent',
+        vibration_pattern: user.vibration_pattern ?? 'medium',
+        notification_duration: user.notification_duration ?? 5,
+        critical_notification_duration: user.critical_notification_duration ?? 30,
         reminder_sound_type: user.reminder_sound_type ?? 'default',
         critical_only_notifications: user.critical_only_notifications ?? false,
         snooze_enabled: user.snooze_enabled ?? true,
         snooze_duration: user.snooze_duration ?? 10,
         priority_notifications: user.priority_notifications ?? true,
+        critical_medication_alert: user.critical_medication_alert ?? true,
         ai_data_sharing: user.ai_data_sharing ?? true,
         ai_personalization: user.ai_personalization ?? true,
         ai_health_coach: user.ai_health_coach ?? true,
@@ -204,21 +216,22 @@ export default function Settings() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="timing" className="dark:text-white text-sm">Notification Timing</Label>
+                <Label htmlFor="timing" className="dark:text-white text-sm">Reminder Lead Time</Label>
                 <MobileSelect
-                  value={formData.notification_timing.toString()}
-                  onValueChange={(value) => setFormData({ ...formData, notification_timing: parseInt(value) })}
+                  value={formData.reminder_minutes_before?.toString() || '15'}
+                  onValueChange={(value) => setFormData({ ...formData, reminder_minutes_before: parseInt(value) })}
                   disabled={!formData.notification_enabled}
                   placeholder="Select timing"
                   options={[
-                    { value: '0', label: 'At scheduled time' },
                     { value: '5', label: '5 minutes before' },
                     { value: '10', label: '10 minutes before' },
                     { value: '15', label: '15 minutes before' },
+                    { value: '20', label: '20 minutes before' },
                     { value: '30', label: '30 minutes before' },
                     { value: '60', label: '1 hour before' }
                   ]}
                 />
+                <p className="text-xs text-gray-500 dark:text-gray-400">When to receive reminders before scheduled time</p>
               </div>
 
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
@@ -306,7 +319,7 @@ export default function Settings() {
                 <div className="space-y-2">
                   <Label htmlFor="snooze_duration" className="dark:text-white text-sm">Snooze Duration</Label>
                   <MobileSelect
-                    value={formData.snooze_duration.toString()}
+                    value={formData.snooze_duration?.toString() || '10'}
                     onValueChange={(value) => setFormData({ ...formData, snooze_duration: parseInt(value) })}
                     disabled={!formData.notification_enabled}
                     placeholder="Select duration"
@@ -318,8 +331,123 @@ export default function Settings() {
                       { value: '30', label: '30 minutes' }
                     ]}
                   />
+                  <p className="text-xs text-gray-500 dark:text-gray-400">How long to delay when you snooze a reminder</p>
                 </div>
               )}
+
+              <div className="pt-3 border-t border-gray-200 dark:border-gray-600 space-y-4">
+                <h3 className="font-semibold text-sm dark:text-white">Sound & Vibration</h3>
+                
+                {formData.notification_sound && (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="dark:text-white text-sm">Normal Medications</Label>
+                      <MobileSelect
+                        value={formData.notification_sound_type || 'default'}
+                        onValueChange={(value) => setFormData({ ...formData, notification_sound_type: value })}
+                        disabled={!formData.notification_enabled || !formData.notification_sound}
+                        placeholder="Select sound"
+                        options={[
+                          { value: 'default', label: 'Default' },
+                          { value: 'gentle', label: 'Gentle' },
+                          { value: 'chime', label: 'Chime' },
+                          { value: 'beep', label: 'Beep' }
+                        ]}
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Sound for regular medication reminders</p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="dark:text-white text-sm">Critical Medications</Label>
+                      <MobileSelect
+                        value={formData.critical_notification_sound || 'urgent'}
+                        onValueChange={(value) => setFormData({ ...formData, critical_notification_sound: value })}
+                        disabled={!formData.notification_enabled || !formData.notification_sound}
+                        placeholder="Select sound"
+                        options={[
+                          { value: 'urgent', label: 'Urgent (Recommended)' },
+                          { value: 'default', label: 'Default' },
+                          { value: 'gentle', label: 'Gentle' },
+                          { value: 'chime', label: 'Chime' }
+                        ]}
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400">More noticeable sound for time-sensitive medications</p>
+                    </div>
+                  </>
+                )}
+
+                <div className="space-y-2">
+                  <Label className="dark:text-white text-sm">Vibration Pattern</Label>
+                  <MobileSelect
+                    value={formData.vibration_pattern || 'medium'}
+                    onValueChange={(value) => setFormData({ ...formData, vibration_pattern: value })}
+                    disabled={!formData.notification_enabled}
+                    placeholder="Select pattern"
+                    options={[
+                      { value: 'short', label: 'Short (1 pulse)' },
+                      { value: 'medium', label: 'Medium (2 pulses)' },
+                      { value: 'long', label: 'Long (3 pulses)' },
+                      { value: 'custom', label: 'Urgent (rapid pulses)' }
+                    ]}
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Vibration intensity for notifications</p>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-gray-200 dark:border-gray-600 space-y-4">
+                <h3 className="font-semibold text-sm dark:text-white">Notification Display Duration</h3>
+                
+                <div className="space-y-2">
+                  <Label className="dark:text-white text-sm">Normal Medications</Label>
+                  <MobileSelect
+                    value={formData.notification_duration?.toString() || '5'}
+                    onValueChange={(value) => setFormData({ ...formData, notification_duration: parseInt(value) })}
+                    disabled={!formData.notification_enabled}
+                    placeholder="Select duration"
+                    options={[
+                      { value: '3', label: '3 seconds' },
+                      { value: '5', label: '5 seconds' },
+                      { value: '8', label: '8 seconds' },
+                      { value: '10', label: '10 seconds' },
+                      { value: '15', label: '15 seconds' }
+                    ]}
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400">How long notification stays visible</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="dark:text-white text-sm">Critical Medications</Label>
+                  <MobileSelect
+                    value={formData.critical_notification_duration?.toString() || '30'}
+                    onValueChange={(value) => setFormData({ ...formData, critical_notification_duration: parseInt(value) })}
+                    disabled={!formData.notification_enabled}
+                    placeholder="Select duration"
+                    options={[
+                      { value: '10', label: '10 seconds' },
+                      { value: '20', label: '20 seconds' },
+                      { value: '30', label: '30 seconds' },
+                      { value: '45', label: '45 seconds' },
+                      { value: '60', label: '1 minute' }
+                    ]}
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Persistent display for time-sensitive medications</p>
+                </div>
+              </div>
+
+              <div className="pt-3 border-t border-gray-200 dark:border-gray-600">
+                <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700 min-h-[44px]">
+                  <div className="flex-1 pr-3">
+                    <Label className="dark:text-white text-sm font-semibold">Critical Medication Alerts</Label>
+                    <p className="text-sm text-red-700 dark:text-red-300">Enhanced reminders for time-sensitive medications with escalating alerts if missed</p>
+                  </div>
+                  <Switch
+                    checked={formData.critical_medication_alert}
+                    onCheckedChange={(checked) => setFormData({ ...formData, critical_medication_alert: checked })}
+                    disabled={!formData.notification_enabled}
+                    className="select-none flex-shrink-0"
+                  />
+                </div>
+              </div>
             </CardContent>
           </Card>
 
