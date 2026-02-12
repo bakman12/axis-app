@@ -104,13 +104,41 @@ export default function SmartNotifications({ schedule, checkIn }) {
     }
   };
 
-  const snooze = (medicationId, scheduledTime, minutes = 10) => {
-    const snoozedUntil = addMinutes(new Date(), minutes);
+  const snooze = async (medicationId, scheduledTime, minutes) => {
+    // Use user's custom snooze duration if not specified
+    let snoozeDuration = minutes;
+    if (!snoozeDuration) {
+      try {
+        const user = await base44.auth.me();
+        snoozeDuration = user?.snooze_duration || 10;
+      } catch (e) {
+        snoozeDuration = 10;
+      }
+    }
+    
+    const snoozedUntil = addMinutes(new Date(), snoozeDuration);
     setSnoozedMeds(prev => new Map(prev).set(`${medicationId}-${scheduledTime}`, snoozedUntil));
-    toast.success(`Snoozed for ${minutes} minutes`);
+    toast.success(`Snoozed for ${snoozeDuration} minutes`);
   };
 
-  const sendNotification = (title, body, options = {}) => {
+  const getVibrationPattern = (pattern, isCritical = false) => {
+    if (!preferences.enableVibration) return undefined;
+    
+    if (isCritical) {
+      return [200, 100, 200, 100, 200, 100, 200]; // Urgent pattern
+    }
+    
+    const patterns = {
+      short: [200],
+      medium: [200, 100, 200],
+      long: [200, 100, 200, 100, 200],
+      custom: [100, 50, 100, 50, 100, 50, 100, 50, 100]
+    };
+    
+    return patterns[pattern] || patterns.medium;
+  };
+
+  const sendNotification = async (title, body, options = {}) => {
     if (!notificationsEnabled || !('Notification' in window)) return;
     
     // Check quiet hours (unless critical and persistent enabled)
@@ -119,22 +147,49 @@ export default function SmartNotifications({ schedule, checkIn }) {
       return;
     }
 
+    // Get user settings from backend for sound and duration
+    let userSettings = {};
+    try {
+      const user = await base44.auth.me();
+      userSettings = {
+        vibrationPattern: user?.vibration_pattern || 'medium',
+        normalDuration: user?.notification_duration || 5,
+        criticalDuration: user?.critical_notification_duration || 30
+      };
+    } catch (e) {
+      // Use defaults if can't fetch
+    }
+
+    const isCritical = options.critical || false;
+    const vibrationPattern = getVibrationPattern(userSettings.vibrationPattern, isCritical);
+
     const notification = new Notification(title, {
       body,
       icon: '💊',
       badge: '💊',
       silent: !preferences.enableSound,
-      vibrate: preferences.enableVibration ? [200, 100, 200] : undefined,
+      vibrate: vibrationPattern,
+      requireInteraction: isCritical,
+      tag: options.tag || 'medication',
       ...options
     });
 
-    // Add action buttons if supported
-    if (options.actions) {
-      notification.onclick = () => {
-        window.focus();
+    // Auto-close notification after duration (except for critical)
+    if (!isCritical) {
+      setTimeout(() => {
         notification.close();
-      };
+      }, (userSettings.normalDuration || 5) * 1000);
+    } else {
+      // Critical notifications stay longer
+      setTimeout(() => {
+        notification.close();
+      }, (userSettings.criticalDuration || 30) * 1000);
     }
+
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
 
     return notification;
   };
@@ -492,9 +547,9 @@ export default function SmartNotifications({ schedule, checkIn }) {
                               variant="ghost"
                               size="sm"
                               className="h-7 text-xs"
-                              onClick={() => snooze(item.medication.id, item.scheduledTime, 10)}
+                              onClick={() => snooze(item.medication.id, item.scheduledTime)}
                             >
-                              Snooze 10m
+                              Snooze
                             </Button>
                           )}
                         </div>
