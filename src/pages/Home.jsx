@@ -11,6 +11,7 @@ import AIAssistant from '../components/AIAssistant';
 import SmartNotifications from '../components/SmartNotifications';
 import ActivityDetector from '../components/ActivityDetector';
 import PullToRefresh from '../components/PullToRefresh';
+import SmartRefillTracker from '../components/SmartRefillTracker';
 import RootPageHeader from '../components/RootPageHeader';
 import MedicalDisclaimer from '../components/MedicalDisclaimer';
 import DailyMoodCheckIn from '../components/DailyMoodCheckIn';
@@ -133,6 +134,9 @@ export default function Home() {
         <SmartNotifications schedule={todaySchedule} checkIn={todayCheckIn} />
         <DailyMoodCheckIn />
       </div>
+
+      {/* Smart Refill Tracker */}
+      <SmartRefillTracker />
 
       {/* Today's Schedule */}
       <TodaySchedule schedule={todaySchedule} />
