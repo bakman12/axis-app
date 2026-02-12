@@ -101,6 +101,37 @@ const FunctionDisplay = ({ toolCall }) => {
 
 export default function MessageBubble({ message }) {
     const isUser = message.role === 'user';
+    const [isSaving, setIsSaving] = useState(false);
+
+    const saveWorkout = async (workout) => {
+        setIsSaving(true);
+        try {
+            const user = await base44.auth.me();
+            const saved = user.saved_workouts || [];
+            saved.push(workout);
+            await base44.auth.updateMe({ saved_workouts: saved });
+            toast.success('Workout saved!');
+        } catch (error) {
+            toast.error('Failed to save workout');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const saveRecipe = async (recipe) => {
+        setIsSaving(true);
+        try {
+            const user = await base44.auth.me();
+            const saved = user.saved_recipes || [];
+            saved.push(recipe);
+            await base44.auth.updateMe({ saved_recipes: saved });
+            toast.success('Recipe saved!');
+        } catch (error) {
+            toast.error('Failed to save recipe');
+        } finally {
+            setIsSaving(false);
+        }
+    };
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [speech, setSpeech] = useState(null);
 
@@ -236,6 +267,98 @@ export default function MessageBubble({ message }) {
                                 components={{
                                     code: ({ inline, className, children, ...props }) => {
                                         const match = /language-(\w+)/.exec(className || '');
+                                        const content = String(children).replace(/\n$/, '');
+
+                                        // Handle workout JSON blocks
+                                        if (!inline && match && match[1] === 'json') {
+                                            try {
+                                                const data = JSON.parse(content);
+                                                if (Array.isArray(data) && data[0]?.duration && data[0]?.intensity) {
+                                                    return data.map((workout, idx) => (
+                                                        <div key={idx} className="my-3 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-700">
+                                                            <div className="flex items-start justify-between mb-2">
+                                                                <h4 className="font-semibold text-orange-900 dark:text-orange-200">{workout.name}</h4>
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="ghost"
+                                                                    onClick={() => saveWorkout(workout)}
+                                                                    disabled={isSaving}
+                                                                    className="h-8"
+                                                                >
+                                                                    <Bookmark className="w-4 h-4" />
+                                                                </Button>
+                                                            </div>
+                                                            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">{workout.description}</p>
+                                                            <div className="flex gap-2 text-xs mb-2">
+                                                                <span className="bg-white dark:bg-gray-800 px-2 py-1 rounded">⏱️ {workout.duration}</span>
+                                                                <span className="bg-white dark:bg-gray-800 px-2 py-1 rounded">💪 {workout.intensity}</span>
+                                                            </div>
+                                                            {workout.tips && (
+                                                                <ul className="text-xs space-y-1 mt-2">
+                                                                    {workout.tips.map((tip, i) => (
+                                                                        <li key={i} className="text-gray-600 dark:text-gray-400">• {tip}</li>
+                                                                    ))}
+                                                                </ul>
+                                                            )}
+                                                        </div>
+                                                    ));
+                                                }
+
+                                                // Handle recipe JSON blocks
+                                                if (Array.isArray(data) && data[0]?.ingredients && data[0]?.instructions) {
+                                                    return data.map((recipe, idx) => (
+                                                        <div key={idx} className="my-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
+                                                            <div className="flex items-start justify-between mb-2">
+                                                                <h4 className="font-semibold text-green-900 dark:text-green-200">{recipe.name}</h4>
+                                                                <Button
+                                                                    size="sm"
+                                                                    variant="ghost"
+                                                                    onClick={() => saveRecipe(recipe)}
+                                                                    disabled={isSaving}
+                                                                    className="h-8"
+                                                                >
+                                                                    <Bookmark className="w-4 h-4" />
+                                                                </Button>
+                                                            </div>
+                                                            <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">{recipe.description}</p>
+                                                            {recipe.healthBenefits && (
+                                                                <p className="text-xs text-green-800 dark:text-green-300 mb-2">
+                                                                    <strong>Benefits:</strong> {recipe.healthBenefits}
+                                                                </p>
+                                                            )}
+                                                            <div className="flex gap-2 text-xs mb-3">
+                                                                <span className="bg-white dark:bg-gray-800 px-2 py-1 rounded">⏱️ {recipe.prepTime}</span>
+                                                                <span className="bg-white dark:bg-gray-800 px-2 py-1 rounded">🍽️ {recipe.servings} servings</span>
+                                                            </div>
+                                                            <details className="text-xs">
+                                                                <summary className="cursor-pointer font-medium mb-2">View full recipe</summary>
+                                                                <div className="space-y-2 mt-2">
+                                                                    <div>
+                                                                        <strong>Ingredients:</strong>
+                                                                        <ul className="list-disc pl-5 mt-1">
+                                                                            {recipe.ingredients.map((ing, i) => (
+                                                                                <li key={i}>{ing}</li>
+                                                                            ))}
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div>
+                                                                        <strong>Instructions:</strong>
+                                                                        <ol className="list-decimal pl-5 mt-1">
+                                                                            {recipe.instructions.map((step, i) => (
+                                                                                <li key={i}>{step}</li>
+                                                                            ))}
+                                                                        </ol>
+                                                                    </div>
+                                                                </div>
+                                                            </details>
+                                                        </div>
+                                                    ));
+                                                }
+                                            } catch (e) {
+                                                // Not a special JSON format, render as code
+                                            }
+                                        }
+
                                         return !inline && match ? (
                                             <div className="relative group/code">
                                                 <pre className="bg-slate-900 text-slate-100 rounded-lg p-3 overflow-x-auto my-2">

@@ -11,6 +11,8 @@ import MessageBubble from '../components/MessageBubble';
 import RootPageHeader from '../components/RootPageHeader';
 import VoiceInput from '../components/VoiceInput';
 import HealthProfileSetup from '../components/HealthProfileSetup';
+import SavedWorkoutsPanel from '../components/SavedWorkoutsPanel';
+import SavedRecipesPanel from '../components/SavedRecipesPanel';
 import {
   Dialog,
   DialogContent,
@@ -128,10 +130,12 @@ export default function HealthCoach() {
   };
 
   const quickActions = [
-    { label: "Today's workout suggestion", prompt: "Can you suggest a workout for today based on my current health and energy level?" },
-    { label: "Healthy meal ideas", prompt: "What are some healthy meal ideas that work well with my medications?" },
-    { label: "Motivation boost", prompt: "I'm feeling a bit unmotivated. Can you help me?" },
-    { label: "Review my progress", prompt: "Can you review my medication adherence and overall health progress?" }
+    { label: "Workout for today", prompt: "Suggest a workout routine for today based on my health profile, energy level, and medication schedule" },
+    { label: "Healthy recipes", prompt: "Give me recipe ideas that match my dietary needs and health conditions" },
+    { label: "Progress review", prompt: "Analyze my medication adherence, mood patterns, and overall progress this week" },
+    { label: "Energy-boosting tips", prompt: "What can I do to boost my energy levels today?" },
+    { label: "Stress management", prompt: "I'm feeling stressed. What techniques can help me right now?" },
+    { label: "Better sleep habits", prompt: "How can I improve my sleep quality given my medication schedule?" }
   ];
 
   const handleQuickAction = (prompt) => {
@@ -172,8 +176,9 @@ export default function HealthCoach() {
       <RootPageHeader title="AI Health Coach" subtitle="Personalized wellness guidance" />
 
       <div className="flex-1 overflow-hidden px-4 md:px-6 lg:px-8 pt-4 pb-2 flex flex-col max-w-5xl mx-auto w-full">
-        {/* Health Profile Status */}
-        <Card className="mb-4 border-l-4 border-l-green-500">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+          {/* Health Profile Status */}
+          <Card className="lg:col-span-3 border-l-4 border-l-green-500">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -210,6 +215,21 @@ export default function HealthCoach() {
           </CardContent>
         </Card>
 
+        {/* Saved Workouts & Recipes */}
+        <div className="hidden lg:block">
+          <SavedWorkoutsPanel />
+        </div>
+        <div className="hidden lg:block">
+          <SavedRecipesPanel />
+        </div>
+      </div>
+
+      {/* Mobile: Show saved items below messages */}
+      <div className="lg:hidden px-4 space-y-4 mb-4">
+        <SavedWorkoutsPanel />
+        <SavedRecipesPanel />
+      </div>
+
         {/* Messages */}
         <div className="flex-1 overflow-y-auto space-y-4 mb-4">
           {messages.length === 0 ? (
@@ -219,20 +239,27 @@ export default function HealthCoach() {
                 <h3 className="text-lg font-semibold mb-2">Welcome to Your AI Health Coach!</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   I'm here to support your wellness journey with personalized advice on exercise, nutrition, 
-                  and staying motivated with your medication routine.
+                  and staying motivated with your medication routine. I analyze your health data to provide 
+                  tailored recommendations just for you.
                 </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-6">
                   {quickActions.map((action, idx) => (
                     <Button
                       key={idx}
                       variant="outline"
                       size="sm"
-                      className="text-xs h-auto py-2"
+                      className="text-xs h-auto py-3 whitespace-normal"
                       onClick={() => handleQuickAction(action.prompt)}
                     >
                       {action.label}
                     </Button>
                   ))}
+                </div>
+                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                  <p className="text-xs text-blue-900 dark:text-blue-200">
+                    💡 <strong>Tip:</strong> The more you share about your daily routine, mood, and challenges, 
+                    the better I can personalize my guidance for you!
+                  </p>
                 </div>
               </CardContent>
             </Card>
