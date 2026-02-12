@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Button } from "@/components/ui/button";
-import { Copy, Zap, CheckCircle2, AlertCircle, Loader2, ChevronRight, Clock, Volume2, VolumeX } from 'lucide-react';
+import { Copy, Zap, CheckCircle2, AlertCircle, Loader2, ChevronRight, Clock, Volume2, VolumeX, Bookmark } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { base44 } from '@/api/base44Client';
 import WorkoutTile from './WorkoutTile';
 import RecipeTile from './RecipeTile';
 import AdherenceChart from './AdherenceChart';
