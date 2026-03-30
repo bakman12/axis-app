@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Send, Sparkles, Heart, Settings } from 'lucide-react';
+import { Loader2, Send, Sparkles, Heart, Settings, AlertTriangle, Smile } from 'lucide-react';
+import { format, addDays } from 'date-fns';
 import { toast } from 'sonner';
 import MessageBubble from '../components/MessageBubble';
 import RootPageHeader from '../components/RootPageHeader';
@@ -43,6 +44,52 @@ export default function HealthCoach() {
       return profiles[0] || null;
     }
   });
+
+  const { data: todayMood } = useQuery({
+    queryKey: ['todayMood'],
+    queryFn: async () => {
+      const today = format(new Date(), 'yyyy-MM-dd');
+      const moods = await base44.entities.DailyMood.filter({ date: today });
+      return moods[0] || null;
+    }
+  });
+
+  const { data: medications = [] } = useQuery({
+    queryKey: ['coachMedications'],
+    queryFn: () => base44.entities.Medication.filter({ active: true })
+  });
+
+  const { data: refillOrders = [] } = useQuery({
+    queryKey: ['coachRefillOrders'],
+    queryFn: () => base44.entities.RefillOrder.filter({ status: 'pending' })
+  });
+
+  // Compute meds running low (<=7 days remaining)
+  const lowMeds = medications.filter(med => {
+    if (!med.quantity_remaining || !med.times?.length) return false;
+    const daysLeft = Math.floor(med.quantity_remaining / med.times.length);
+    return daysLeft <= (med.refill_reminder_days || 7);
+  });
+
+  // Build a context prefix to attach to every outgoing message
+  const buildContextPrefix = () => {
+    const parts = [];
+
+    if (todayMood) {
+      parts.push(`[Today's mood: ${todayMood.mood}, energy: ${todayMood.energy_level ?? 'unknown'}/10, sleep: ${todayMood.sleep_quality ?? 'unknown'}${todayMood.symptoms?.length ? `, symptoms: ${todayMood.symptoms.join(', ')}` : ''}]`);
+    }
+
+    if (lowMeds.length > 0) {
+      const medSummaries = lowMeds.map(med => {
+        const daysLeft = Math.floor(med.quantity_remaining / med.times.length);
+        const hasOrder = refillOrders.some(o => o.medication_id === med.id);
+        return `${med.name} (~${daysLeft} days left${hasOrder ? ', refill ordered' : ', NO refill ordered yet'})`;
+      });
+      parts.push(`[Low medication supply: ${medSummaries.join('; ')}]`);
+    }
+
+    return parts.length > 0 ? parts.join(' ') + '\n\nUser message: ' : '';
+  };
 
   // Create or load conversation
   useEffect(() => {
@@ -106,9 +153,10 @@ export default function HealthCoach() {
 
     try {
       const conversation = await base44.agents.getConversation(conversationId);
+      const contextPrefix = buildContextPrefix();
       await base44.agents.addMessage(conversation, {
         role: 'user',
-        content: textToSend
+        content: contextPrefix + textToSend
       });
     } catch (error) {
       console.error('Error sending message:', error);
@@ -130,12 +178,36 @@ export default function HealthCoach() {
   };
 
   const quickActions = [
-    { label: "Workout for today", prompt: "Suggest a workout routine for today based on my health profile, energy level, and medication schedule" },
-    { label: "Healthy recipes", prompt: "Give me recipe ideas that match my dietary needs and health conditions" },
-    { label: "Progress review", prompt: "Analyze my medication adherence, mood patterns, and overall progress this week" },
-    { label: "Energy-boosting tips", prompt: "What can I do to boost my energy levels today?" },
-    { label: "Stress management", prompt: "I'm feeling stressed. What techniques can help me right now?" },
-    { label: "Better sleep habits", prompt: "How can I improve my sleep quality given my medication schedule?" }
+    {
+      label: "Workout for today",
+      prompt: todayMood
+        ? `Suggest a workout routine for today. I'm feeling ${todayMood.mood} with an energy level of ${todayMood.energy_level ?? '?'}/10.`
+        : "Suggest a workout routine for today based on my health profile and medication schedule"
+    },
+    {
+      label: "Healthy recipes",
+      prompt: todayMood && (todayMood.mood === 'low' || todayMood.mood === 'struggling')
+        ? "I'm not feeling great today. Suggest simple, comforting but nutritious recipes that suit my health conditions and dietary needs."
+        : "Give me recipe ideas that match my dietary needs and health conditions"
+    },
+    {
+      label: "Check my refills",
+      prompt: lowMeds.length > 0
+        ? `I have ${lowMeds.length} medication(s) running low. Can you help me plan around my upcoming refills and suggest anything I should be aware of?`
+        : "Can you check my medication supply and let me know if I need to think about any refills soon?"
+    },
+    {
+      label: "Progress review",
+      prompt: "Analyse my medication adherence, mood patterns, refill history, and overall progress this week"
+    },
+    {
+      label: "Energy-boosting tips",
+      prompt: "What can I do to boost my energy levels today given my current health status?"
+    },
+    {
+      label: "Better sleep habits",
+      prompt: "How can I improve my sleep quality given my medication schedule and health conditions?"
+    }
   ];
 
   const handleQuickAction = (prompt) => {
@@ -180,18 +252,32 @@ export default function HealthCoach() {
           {/* Health Profile Status */}
           <Card className="lg:col-span-3 border-l-4 border-l-green-500">
           <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Heart className="w-5 h-5 text-green-500" />
-                <div>
-                  <p className="text-sm font-medium">Health Profile</p>
-                  {healthProfile ? (
-                    <p className="text-xs text-gray-500">
-                      {healthProfile.fitness_level} • {healthProfile.health_conditions?.length || 0} conditions tracked
-                    </p>
-                  ) : (
-                    <p className="text-xs text-gray-500">Complete your profile for better recommendations</p>
-                  )}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <Heart className="w-5 h-5 text-green-500 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm font-medium">AI Coach Context</p>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {todayMood ? (
+                      <Badge variant="outline" className="text-xs bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-700">
+                        <Smile className="w-3 h-3 mr-1" />
+                        Mood: {todayMood.mood} ({todayMood.energy_level ?? '?'}/10 energy)
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline" className="text-xs text-gray-400">No mood logged today</Badge>
+                    )}
+                    {lowMeds.length > 0 && (
+                      <Badge variant="outline" className="text-xs bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-700 text-orange-700 dark:text-orange-300">
+                        <AlertTriangle className="w-3 h-3 mr-1" />
+                        {lowMeds.length} med{lowMeds.length > 1 ? 's' : ''} running low
+                      </Badge>
+                    )}
+                    {healthProfile && (
+                      <Badge variant="outline" className="text-xs bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700 text-green-700 dark:text-green-300">
+                        Profile: {healthProfile.fitness_level}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               </div>
               <Dialog open={setupOpen} onOpenChange={setSetupOpen}>
