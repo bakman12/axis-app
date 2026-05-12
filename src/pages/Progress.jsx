@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import GamificationDashboard from '../components/GamificationDashboard';
 import RootPageHeader from '../components/RootPageHeader';
 import PullToRefresh from '../components/PullToRefresh';
@@ -16,12 +16,12 @@ export default function Progress() {
 
   const { data: allLogs = [] } = useQuery({
     queryKey: ['logs'],
-    queryFn: () => base44.entities.MedicationLog.list('-created_date', 100)
+    queryFn: () => entities.MedicationLog.list('-created_date', 100)
   });
 
   const { data: medications = [] } = useQuery({
     queryKey: ['medications'],
-    queryFn: () => base44.entities.Medication.filter({ active: true })
+    queryFn: () => entities.Medication.filter({ active: true })
   });
 
   return (

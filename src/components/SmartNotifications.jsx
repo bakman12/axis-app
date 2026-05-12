@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Bell, BellOff, Zap, AlertCircle, Clock, MapPin, Settings } from 'lucide-react';
-import { format, addMinutes, differenceInMinutes, isAfter, isBefore } from 'date-fns';
+import { Bell, BellOff, Zap, AlertCircle, Clock, Settings } from 'lucide-react';
+import { format, addMinutes, differenceInMinutes } from 'date-fns';
 import { toast } from 'sonner';
 import {
   Dialog,
@@ -17,298 +17,149 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
-import { base44 } from '@/api/base44Client';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
-export default function SmartNotifications({ schedule, checkIn }) {
+// Stable integer ID: medication id hash + day + time slot index + type
+function stableId(medId, dayOffset, timeIndex, type) {
+  let h = 0;
+  const s = `${medId}-${dayOffset}-${timeIndex}-${type}`;
+  for (let i = 0; i < s.length; i++) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  return (Math.abs(h) % 1_000_000_000) + 1;
+}
+
+async function scheduleAll(medications, preferences) {
+  try {
+    // Cancel all existing scheduled notifications before rescheduling
+    const { notifications: pending } = await LocalNotifications.getPending();
+    if (pending.length > 0) await LocalNotifications.cancel({ notifications: pending });
+
+    const notifications = [];
+    const now = new Date();
+
+    for (let day = 0; day < 7; day++) {
+      medications.forEach((med, mi) => {
+        (med.times ?? []).forEach((time, ti) => {
+          const [h, m] = time.split(':').map(Number);
+          const fireAt = new Date();
+          fireAt.setDate(fireAt.getDate() + day);
+          fireAt.setHours(h, m, 0, 0);
+          if (fireAt <= now) return;
+
+          // Lead-time reminder
+          const leadAt = new Date(fireAt.getTime() - preferences.reminderLeadTime * 60_000);
+          if (leadAt > now) {
+            notifications.push({
+              id: stableId(med.id ?? mi, day, ti, 0),
+              title: `${med.critical ? '⚠️ ' : ''}${med.name} in ${preferences.reminderLeadTime} min`,
+              body: `Take ${med.dosage} at ${time}`,
+              schedule: { at: leadAt },
+              smallIcon: 'ic_stat_icon_config_sample',
+              autoCancel: true,
+            });
+          }
+
+          // At-time notification
+          notifications.push({
+            id: stableId(med.id ?? mi, day, ti, 1),
+            title: `Time to take ${med.name}`,
+            body: med.dosage,
+            schedule: { at: fireAt },
+            smallIcon: 'ic_stat_icon_config_sample',
+            ongoing: !!(med.critical && preferences.persistentForCritical),
+            autoCancel: true,
+          });
+        });
+      });
+    }
+
+    if (notifications.length > 0) {
+      await LocalNotifications.schedule({ notifications });
+    }
+  } catch {
+    // Ignore — running in browser dev mode or permissions not granted yet
+  }
+}
+
+const PREFS_KEY = 'axis_notif_prefs';
+
+function loadPrefs() {
+  try {
+    const stored = localStorage.getItem(PREFS_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch { return null; }
+}
+
+function savePrefs(prefs) {
+  try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch { }
+}
+
+const DEFAULT_PREFS = {
+  enableSound: true,
+  enableVibration: true,
+  reminderLeadTime: 15,
+  quietHoursStart: '22:00',
+  quietHoursEnd: '07:00',
+  enableQuietHours: false,
+  persistentForCritical: true,
+  escalatingReminders: true,
+};
+
+export default function SmartNotifications({ schedule, medications }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [permission, setPermission] = useState('default');
-  const [snoozedMeds, setSnoozedMeds] = useState(new Map());
-  const [locationEnabled, setLocationEnabled] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  
-  // Notification preferences from user settings
-  const [preferences, setPreferences] = useState({
-    enableSound: true,
-    enableVibration: true,
-    reminderLeadTime: 15, // minutes before
-    enableLocationReminders: false,
-    quietHoursStart: '22:00',
-    quietHoursEnd: '07:00',
-    enableQuietHours: false,
-    persistentForCritical: true,
-    escalatingReminders: true
-  });
+  const [preferences, setPreferences] = useState(() => ({ ...DEFAULT_PREFS, ...(loadPrefs() ?? {}) }));
 
+  // Check current permission status on mount
   useEffect(() => {
-    if ('Notification' in window) {
-      setPermission(Notification.permission);
-      setNotificationsEnabled(Notification.permission === 'granted');
-    }
-    
-    // Load preferences from user settings
-    base44.auth.me().then(user => {
-      if (user?.notification_preferences) {
-        setPreferences(prev => ({ ...prev, ...user.notification_preferences }));
-      }
+    LocalNotifications.checkPermissions()
+      .then(({ display }) => {
+        setPermission(display);
+        setNotificationsEnabled(display === 'granted');
+      })
+      .catch(() => {});
+
+    // Create Android notification channel (required on Android 8+)
+    LocalNotifications.createChannel({
+      id: 'axis_meds',
+      name: 'Medication Reminders',
+      description: 'Axis medication reminder notifications',
+      importance: 5, // IMPORTANCE_HIGH
+      visibility: 1,
+      vibration: true,
     }).catch(() => {});
   }, []);
 
-  // Location tracking
+  // Re-schedule whenever medications or preferences change (and permission is granted)
   useEffect(() => {
-    if (!preferences.enableLocationReminders) return;
-
-    if ('geolocation' in navigator) {
-      const watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          setCurrentLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-          setLocationEnabled(true);
-        },
-        (error) => {
-          console.log('Location error:', error);
-          setLocationEnabled(false);
-        },
-        { enableHighAccuracy: false, maximumAge: 300000 } // 5 min cache
-      );
-
-      return () => navigator.geolocation.clearWatch(watchId);
-    }
-  }, [preferences.enableLocationReminders]);
+    if (!notificationsEnabled || !medications?.length) return;
+    scheduleAll(medications, preferences);
+  }, [medications, notificationsEnabled, preferences]);
 
   const requestPermission = async () => {
-    if ('Notification' in window) {
-      const result = await Notification.requestPermission();
-      setPermission(result);
-      setNotificationsEnabled(result === 'granted');
-      if (result === 'granted') {
-        toast.success('Smart notifications enabled');
-      }
-    }
-  };
-
-  const isQuietHours = () => {
-    if (!preferences.enableQuietHours) return false;
-    
-    const now = new Date();
-    const currentTime = format(now, 'HH:mm');
-    const start = preferences.quietHoursStart;
-    const end = preferences.quietHoursEnd;
-    
-    if (start < end) {
-      return currentTime >= start && currentTime <= end;
-    } else {
-      return currentTime >= start || currentTime <= end;
-    }
-  };
-
-  const snooze = async (medicationId, scheduledTime, minutes) => {
-    // Use user's custom snooze duration if not specified
-    let snoozeDuration = minutes;
-    if (!snoozeDuration) {
-      try {
-        const user = await base44.auth.me();
-        snoozeDuration = user?.snooze_duration || 10;
-      } catch (e) {
-        snoozeDuration = 10;
-      }
-    }
-    
-    const snoozedUntil = addMinutes(new Date(), snoozeDuration);
-    setSnoozedMeds(prev => new Map(prev).set(`${medicationId}-${scheduledTime}`, snoozedUntil));
-    toast.success(`Snoozed for ${snoozeDuration} minutes`);
-  };
-
-  const getVibrationPattern = (pattern, isCritical = false) => {
-    if (!preferences.enableVibration) return undefined;
-    
-    if (isCritical) {
-      return [200, 100, 200, 100, 200, 100, 200]; // Urgent pattern
-    }
-    
-    const patterns = {
-      short: [200],
-      medium: [200, 100, 200],
-      long: [200, 100, 200, 100, 200],
-      custom: [100, 50, 100, 50, 100, 50, 100, 50, 100]
-    };
-    
-    return patterns[pattern] || patterns.medium;
-  };
-
-  const sendNotification = async (title, body, options = {}) => {
-    if (!notificationsEnabled || !('Notification' in window)) return;
-    
-    // Check quiet hours (unless critical and persistent enabled)
-    if (isQuietHours() && !(options.critical && preferences.persistentForCritical)) {
-      console.log('Skipping notification - quiet hours');
-      return;
-    }
-
-    // Get user settings from backend for sound and duration
-    let userSettings = {};
     try {
-      const user = await base44.auth.me();
-      userSettings = {
-        vibrationPattern: user?.vibration_pattern || 'medium',
-        normalDuration: user?.notification_duration || 5,
-        criticalDuration: user?.critical_notification_duration || 30
-      };
-    } catch (e) {
-      // Use defaults if can't fetch
-    }
-
-    const isCritical = options.critical || false;
-    const vibrationPattern = getVibrationPattern(userSettings.vibrationPattern, isCritical);
-
-    const notification = new Notification(title, {
-      body,
-      icon: '💊',
-      badge: '💊',
-      silent: !preferences.enableSound,
-      vibrate: vibrationPattern,
-      requireInteraction: isCritical,
-      tag: options.tag || 'medication',
-      ...options
-    });
-
-    // Auto-close notification after duration (except for critical)
-    if (!isCritical) {
-      setTimeout(() => {
-        notification.close();
-      }, (userSettings.normalDuration || 5) * 1000);
-    } else {
-      // Critical notifications stay longer
-      setTimeout(() => {
-        notification.close();
-      }, (userSettings.criticalDuration || 30) * 1000);
-    }
-
-    notification.onclick = () => {
-      window.focus();
-      notification.close();
-    };
-
-    return notification;
-  };
-
-  // Enhanced smart notification logic
-  useEffect(() => {
-    if (!notificationsEnabled || !schedule || schedule.length === 0) return;
-
-    const checkUpcoming = () => {
-      const now = new Date();
-
-      schedule.forEach(item => {
-        if (item.log) return; // Already logged
-
-        const medKey = `${item.medication.id}-${item.scheduledTime}`;
-        
-        // Check if snoozed
-        const snoozedUntil = snoozedMeds.get(medKey);
-        if (snoozedUntil && isBefore(now, snoozedUntil)) {
-          return; // Still snoozed
-        } else if (snoozedUntil) {
-          // Snooze expired, remove it
-          setSnoozedMeds(prev => {
-            const newMap = new Map(prev);
-            newMap.delete(medKey);
-            return newMap;
-          });
-        }
-
-        const [hours, minutes] = item.scheduledTime.split(':');
-        const scheduledDate = new Date();
-        scheduledDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-        
-        const minutesUntil = differenceInMinutes(scheduledDate, now);
-
-        // Enhanced reminders based on context and preferences
-        const isHighRisk = checkIn?.routine_disrupted || checkIn?.context !== 'normal';
-        const baseLeadTime = preferences.reminderLeadTime;
-        const reminderMinutes = item.medication.critical ? (isHighRisk ? baseLeadTime + 15 : baseLeadTime) : baseLeadTime;
-
-        // Initial reminder
-        if (minutesUntil === reminderMinutes) {
-          const urgency = item.medication.critical ? '⚠️ CRITICAL' : '';
-          const locationNote = locationEnabled && checkIn?.location_changed ? 
-            '\n📍 You\'re in a different location - don\'t forget!' : '';
-          
-          sendNotification(
-            `${urgency} ${item.medication.name} Due Soon`,
-            `Take ${item.medication.dosage} at ${item.scheduledTime}${
-              isHighRisk ? '\n⚠️ Extra reminder - routine disrupted' : ''
-            }${locationNote}`,
-            { 
-              tag: medKey,
-              requireInteraction: item.medication.critical,
-              critical: item.medication.critical
-            }
-          );
-        }
-
-        // Escalating reminders for missed medications
-        if (preferences.escalatingReminders && minutesUntil < 0) {
-          const minutesLate = Math.abs(minutesUntil);
-          
-          // Critical meds: every 10 minutes when late
-          if (item.medication.critical && minutesLate > 0 && minutesLate % 10 === 0) {
-            sendNotification(
-              '🚨 CRITICAL Medication Overdue',
-              `${item.medication.name} was due at ${item.scheduledTime}. Please take it now.`,
-              { 
-                tag: `late-${medKey}`,
-                requireInteraction: true,
-                critical: true
-              }
-            );
-          }
-          
-          // Regular meds: reminder at 15, 30, 60 minutes late
-          if (!item.medication.critical && [15, 30, 60].includes(minutesLate)) {
-            sendNotification(
-              `${item.medication.name} Overdue`,
-              `Scheduled for ${item.scheduledTime}. Take when possible.`,
-              { tag: `late-${medKey}` }
-            );
-          }
-        }
-
-        // At scheduled time
-        if (minutesUntil === 0) {
-          sendNotification(
-            `Time to take ${item.medication.name}`,
-            `${item.medication.dosage} - Take now`,
-            { 
-              tag: `now-${medKey}`,
-              requireInteraction: item.medication.critical
-            }
-          );
-        }
-      });
-    };
-
-    const interval = setInterval(checkUpcoming, 60000); // Check every minute
-    checkUpcoming(); // Check immediately
-
-    return () => clearInterval(interval);
-  }, [schedule, notificationsEnabled, checkIn, preferences, snoozedMeds, locationEnabled]);
-
-  const upcomingMeds = schedule
-    ?.filter(item => !item.log)
-    .slice(0, 3) || [];
-
-  const savePreferences = async () => {
-    try {
-      await base44.auth.updateMe({ notification_preferences: preferences });
-      toast.success('Notification preferences saved');
-      setSettingsOpen(false);
-    } catch (error) {
-      toast.error('Failed to save preferences');
+      const { display } = await LocalNotifications.requestPermissions();
+      setPermission(display);
+      setNotificationsEnabled(display === 'granted');
+      if (display === 'granted') {
+        toast.success('Notifications enabled');
+        if (medications?.length) scheduleAll(medications, preferences);
+      } else {
+        toast.error('Notification permission denied');
+      }
+    } catch {
+      toast.error('Could not request notification permission');
     }
   };
+
+  const handleSavePrefs = () => {
+    savePrefs(preferences);
+    if (notificationsEnabled && medications?.length) scheduleAll(medications, preferences);
+    toast.success('Notification preferences saved');
+    setSettingsOpen(false);
+  };
+
+  const upcomingMeds = schedule?.filter(item => !item.log).slice(0, 3) ?? [];
 
   return (
     <Card className="shadow-md border-l-4 border-l-blue-500">
@@ -316,7 +167,7 @@ export default function SmartNotifications({ schedule, checkIn }) {
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bell className="w-5 h-5 text-blue-500" />
-            Smart Notifications
+            Notifications
           </div>
           <div className="flex items-center gap-2">
             <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
@@ -328,9 +179,7 @@ export default function SmartNotifications({ schedule, checkIn }) {
               <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>Notification Settings</DialogTitle>
-                  <DialogDescription>
-                    Customize your medication reminders
-                  </DialogDescription>
+                  <DialogDescription>Customize your medication reminders</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-6 py-4">
                   <div className="space-y-2">
@@ -338,107 +187,55 @@ export default function SmartNotifications({ schedule, checkIn }) {
                     <div className="flex items-center gap-3">
                       <Slider
                         value={[preferences.reminderLeadTime]}
-                        onValueChange={([value]) => setPreferences(p => ({ ...p, reminderLeadTime: value }))}
-                        min={5}
-                        max={60}
-                        step={5}
-                        className="flex-1"
+                        onValueChange={([v]) => setPreferences(p => ({ ...p, reminderLeadTime: v }))}
+                        min={5} max={60} step={5} className="flex-1"
                       />
                       <span className="text-sm font-medium w-16">{preferences.reminderLeadTime} min</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Sound</Label>
-                      <p className="text-xs text-gray-500">Play sound with notifications</p>
+                  {[
+                    ['persistentForCritical', 'Persistent Critical Alerts', 'Keep alert visible until dismissed for critical meds'],
+                    ['escalatingReminders', 'Escalating Reminders', 'Repeat reminders for missed doses'],
+                  ].map(([key, label, desc]) => (
+                    <div key={key} className="flex items-center justify-between">
+                      <div>
+                        <Label>{label}</Label>
+                        <p className="text-xs text-gray-500">{desc}</p>
+                      </div>
+                      <Switch
+                        checked={preferences[key]}
+                        onCheckedChange={checked => setPreferences(p => ({ ...p, [key]: checked }))}
+                      />
                     </div>
-                    <Switch
-                      checked={preferences.enableSound}
-                      onCheckedChange={(checked) => setPreferences(p => ({ ...p, enableSound: checked }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Vibration</Label>
-                      <p className="text-xs text-gray-500">Vibrate on notifications</p>
-                    </div>
-                    <Switch
-                      checked={preferences.enableVibration}
-                      onCheckedChange={(checked) => setPreferences(p => ({ ...p, enableVibration: checked }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Location Reminders</Label>
-                      <p className="text-xs text-gray-500">Extra reminders when location changes</p>
-                    </div>
-                    <Switch
-                      checked={preferences.enableLocationReminders}
-                      onCheckedChange={(checked) => setPreferences(p => ({ ...p, enableLocationReminders: checked }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Escalating Reminders</Label>
-                      <p className="text-xs text-gray-500">Repeat reminders for missed doses</p>
-                    </div>
-                    <Switch
-                      checked={preferences.escalatingReminders}
-                      onCheckedChange={(checked) => setPreferences(p => ({ ...p, escalatingReminders: checked }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label>Persistent Critical Alerts</Label>
-                      <p className="text-xs text-gray-500">Always alert for critical meds</p>
-                    </div>
-                    <Switch
-                      checked={preferences.persistentForCritical}
-                      onCheckedChange={(checked) => setPreferences(p => ({ ...p, persistentForCritical: checked }))}
-                    />
-                  </div>
+                  ))}
 
                   <div className="space-y-3 pt-4 border-t">
                     <div className="flex items-center justify-between">
                       <Label>Quiet Hours</Label>
                       <Switch
                         checked={preferences.enableQuietHours}
-                        onCheckedChange={(checked) => setPreferences(p => ({ ...p, enableQuietHours: checked }))}
+                        onCheckedChange={checked => setPreferences(p => ({ ...p, enableQuietHours: checked }))}
                       />
                     </div>
-                    
                     {preferences.enableQuietHours && (
                       <div className="grid grid-cols-2 gap-3 pl-4">
-                        <div>
-                          <Label className="text-xs">Start</Label>
-                          <Input
-                            type="time"
-                            value={preferences.quietHoursStart}
-                            onChange={(e) => setPreferences(p => ({ ...p, quietHoursStart: e.target.value }))}
-                            className="mt-1"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">End</Label>
-                          <Input
-                            type="time"
-                            value={preferences.quietHoursEnd}
-                            onChange={(e) => setPreferences(p => ({ ...p, quietHoursEnd: e.target.value }))}
-                            className="mt-1"
-                          />
-                        </div>
+                        {[['quietHoursStart', 'Start'], ['quietHoursEnd', 'End']].map(([k, lbl]) => (
+                          <div key={k}>
+                            <Label className="text-xs">{lbl}</Label>
+                            <Input
+                              type="time"
+                              value={preferences[k]}
+                              onChange={e => setPreferences(p => ({ ...p, [k]: e.target.value }))}
+                              className="mt-1"
+                            />
+                          </div>
+                        ))}
                       </div>
                     )}
                   </div>
                 </div>
-                <Button onClick={savePreferences} className="w-full">
-                  Save Preferences
-                </Button>
+                <Button onClick={handleSavePrefs} className="w-full">Save Preferences</Button>
               </DialogContent>
             </Dialog>
 
@@ -448,110 +245,74 @@ export default function SmartNotifications({ schedule, checkIn }) {
               onClick={requestPermission}
               disabled={permission === 'denied'}
             >
-              {notificationsEnabled ? (
-                <><Bell className="w-4 h-4 mr-2" /> Enabled</>
-              ) : (
-                <><BellOff className="w-4 h-4 mr-2" /> Enable</>
-              )}
+              {notificationsEnabled
+                ? <><Bell className="w-4 h-4 mr-2" />Enabled</>
+                : <><BellOff className="w-4 h-4 mr-2" />Enable</>}
             </Button>
           </div>
         </CardTitle>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          {notificationsEnabled 
-            ? 'Adaptive reminders based on your routine'
-            : 'Enable to receive proactive medication reminders'
-          }
+          {notificationsEnabled
+            ? 'Reminders scheduled for the next 7 days'
+            : 'Enable to receive medication reminders'}
         </p>
       </CardHeader>
+
       <CardContent>
         {permission === 'denied' ? (
           <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-center">
             <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
             <p className="text-sm text-gray-700">
-              Notifications blocked. Please enable in browser settings.
+              Notifications blocked. Go to Android Settings → Apps → Axis → Notifications to re-enable.
             </p>
           </div>
         ) : !notificationsEnabled ? (
           <div className="text-center py-4">
             <Zap className="w-12 h-12 text-gray-300 mx-auto mb-3" />
             <p className="text-sm text-gray-600">
-              Get intelligent reminders that adapt to your schedule and routine disruptions
+              Tap Enable above to schedule reminders for all your medications
             </p>
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="flex flex-wrap items-center gap-2 text-sm">
+            <div className="flex items-center gap-2 text-sm">
               <Zap className="w-4 h-4 text-green-500" />
               <span className="text-green-700 dark:text-green-400 font-medium">Active</span>
-              {checkIn?.routine_disrupted && (
-                <Badge className="bg-orange-100 text-orange-800 text-xs">
-                  Extra reminders enabled
-                </Badge>
-              )}
-              {locationEnabled && (
-                <Badge variant="outline" className="text-xs">
-                  <MapPin className="w-3 h-3 mr-1" />
-                  Location tracking
-                </Badge>
-              )}
-              {preferences.enableQuietHours && (
-                <Badge variant="outline" className="text-xs">
-                  🌙 Quiet hours: {preferences.quietHoursStart}-{preferences.quietHoursEnd}
-                </Badge>
-              )}
+              <Badge variant="outline" className="text-xs">
+                {medications?.length ?? 0} medication{medications?.length !== 1 ? 's' : ''} scheduled
+              </Badge>
             </div>
-            
+
             {upcomingMeds.length > 0 && (
               <div>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Next reminders:</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">Today's upcoming:</p>
                 <div className="space-y-2">
                   {upcomingMeds.map((item, idx) => {
-                    const [hours, minutes] = item.scheduledTime.split(':');
+                    const [h, m] = item.scheduledTime.split(':').map(Number);
                     const scheduledDate = new Date();
-                    scheduledDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                    scheduledDate.setHours(h, m, 0, 0);
                     const minutesUntil = differenceInMinutes(scheduledDate, new Date());
-                    const isHighRisk = checkIn?.routine_disrupted;
-                    const baseLeadTime = preferences.reminderLeadTime;
-                    const reminderMinutes = item.medication.critical ? (isHighRisk ? baseLeadTime + 15 : baseLeadTime) : baseLeadTime;
-                    const reminderTime = format(addMinutes(scheduledDate, -reminderMinutes), 'HH:mm');
-                    const medKey = `${item.medication.id}-${item.scheduledTime}`;
-                    const isSnoozed = snoozedMeds.has(medKey);
-                    
+                    const reminderTime = format(addMinutes(scheduledDate, -preferences.reminderLeadTime), 'HH:mm');
+
                     return (
                       <div key={idx} className="p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg text-xs">
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <p className="font-medium text-gray-900 dark:text-gray-100 truncate">
-                                {item.medication.name}
-                              </p>
+                              <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{item.medication.name}</p>
                               {item.medication.critical && (
-                                <Badge className="bg-red-100 text-red-800 text-[10px] px-1 py-0">
-                                  Critical
-                                </Badge>
-                              )}
-                              {isSnoozed && (
-                                <Badge variant="outline" className="text-[10px] px-1 py-0">
-                                  Snoozed
-                                </Badge>
+                                <Badge className="bg-red-100 text-red-800 text-[10px] px-1 py-0">Critical</Badge>
                               )}
                             </div>
-                            <p className="text-gray-600 dark:text-gray-400">Due: {item.scheduledTime}</p>
+                            <p className="text-gray-600 dark:text-gray-400">
+                              Due: {item.scheduledTime}
+                              {minutesUntil > 0 && ` (in ${minutesUntil} min)`}
+                            </p>
                             <div className="flex items-center gap-1 mt-1 text-blue-700 dark:text-blue-300">
                               <Clock className="w-3 h-3" />
                               <span>Reminder at {reminderTime}</span>
                             </div>
                           </div>
-                          {minutesUntil >= 0 && minutesUntil <= reminderMinutes && !isSnoozed && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 text-xs"
-                              onClick={() => snooze(item.medication.id, item.scheduledTime)}
-                            >
-                              Snooze
-                            </Button>
-                          )}
                         </div>
                       </div>
                     );

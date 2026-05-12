@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download, FileJson, FileSpreadsheet, Heart } from 'lucide-react';
@@ -13,9 +13,9 @@ export default function HealthDataExport() {
     setExporting(true);
     try {
       const [medications, logs, checkIns] = await Promise.all([
-        base44.entities.Medication.list(),
-        base44.entities.MedicationLog.list('-created_date', 1000),
-        base44.entities.CheckIn.list('-created_date', 1000)
+        entities.Medication.list(),
+        entities.MedicationLog.list('-created_date', 1000),
+        entities.CheckIn.list('-created_date', 1000)
       ]);
 
       // Create CSV with health app compatible format
@@ -44,7 +44,7 @@ export default function HealthDataExport() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `medmind-health-data-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+      a.download = `axis-health-data-${format(new Date(), 'yyyy-MM-dd')}.csv`;
       a.click();
       URL.revokeObjectURL(url);
 
@@ -60,10 +60,10 @@ export default function HealthDataExport() {
     setExporting(true);
     try {
       const [medications, logs, checkIns, achievements] = await Promise.all([
-        base44.entities.Medication.list(),
-        base44.entities.MedicationLog.list('-created_date', 1000),
-        base44.entities.CheckIn.list('-created_date', 1000),
-        base44.entities.Achievement.list()
+        entities.Medication.list(),
+        entities.MedicationLog.list('-created_date', 1000),
+        entities.CheckIn.list('-created_date', 1000),
+        entities.Achievement.list()
       ]);
 
       // Calculate adherence stats
@@ -72,7 +72,7 @@ export default function HealthDataExport() {
 
       const healthData = {
         export_date: new Date().toISOString(),
-        app: 'MedMind',
+        app: 'Axis',
         version: '1.0',
         summary: {
           total_medications: medications.length,
@@ -121,7 +121,7 @@ export default function HealthDataExport() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `medmind-health-data-${format(new Date(), 'yyyy-MM-dd')}.json`;
+      a.download = `axis-health-data-${format(new Date(), 'yyyy-MM-dd')}.json`;
       a.click();
       URL.revokeObjectURL(url);
 
@@ -137,8 +137,8 @@ export default function HealthDataExport() {
     setExporting(true);
     try {
       const [medications, logs] = await Promise.all([
-        base44.entities.Medication.list(),
-        base44.entities.MedicationLog.list('-created_date', 1000)
+        entities.Medication.list(),
+        entities.MedicationLog.list('-created_date', 1000)
       ]);
 
       // Create FHIR-inspired format compatible with many health platforms
@@ -172,7 +172,7 @@ export default function HealthDataExport() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `medmind-fhir-export-${format(new Date(), 'yyyy-MM-dd')}.json`;
+      a.download = `axis-fhir-export-${format(new Date(), 'yyyy-MM-dd')}.json`;
       a.click();
       URL.revokeObjectURL(url);
 

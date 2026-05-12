@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Trophy, Target, TrendingUp } from 'lucide-react';
+import { Target, TrendingUp } from 'lucide-react';
 import { format, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 
 export default function ProgressTracker({ logs, medications, stats }) {

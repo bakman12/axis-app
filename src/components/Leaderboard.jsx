@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,20 +33,20 @@ export default function Leaderboard({ stats, achievements }) {
 
   const { data: myProfile } = useQuery({
     queryKey: ['myLeaderboardProfile'],
-    queryFn: () => base44.entities.Leaderboard.filter({ created_by: user?.email })
+    queryFn: () => entities.Leaderboard.filter({ created_by: user?.email })
       .then(profiles => profiles[0] || null)
   });
 
   const { data: publicLeaderboard = [] } = useQuery({
     queryKey: ['publicLeaderboard'],
-    queryFn: () => base44.entities.Leaderboard.filter({ is_public: true }, '-points', 10)
+    queryFn: () => entities.Leaderboard.filter({ is_public: true }, '-points', 10)
   });
 
   const { data: friendLeaderboard = [] } = useQuery({
     queryKey: ['friendLeaderboard', myProfile?.friend_group],
     queryFn: () => {
       if (!myProfile?.friend_group) return [];
-      return base44.entities.Leaderboard.filter(
+      return entities.Leaderboard.filter(
         { friend_group: myProfile.friend_group },
         '-points',
         20
@@ -55,7 +56,7 @@ export default function Leaderboard({ stats, achievements }) {
   });
 
   const createProfileMutation = useMutation({
-    mutationFn: (data) => base44.entities.Leaderboard.create(data),
+    mutationFn: (data) => entities.Leaderboard.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['myLeaderboardProfile']);
       toast.success('Leaderboard profile created!');
@@ -64,7 +65,7 @@ export default function Leaderboard({ stats, achievements }) {
   });
 
   const updateProfileMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Leaderboard.update(id, data),
+    mutationFn: ({ id, data }) => entities.Leaderboard.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['myLeaderboardProfile']);
       queryClient.invalidateQueries(['publicLeaderboard']);

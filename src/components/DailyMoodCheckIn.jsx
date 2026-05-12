@@ -1,10 +1,8 @@
-import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Smile, Meh, Frown, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
@@ -23,13 +21,13 @@ export default function DailyMoodCheckIn() {
   const { data: todayMood } = useQuery({
     queryKey: ['dailyMood', today],
     queryFn: async () => {
-      const moods = await base44.entities.DailyMood.filter({ date: today });
+      const moods = await entities.DailyMood.filter({ date: today });
       return moods[0] || null;
     }
   });
 
   const createMoodMutation = useMutation({
-    mutationFn: (mood) => base44.entities.DailyMood.create({
+    mutationFn: (mood) => entities.DailyMood.create({
       date: today,
       mood,
       energy_level: 5

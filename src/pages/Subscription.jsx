@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -50,7 +51,7 @@ export default function SubscriptionPage() {
 
   const { data: subscriptions = [] } = useQuery({
     queryKey: ['subscriptions'],
-    queryFn: () => base44.entities.Subscription.list()
+    queryFn: () => entities.Subscription.list()
   });
 
   const subscription = subscriptions[0];
@@ -86,7 +87,7 @@ export default function SubscriptionPage() {
     mutationFn: async () => {
       await base44.auth.updateMe({ subscription_tier: 'free' });
       if (subscription) {
-        await base44.entities.Subscription.update(subscription.id, {
+        await entities.Subscription.update(subscription.id, {
           status: 'cancelled',
           cancel_at_period_end: true
         });

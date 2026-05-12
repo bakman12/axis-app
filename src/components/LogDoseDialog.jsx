@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
@@ -15,6 +15,8 @@ import { MobileSelect } from '@/components/ui/mobile-select';
 import { CheckCircle2, Clock, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import { checkAndNotifyLowStock } from '@/lib/NotificationService';
 
 export default function LogDoseDialog({ open, onClose, medication, scheduledTime }) {
   const [status, setStatus] = useState('taken');
@@ -23,8 +25,24 @@ export default function LogDoseDialog({ open, onClose, medication, scheduledTime
   const queryClient = useQueryClient();
 
   const logMutation = useMutation({
-    mutationFn: (data) => base44.entities.MedicationLog.create(data),
-    onSuccess: () => {
+    mutationFn: (data) => entities.MedicationLog.create(data),
+    onSuccess: async (_, variables) => {
+      // Haptic feedback
+      if (variables.status !== 'missed') {
+        Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
+      } else {
+        Haptics.notification({ type: NotificationType.Warning }).catch(() => {});
+      }
+
+      // Decrement stock for taken/partial doses
+      if (variables.status !== 'missed' && medication?.quantity_remaining != null) {
+        const consumed = parseFloat(doseAmount) || 1;
+        const newQty = Math.max(0, medication.quantity_remaining - consumed);
+        await entities.Medication.update(medication.id, { quantity_remaining: newQty });
+        await checkAndNotifyLowStock({ ...medication, quantity_remaining: newQty });
+        queryClient.invalidateQueries(['medications']);
+      }
+
       queryClient.invalidateQueries(['medicationLogs']);
       queryClient.invalidateQueries(['achievements']);
       toast.success('Dose logged successfully');
@@ -44,12 +62,13 @@ export default function LogDoseDialog({ open, onClose, medication, scheduledTime
     const scheduledDateTime = new Date(`${format(now, 'yyyy-MM-dd')} ${scheduledTime}`);
     const delayMinutes = Math.round((now - scheduledDateTime) / 1000 / 60);
 
+    const resolvedStatus = parseFloat(doseAmount) < 1.0 ? 'partial' : status;
     logMutation.mutate({
       medication_id: medication.id,
       medication_name: medication.name,
       scheduled_time: scheduledTime,
       taken_time: now.toISOString(),
-      status: parseFloat(doseAmount) < 1.0 ? 'partial' : status,
+      status: resolvedStatus,
       dose_amount: parseFloat(doseAmount),
       delay_minutes: delayMinutes > 0 ? delayMinutes : 0,
       context: context || undefined

@@ -1,15 +1,16 @@
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { entities } from '@/lib/encryptedBase44Client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plane, Calendar, Package, Plus, Clock } from 'lucide-react';
+import { Plane, Calendar } from 'lucide-react';
 import RootPageHeader from '../components/RootPageHeader';
 import AddTripDialog from '../components/AddTripDialog';
 import AddEventDialog from '../components/AddEventDialog';
 import TripCard from '../components/TripCard';
 import EventCard from '../components/EventCard';
 import PackingCalculator from '../components/PackingCalculator';
+import ActiveTripSchedule from '../components/ActiveTripSchedule';
 import { AlertTriangle } from 'lucide-react';
 
 export default function Travel() {
@@ -19,23 +20,26 @@ export default function Travel() {
 
   const { data: trips = [], isLoading: tripsLoading } = useQuery({
     queryKey: ['trips'],
-    queryFn: () => base44.entities.Trip.filter({ active: true }, '-start_date')
+    queryFn: () => entities.Trip.filter({ active: true }, '-start_date')
   });
 
   const { data: events = [], isLoading: eventsLoading } = useQuery({
     queryKey: ['events'],
-    queryFn: () => base44.entities.ImportantEvent.list('-date')
+    queryFn: () => entities.ImportantEvent.list('-date')
   });
 
   const { data: medications = [] } = useQuery({
     queryKey: ['medications'],
-    queryFn: () => base44.entities.Medication.filter({ active: true })
+    queryFn: () => entities.Medication.filter({ active: true })
   });
 
   // Get upcoming trips and events
   const today = new Date().toISOString().split('T')[0];
   const upcomingTrips = trips.filter(t => t.end_date >= today);
   const upcomingEvents = events.filter(e => e.date >= today);
+
+  // Trip that is currently in progress (started but not yet ended)
+  const activeTrip = trips.find(t => t.start_date <= today && t.end_date >= today) ?? null;
 
   return (
     <div style={{ overscrollBehavior: 'none' }}>
@@ -84,6 +88,11 @@ export default function Travel() {
             Add Event
           </Button>
         </div>
+
+        {/* Active trip adjusted schedule — only shown while a trip is in progress */}
+        {activeTrip && (
+          <ActiveTripSchedule trip={activeTrip} medications={medications} />
+        )}
 
         {/* Packing Calculator */}
         {medications.length > 0 && (

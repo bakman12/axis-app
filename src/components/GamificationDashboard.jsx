@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Flame, Star, Target, Sparkles, RefreshCw, Award, TrendingUp } from 'lucide-react';
+import { Trophy, Flame, Star, Target, Sparkles, RefreshCw, Award } from 'lucide-react';
 import ProgressTracker from './ProgressTracker';
 import Leaderboard from './Leaderboard';
-import { format, differenceInDays, startOfDay } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { toast } from 'sonner';
 
 const BADGE_DEFINITIONS = [
@@ -35,7 +36,7 @@ export default function GamificationDashboard({ logs, medications }) {
 
   const { data: achievements = [] } = useQuery({
     queryKey: ['achievements'],
-    queryFn: () => base44.entities.Achievement.list('-earned_date', 50)
+    queryFn: () => entities.Achievement.list('-earned_date', 50)
   });
 
   const { data: user } = useQuery({
@@ -45,7 +46,7 @@ export default function GamificationDashboard({ logs, medications }) {
 
   const { data: previousChallenges = [] } = useQuery({
     queryKey: ['previousChallenges'],
-    queryFn: () => base44.entities.Challenge.list('-created_date', 10)
+    queryFn: () => entities.Challenge.list('-created_date', 10)
   });
 
   const { data: personalizedChallenge, refetch: refetchChallenge } = useQuery({
@@ -162,7 +163,7 @@ Create ONE specific challenge for this week that:
         const weekFromNow = new Date();
         weekFromNow.setDate(weekFromNow.getDate() + 7);
         
-        await base44.entities.Challenge.create({
+        await entities.Challenge.create({
           challenge_title: result.challenge_title,
           challenge_description: result.challenge_description,
           goal: result.goal,
@@ -186,7 +187,7 @@ Create ONE specific challenge for this week that:
   });
 
   const createAchievementMutation = useMutation({
-    mutationFn: (badge) => base44.entities.Achievement.create({
+    mutationFn: (badge) => entities.Achievement.create({
       badge_id: badge.id,
       badge_name: badge.name,
       badge_icon: badge.icon,
@@ -396,11 +397,11 @@ Create ONE specific challenge for this week that:
                   size="sm"
                   className="text-xs h-7"
                   onClick={async () => {
-                    const activeChallenges = await base44.entities.Challenge.filter({ 
+                    const activeChallenges = await entities.Challenge.filter({ 
                       status: 'active' 
                     });
                     if (activeChallenges[0]) {
-                      await base44.entities.Challenge.update(activeChallenges[0].id, {
+                      await entities.Challenge.update(activeChallenges[0].id, {
                         user_feedback: 'too_easy'
                       });
                       toast.success('Feedback saved! Next challenge will be more ambitious.');
@@ -414,11 +415,11 @@ Create ONE specific challenge for this week that:
                   size="sm"
                   className="text-xs h-7"
                   onClick={async () => {
-                    const activeChallenges = await base44.entities.Challenge.filter({ 
+                    const activeChallenges = await entities.Challenge.filter({ 
                       status: 'active' 
                     });
                     if (activeChallenges[0]) {
-                      await base44.entities.Challenge.update(activeChallenges[0].id, {
+                      await entities.Challenge.update(activeChallenges[0].id, {
                         user_feedback: 'too_hard'
                       });
                       toast.success('Feedback saved! Next challenge will be easier.');

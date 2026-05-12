@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Phone, Clock, Star, Search, Loader2, Navigation } from 'lucide-react';
+import { MapPin, Phone, Clock, Star, Loader2, Navigation } from 'lucide-react';
 import { toast } from 'sonner';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -27,19 +27,19 @@ export default function PharmacyFinder({ selectedMedication, onPharmacySelected 
 
   const { data: savedPharmacies = [] } = useQuery({
     queryKey: ['pharmacies'],
-    queryFn: () => base44.entities.Pharmacy.list('-created_date')
+    queryFn: () => entities.Pharmacy.list('-created_date')
   });
 
   const setPreferredMutation = useMutation({
     mutationFn: async (pharmacyId) => {
       // Unset all others first
       const updates = savedPharmacies.map(p => 
-        base44.entities.Pharmacy.update(p.id, { is_preferred: false })
+        entities.Pharmacy.update(p.id, { is_preferred: false })
       );
       await Promise.all(updates);
       
       // Set the selected one
-      await base44.entities.Pharmacy.update(pharmacyId, { is_preferred: true });
+      await entities.Pharmacy.update(pharmacyId, { is_preferred: true });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pharmacies'] });
@@ -50,7 +50,7 @@ export default function PharmacyFinder({ selectedMedication, onPharmacySelected 
 
   const savePharmacyMutation = useMutation({
     mutationFn: async (pharmacy) => {
-      return await base44.entities.Pharmacy.create(pharmacy);
+      return await entities.Pharmacy.create(pharmacy);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pharmacies'] });

@@ -28,3 +28,11 @@ dist-ssr
 *.sw?
 
 .env
+
+# Claude Code memory (contains personal data)
+.claude/
+
+# Android build outputs
+android/app/build/
+android/.gradle/
+android/build/

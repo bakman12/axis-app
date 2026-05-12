@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Pill, MapPin, Clock, AlertTriangle, CheckCircle2, Package } from 'lucide-react';
 import { toast } from 'sonner';
-import { format, addDays, differenceInDays, parseISO } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import PharmacyFinder from './PharmacyFinder';
 import {
   Dialog,
@@ -14,7 +14,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 
 export default function SmartRefillTracker() {
@@ -24,7 +23,7 @@ export default function SmartRefillTracker() {
 
   const { data: medications = [] } = useQuery({
     queryKey: ['medications'],
-    queryFn: () => base44.entities.Medication.filter({ active: true })
+    queryFn: () => entities.Medication.filter({ active: true })
   });
 
   const { data: logs = [] } = useQuery({
@@ -32,19 +31,19 @@ export default function SmartRefillTracker() {
     queryFn: async () => {
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      return await base44.entities.MedicationLog.list('-taken_time', 500);
+      return await entities.MedicationLog.list('-taken_time', 500);
     }
   });
 
   const { data: refillOrders = [] } = useQuery({
     queryKey: ['refillOrders'],
-    queryFn: () => base44.entities.RefillOrder.list('-order_date', 50)
+    queryFn: () => entities.RefillOrder.list('-order_date', 50)
   });
 
   const { data: preferredPharmacy } = useQuery({
     queryKey: ['preferredPharmacy'],
     queryFn: async () => {
-      const pharmacies = await base44.entities.Pharmacy.filter({ is_preferred: true });
+      const pharmacies = await entities.Pharmacy.filter({ is_preferred: true });
       return pharmacies[0] || null;
     }
   });
@@ -106,7 +105,7 @@ export default function SmartRefillTracker() {
 
   const createRefillOrderMutation = useMutation({
     mutationFn: async ({ medication, pharmacy }) => {
-      return await base44.entities.RefillOrder.create({
+      return await entities.RefillOrder.create({
         medication_id: medication.id,
         medication_name: medication.name,
         pharmacy_id: pharmacy.id,

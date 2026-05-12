@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, TrendingUp, Settings, Pill, Trophy, Heart } from 'lucide-react';
+import { Home, Settings, Pill, Plane, Trophy } from 'lucide-react';
 import { createPageUrl } from './utils';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -18,13 +18,25 @@ export default function Layout({ children, currentPageName }) {
   });
   
   useEffect(() => {
-    const theme = user?.theme || 'light';
-    
+    const theme = localStorage.getItem('axis_theme') || user?.theme || 'light';
+    // Sync to localStorage so it survives API failures
+    if (user?.theme && !localStorage.getItem('axis_theme')) {
+      localStorage.setItem('axis_theme', user.theme);
+    }
+
+    const apply = (t) =>
+      document.documentElement.classList.toggle(
+        'dark',
+        t === 'dark' || (t === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches),
+      );
+
+    apply(theme);
+
     if (theme === 'auto') {
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.classList.toggle('dark', isDark);
-    } else {
-      document.documentElement.classList.toggle('dark', theme === 'dark');
+      const mql = window.matchMedia('(prefers-color-scheme: dark)');
+      const handler = (e) => document.documentElement.classList.toggle('dark', e.matches);
+      mql.addEventListener('change', handler);
+      return () => mql.removeEventListener('change', handler);
     }
   }, [user?.theme]);
 
@@ -41,11 +53,11 @@ export default function Layout({ children, currentPageName }) {
   }, [user?.disable_system_gestures]);
   
   const navItems = [
-    { name: 'Home', icon: Home, path: createPageUrl('Home') },
-    { name: 'Meds', icon: Pill, path: createPageUrl('Medications') },
-    { name: 'Coach', icon: Heart, path: createPageUrl('HealthCoach') },
-    { name: 'Progress', icon: Trophy, path: createPageUrl('Progress') },
-    { name: 'Settings', icon: Settings, path: createPageUrl('Settings') }
+    { name: 'Home',     icon: Home,     path: createPageUrl('Home') },
+    { name: 'Meds',     icon: Pill,     path: createPageUrl('Medications') },
+    { name: 'Travel',   icon: Plane,    path: createPageUrl('Travel') },
+    { name: 'Progress', icon: Trophy,   path: createPageUrl('Progress') },
+    { name: 'Settings', icon: Settings, path: createPageUrl('Settings') },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -59,14 +71,20 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/50 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950" style={{ minHeight: '100dvh', paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}>
-      {/* Offline Support */}
+    <div className="fixed inset-0 bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/50 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <OfflineDataManager />
       <OfflineIndicator />
       <NavigationManager />
-      
-      {/* Main Content - No transitions for instant native feel */}
-      <div className="pb-20" style={{ minHeight: '100dvh' }}>
+
+      {/* Scrollable content — explicit container gives Android WebView native-speed fling scrolling */}
+      <div
+        className="absolute inset-0 overflow-y-auto"
+        style={{
+          paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))',
+          WebkitOverflowScrolling: 'touch',
+          overscrollBehavior: 'none',
+        }}
+      >
         {children}
       </div>
 

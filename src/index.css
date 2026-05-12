@@ -80,9 +80,14 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* Eliminate 300ms tap delay on Android */
+    touch-action: manipulation;
   }
 
-  body {
+  html, body {
     @apply bg-background text-foreground;
+    /* Momentum scrolling for any overflow containers */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
   }
 }

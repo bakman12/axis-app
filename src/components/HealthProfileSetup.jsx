@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,7 +31,7 @@ export default function HealthProfileSetup({ onComplete }) {
   const { data: existingProfile } = useQuery({
     queryKey: ['healthProfile'],
     queryFn: async () => {
-      const profiles = await base44.entities.HealthProfile.list();
+      const profiles = await entities.HealthProfile.list();
       return profiles[0] || null;
     }
   });
@@ -58,9 +58,9 @@ export default function HealthProfileSetup({ onComplete }) {
   const saveMutation = useMutation({
     mutationFn: async (data) => {
       if (existingProfile) {
-        return await base44.entities.HealthProfile.update(existingProfile.id, data);
+        return await entities.HealthProfile.update(existingProfile.id, data);
       } else {
-        return await base44.entities.HealthProfile.create(data);
+        return await entities.HealthProfile.create(data);
       }
     },
     onSuccess: () => {

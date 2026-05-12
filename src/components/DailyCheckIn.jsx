@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { CheckCircle, AlertCircle } from 'lucide-react';
-import { format, startOfDay } from 'date-fns';
+import { format } from 'date-fns';
 import { toast } from 'sonner';
 
 const CONTEXT_OPTIONS = [
@@ -32,7 +32,7 @@ export default function DailyCheckIn() {
   const { data: todayCheckIn, isLoading } = useQuery({
     queryKey: ['checkin', today],
     queryFn: async () => {
-      const checkIns = await base44.entities.CheckIn.filter({ date: today });
+      const checkIns = await entities.CheckIn.filter({ date: today });
       return checkIns[0] || null;
     }
   });
@@ -49,9 +49,9 @@ export default function DailyCheckIn() {
   const checkInMutation = useMutation({
     mutationFn: (data) => {
       if (todayCheckIn) {
-        return base44.entities.CheckIn.update(todayCheckIn.id, data);
+        return entities.CheckIn.update(todayCheckIn.id, data);
       }
-      return base44.entities.CheckIn.create(data);
+      return entities.CheckIn.create(data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['checkin']);

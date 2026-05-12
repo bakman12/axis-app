@@ -1,11 +1,11 @@
 import React from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Package, CheckCircle } from 'lucide-react';
-import { differenceInDays, addDays, format } from 'date-fns';
+import { format } from 'date-fns';
 import { toast } from 'sonner';
 
 export default function RefillReminders({ medications }) {
@@ -13,7 +13,7 @@ export default function RefillReminders({ medications }) {
 
   const markRefilledMutation = useMutation({
     mutationFn: ({ id, quantity }) => 
-      base44.entities.Medication.update(id, {
+      entities.Medication.update(id, {
         quantity_remaining: quantity,
         last_refill_date: format(new Date(), 'yyyy-MM-dd')
       }),

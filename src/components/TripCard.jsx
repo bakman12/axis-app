@@ -1,4 +1,4 @@
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ export default function TripCard({ trip, medications }) {
   const queryClient = useQueryClient();
 
   const deleteTripMutation = useMutation({
-    mutationFn: (id) => base44.entities.Trip.delete(id),
+    mutationFn: (id) => entities.Trip.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['trips'] });
       toast.success('Trip deleted');

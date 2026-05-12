@@ -12,7 +12,7 @@ export default function MedicalDisclaimer() {
               Important Medical Disclaimer
             </p>
             <p className="text-amber-800 dark:text-amber-200">
-              MedMind is a <strong>medication tracking and reminder tool only</strong>. It does not provide medical advice, diagnosis, or treatment recommendations.
+              Axis is a <strong>medication tracking and reminder tool only</strong>. It does not provide medical advice, diagnosis, or treatment recommendations.
             </p>
             <ul className="space-y-1 text-amber-800 dark:text-amber-200 ml-4 list-disc">
               <li>Always follow your doctor's or pharmacist's instructions</li>

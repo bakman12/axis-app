@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { toast } from 'sonner';
 
 // Store for offline data
-const CACHE_PREFIX = 'medmind_cache_';
+const CACHE_PREFIX = 'axis_cache_';
 const QUEUE_KEY = 'offline_queue';
 const LAST_SYNC_KEY = 'last_sync_time';
 
@@ -86,7 +86,7 @@ export const OfflineStorage = {
 
 // Wrapper for base44 entities with offline support
 export function createOfflineEntity(entityName) {
-  const original = base44.entities[entityName];
+  const original = entities[entityName];
 
   return {
     ...original,
@@ -178,7 +178,7 @@ export default function OfflineDataManager() {
 
       for (const operation of queue) {
         try {
-          const entity = base44.entities[operation.entity];
+          const entity = entities[operation.entity];
           
           switch (operation.operation) {
             case 'create':

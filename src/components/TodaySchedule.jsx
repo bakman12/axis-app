@@ -1,5 +1,5 @@
 import React from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,56 +10,58 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import SnoozeButton from './SnoozeButton';
 import LogDoseDialog from './LogDoseDialog';
+import { useDrag } from '@use-gesture/react';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import { checkAndNotifyLowStock } from '@/lib/NotificationService';
 
 export default function TodaySchedule({ schedule }) {
   const [contextNotes, setContextNotes] = React.useState({});
   const [selectedMedication, setSelectedMedication] = React.useState(null);
   const [selectedTime, setSelectedTime] = React.useState(null);
+  const [swipeStates, setSwipeStates] = React.useState({});
   const queryClient = useQueryClient();
 
   const logMedicationMutation = useMutation({
     mutationFn: async ({ medication, scheduledTime, status, context }) => {
-      const now = new Date();
+      const takenAt = new Date();
       const [hours, minutes] = scheduledTime.split(':');
       const scheduledDate = new Date();
       scheduledDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
       
-      const delayMinutes = Math.floor((now - scheduledDate) / 60000);
+      const delayMinutes = Math.floor((takenAt - scheduledDate) / 60000);
 
-      return base44.entities.MedicationLog.create({
+      return entities.MedicationLog.create({
         medication_id: medication.id,
         medication_name: medication.name,
         scheduled_time: scheduledTime,
-        taken_time: now.toISOString(),
+        taken_time: takenAt.toISOString(),
         status,
         delay_minutes: delayMinutes > 0 ? delayMinutes : 0,
         context: context || undefined
       });
     },
     onMutate: async ({ medication, scheduledTime, status, context }) => {
-      // Cancel outgoing refetches
       await queryClient.cancelQueries(['logs', 'today']);
 
-      // Snapshot previous value
       const previousLogs = queryClient.getQueryData(['logs', 'today']);
 
-      // Optimistically update
-      const now = new Date();
+      const currentTime = new Date();
       const [hours, minutes] = scheduledTime.split(':');
       const scheduledDate = new Date();
       scheduledDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-      const delayMinutes = Math.floor((now - scheduledDate) / 60000);
+
+      const delayMinutes = Math.floor((currentTime - scheduledDate) / 60000);
 
       const optimisticLog = {
         id: `temp-${Date.now()}`,
         medication_id: medication.id,
         medication_name: medication.name,
         scheduled_time: scheduledTime,
-        taken_time: now.toISOString(),
+        taken_time: currentTime.toISOString(),
         status,
         delay_minutes: delayMinutes > 0 ? delayMinutes : 0,
         context: context || undefined,
-        created_date: now.toISOString()
+        created_date: currentTime.toISOString()
       };
 
       queryClient.setQueryData(['logs', 'today'], (old = []) => [...old, optimisticLog]);
@@ -67,14 +69,29 @@ export default function TodaySchedule({ schedule }) {
       return { previousLogs };
     },
     onError: (err, variables, context) => {
-      // Rollback on error
-      queryClient.setQueryData(['logs', 'today'], context.previousLogs);
+      if (context?.previousLogs) {
+        queryClient.setQueryData(['logs', 'today'], context.previousLogs);
+      }
       toast.error('Failed to log medication');
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['logs']);
+    onSuccess: async (_, /** @type {any} */ vars) => {
+      if (vars.status === 'taken') {
+        Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
+        const med = vars.medication;
+        if (med?.quantity_remaining != null) {
+          const newQty = Math.max(0, med.quantity_remaining - 1);
+          await /** @type {any} */ (entities).Medication.update(med.id, { quantity_remaining: newQty });
+          await checkAndNotifyLowStock({ ...med, quantity_remaining: newQty });
+          queryClient.invalidateQueries({ queryKey: ['medications'] });
+        }
+      } else if (vars.status === 'missed') {
+        Haptics.notification({ type: NotificationType.Warning }).catch(() => {});
+      }
       toast.success('Logged successfully');
       setContextNotes({});
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(['logs', 'today']);
     }
   });
 
@@ -87,6 +104,28 @@ export default function TodaySchedule({ schedule }) {
       context
     });
   };
+
+  const bind = useDrag(
+    ({ args: [item], down, movement: [mx], direction: [xDir], velocity: [vx] }) => {
+      const trigger = Math.abs(mx) > 100 && Math.abs(vx) > 0.5;
+      const dir = xDir < 0 ? 'left' : 'right';
+      const key = `${item.medication.id}-${item.scheduledTime}`;
+
+      if (!down) {
+        if (trigger) {
+          Haptics.impact({ style: 'medium' }).catch(() => {});
+          if (dir === 'right' && !item.log) {
+            handleLog(item, 'taken');
+          } else if (dir === 'left' && !item.log) {
+            handleLog(item, 'missed');
+          }
+        }
+        setSwipeStates(prev => ({ ...prev, [key]: 0 }));
+      } else {
+        setSwipeStates(prev => ({ ...prev, [key]: mx }));
+      }
+    }
+  );
 
   const now = new Date();
   const currentTime = format(now, 'HH:mm');
@@ -120,6 +159,11 @@ export default function TodaySchedule({ schedule }) {
                       ? 'bg-orange-50 border-orange-400'
                       : 'bg-white border-gray-200'
                   }`}
+                  style={{
+                    transform: `translateX(${swipeStates[`${item.medication.id}-${item.scheduledTime}`] || 0}px)`,
+                    touchAction: 'pan-y' // allows vertical scroll while intercepting horizontal swipes
+                  }}
+                  {...bind(item)}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">

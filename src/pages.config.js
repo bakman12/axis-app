@@ -47,27 +47,19 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Analytics from './pages/Analytics';
-import HealthCoach from './pages/HealthCoach';
 import Home from './pages/Home';
 import Medications from './pages/Medications';
-import NHSGuidelines from './pages/NHSGuidelines';
 import Progress from './pages/Progress';
 import Settings from './pages/Settings';
-import Subscription from './pages/Subscription';
 import Travel from './pages/Travel';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Analytics": Analytics,
-    "HealthCoach": HealthCoach,
     "Home": Home,
     "Medications": Medications,
-    "NHSGuidelines": NHSGuidelines,
     "Progress": Progress,
     "Settings": Settings,
-    "Subscription": Subscription,
     "Travel": Travel,
 }
 

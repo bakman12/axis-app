@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import AdherenceAnalytics from '../components/AdherenceAnalytics';
 import GamificationDashboard from '../components/GamificationDashboard';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp } from 'lucide-react';
 import RootPageHeader from '../components/RootPageHeader';
 import PremiumGate from '../components/PremiumGate';
 import AdvancedInsights from '../components/AdvancedInsights';
@@ -12,7 +11,7 @@ import HealthReportGenerator from '../components/HealthReportGenerator';
 export default function Analytics() {
   const { data: medications = [] } = useQuery({
     queryKey: ['medications'],
-    queryFn: () => base44.entities.Medication.filter({ active: true })
+    queryFn: () => entities.Medication.filter({ active: true })
   });
 
   const { data: user } = useQuery({
@@ -27,12 +26,12 @@ export default function Analytics() {
 
   const { data: allLogs = [] } = useQuery({
     queryKey: ['logs', logLimit],
-    queryFn: () => base44.entities.MedicationLog.list('-created_date', logLimit)
+    queryFn: () => entities.MedicationLog.list('-created_date', logLimit)
   });
 
   const { data: allCheckIns = [] } = useQuery({
     queryKey: ['checkins'],
-    queryFn: () => base44.entities.CheckIn.list('-created_date', 30)
+    queryFn: () => entities.CheckIn.list('-created_date', 30)
   });
 
   return (

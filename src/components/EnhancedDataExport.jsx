@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { MobileSelect } from '@/components/ui/mobile-select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Download, FileText, FileSpreadsheet, Calendar, Loader2 } from 'lucide-react';
+import { Download, FileText, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { format, parseISO, isWithinInterval } from 'date-fns';
 
@@ -31,11 +31,11 @@ export default function EnhancedDataExport({ user }) {
     try {
       // Fetch all data
       const [medications, logs, checkIns, moods, achievements] = await Promise.all([
-        base44.entities.Medication.list(),
-        base44.entities.MedicationLog.list('-created_date', 10000),
-        base44.entities.CheckIn.list('-created_date', 1000),
-        base44.entities.DailyMood.list('-date', 1000),
-        base44.entities.Achievement.list()
+        entities.Medication.list(),
+        entities.MedicationLog.list('-created_date', 10000),
+        entities.CheckIn.list('-created_date', 1000),
+        entities.DailyMood.list('-date', 1000),
+        entities.Achievement.list()
       ]);
 
       // Filter by date range

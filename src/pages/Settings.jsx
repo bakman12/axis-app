@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,9 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { MobileSelect } from '@/components/ui/mobile-select';
 import { Separator } from '@/components/ui/separator';
-import { Settings as SettingsIcon, Bell, Shield, Target, Download, User, Save, CheckCircle, Trash2 } from 'lucide-react';
+import { Settings as SettingsIcon, Bell, Shield, Target, Download, User, Save, CheckCircle, Trash2, Lock, Timer } from 'lucide-react';
 import HealthDataExport from '@/components/HealthDataExport';
 import EnhancedDataExport from '@/components/EnhancedDataExport';
+import HealthDataIntegration from '@/components/HealthDataIntegration';
+import EmergencyIDSetup from '@/components/EmergencyIDSetup';
+import { getAutoLockTimeout, setAutoLockTimeout } from '@/lib/AutoLock';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,8 +30,26 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import RootPageHeader from '../components/RootPageHeader';
 import { PrivacyNotice } from '../components/MedicalDisclaimer';
+import AuditLogViewer from '@/components/AuditLogViewer';
+import PinChange from '@/components/PinChange';
+import EncryptedBackup from '@/components/EncryptedBackup';
+
+const AUTO_LOCK_OPTIONS = [
+  { value: '30000',  label: '30 seconds' },
+  { value: '60000',  label: '1 minute' },
+  { value: '300000', label: '5 minutes' },
+  { value: '900000', label: '15 minutes' },
+  { value: '0',      label: 'Never (not recommended)' },
+];
 
 export default function Settings() {
+  const [autoLockTimeout, setAutoLockTimeoutState] = useState(() => String(getAutoLockTimeout()));
+
+  const handleAutoLockChange = (value) => {
+    setAutoLockTimeoutState(value);
+    setAutoLockTimeout(parseInt(value, 10));
+  };
+
   const [formData, setFormData] = useState({
     notification_enabled: true,
     reminder_minutes_before: 15,
@@ -63,6 +85,7 @@ export default function Settings() {
 
   useEffect(() => {
     if (user) {
+      const storedTheme = localStorage.getItem('axis_theme');
       setFormData({
         notification_enabled: user.notification_enabled ?? true,
         reminder_minutes_before: user.reminder_minutes_before ?? 15,
@@ -86,7 +109,7 @@ export default function Settings() {
         target_streak: user.target_streak ?? 30,
         target_adherence: user.target_adherence ?? 95,
         time_format: user.time_format ?? '12h',
-        theme: user.theme ?? 'light',
+        theme: storedTheme || user.theme || 'light',
         disable_system_gestures: user.disable_system_gestures ?? false
       });
     }
@@ -114,10 +137,10 @@ export default function Settings() {
   const handleExportData = async () => {
     try {
       const [medications, logs, checkIns, achievements] = await Promise.all([
-        base44.entities.Medication.list(),
-        base44.entities.MedicationLog.list('-created_date', 1000),
-        base44.entities.CheckIn.list('-created_date', 1000),
-        base44.entities.Achievement.list()
+        entities.Medication.list(),
+        entities.MedicationLog.list('-created_date', 1000),
+        entities.CheckIn.list('-created_date', 1000),
+        entities.Achievement.list()
       ]);
 
       const exportData = {
@@ -150,17 +173,17 @@ export default function Settings() {
     try {
       // Delete all user data
       const [medications, logs, checkIns, achievements] = await Promise.all([
-        base44.entities.Medication.list(),
-        base44.entities.MedicationLog.list(),
-        base44.entities.CheckIn.list(),
-        base44.entities.Achievement.list()
+        entities.Medication.list(),
+        entities.MedicationLog.list(),
+        entities.CheckIn.list(),
+        entities.Achievement.list()
       ]);
 
       await Promise.all([
-        ...medications.map(m => base44.entities.Medication.delete(m.id)),
-        ...logs.map(l => base44.entities.MedicationLog.delete(l.id)),
-        ...checkIns.map(c => base44.entities.CheckIn.delete(c.id)),
-        ...achievements.map(a => base44.entities.Achievement.delete(a.id))
+        ...medications.map(m => entities.Medication.delete(m.id)),
+        ...logs.map(l => entities.MedicationLog.delete(l.id)),
+        ...checkIns.map(c => entities.CheckIn.delete(c.id)),
+        ...achievements.map(a => entities.Achievement.delete(a.id))
       ]);
 
       toast.success('Account data deleted successfully');
@@ -615,15 +638,22 @@ export default function Settings() {
                 <Label htmlFor="theme" className="dark:text-white text-sm">App Theme</Label>
                 <MobileSelect
                   value={formData.theme}
-                  onValueChange={(value) => setFormData({ ...formData, theme: value })}
+                  onValueChange={(value) => {
+                    setFormData({ ...formData, theme: value });
+                    localStorage.setItem('axis_theme', value);
+                    document.documentElement.classList.toggle(
+                      'dark',
+                      value === 'dark' || (value === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches),
+                    );
+                  }}
                   placeholder="App theme"
                   options={[
                     { value: 'light', label: 'Light' },
                     { value: 'dark', label: 'Dark' },
-                    { value: 'auto', label: 'Auto (system)' }
+                    { value: 'auto', label: 'System default' }
                   ]}
                 />
-                <p className="text-sm text-gray-500 dark:text-gray-400">Theme applies automatically</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Changes apply instantly</p>
               </div>
 
               <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
@@ -642,6 +672,66 @@ export default function Settings() {
 
           {/* Health App Integration */}
           <HealthDataExport />
+
+          {/* External Health Data Integration */}
+          <HealthDataIntegration />
+
+          {/* Security */}
+          <Card className="shadow-md border-l-4 border-l-orange-500 dark:bg-gray-800 dark:border-gray-700">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 dark:text-white">
+                <Lock className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                Security & Privacy
+              </CardTitle>
+              <CardDescription className="dark:text-gray-400">
+                Biometric lock, auto-lock, and screen security settings
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg min-h-[44px]">
+                <div>
+                  <Label className="dark:text-white text-sm flex items-center gap-2">
+                    <Timer className="w-4 h-4 text-orange-500" />
+                    Auto-lock timeout
+                  </Label>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    App locks and clears decrypted data after this period of inactivity
+                  </p>
+                </div>
+                <MobileSelect
+                  value={autoLockTimeout}
+                  onValueChange={handleAutoLockChange}
+                  options={AUTO_LOCK_OPTIONS}
+                  className="w-36 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
+                />
+              </div>
+
+              <div className="p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-700 rounded-lg">
+                <p className="text-xs text-orange-900 dark:text-orange-200">
+                  <strong>🔒 Black Box Mode:</strong> All medication data, dosages, and health notes are encrypted on your device with AES-256-GCM. The encryption key never leaves your device and is inaccessible via any admin interface.
+                </p>
+              </div>
+
+              <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                <p>• Screenshots and screen recording are blocked (Android FLAG_SECURE)</p>
+                <p>• App locks immediately when sent to background</p>
+                <p>• Biometric (fingerprint / Face ID) + PIN fallback protect decryption</p>
+                <p>• Emergency Medical ID is always accessible without unlocking</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Change PIN */}
+          <PinChange />
+
+          {/* Emergency Medical ID */}
+          <EmergencyIDSetup />
+
+          {/* Audit Log */}
+          <AuditLogViewer />
+
+          {/* Encrypted Backup */}
+          <EncryptedBackup />
 
           {/* Enhanced Data Export */}
           <EnhancedDataExport user={user} />

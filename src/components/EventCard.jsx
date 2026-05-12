@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, AlertCircle, Trash2, Sparkles } from 'lucide-react';
-import { format, differenceInDays, differenceInHours, parseISO } from 'date-fns';
+import { format, differenceInDays, parseISO } from 'date-fns';
 import { toast } from 'sonner';
 
 export default function EventCard({ event }) {
@@ -14,7 +15,7 @@ export default function EventCard({ event }) {
   const [loadingTip, setLoadingTip] = useState(false);
 
   const deleteEventMutation = useMutation({
-    mutationFn: (id) => base44.entities.ImportantEvent.delete(id),
+    mutationFn: (id) => entities.ImportantEvent.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
       toast.success('Event deleted');

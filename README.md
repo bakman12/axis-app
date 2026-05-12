@@ -1,39 +1,48 @@
-**Welcome to your Base44 project** 
+# Med.AI
 
-**About**
+A comprehensive medication management app designed to help users stay on track with their medication schedules, featuring AI assistance, health data integration, and travel planning.
 
-View and Edit  your app on [Base44.com](http://Base44.com) 
+## Features
 
-This project contains everything you need to run your app locally.
+- **Medication Tracking**: Log doses, set reminders, and track adherence
+- **AI Health Coach**: Personalized insights and recommendations
+- **Travel Planning**: Manage medications for trips with packing calculators
+- **Health Integration**: Sync with Apple Health/Google Fit
+- **Offline Support**: PWA functionality for app-like experience
+- **Touch Gestures**: Swipe to log doses on mobile devices
 
-**Edit the code in your local development environment**
+## Tech Stack
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+- React 18 + Vite
+- Capacitor (for native Android/iOS)
+- Base44 backend
+- PWA with service worker
+- Touch gestures with @use-gesture/react
 
-**Prerequisites:** 
+## Development Setup
 
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
+1. Clone the repo
+2. `npm install`
+3. `npm run dev` for web development
+4. `npm run build && npx cap sync` for native builds
 
-```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
+## App Store Launch Checklist
 
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
-```
+- [ ] Add app icons and splash screens to `resources/` folder
+- [ ] Test on physical devices (Android/iOS)
+- [ ] Create privacy policy and terms of service
+- [ ] Set up app store listings with screenshots
+- [ ] Ensure HIPAA compliance for health data
+- [ ] Test all Capacitor plugins (health, haptics, calendar)
+- [ ] Verify offline functionality
+- [ ] Run security audit
+- [ ] Prepare beta testing group
 
-Run the app: `npm run dev`
+## Publishing
 
-**Publish your changes**
+- **Android**: Build signed APK/AAB, upload to Google Play
+- **iOS**: Build archive, upload to App Store Connect
 
-Open [Base44.com](http://Base44.com) and click on Publish.
+## Support
 
-**Docs & Support**
-
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+For issues or contributions, please open a GitHub issue.

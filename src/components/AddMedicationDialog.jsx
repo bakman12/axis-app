@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+
+import React, { useState, useMemo } from 'react';
+import { entities } from '@/lib/encryptedBase44Client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +9,14 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { MobileSelect } from '@/components/ui/mobile-select';
-import { Plus, X, Scan } from 'lucide-react';
+import { Plus, X, Scan, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { scheduleMedicationNotifications } from '@/lib/NotificationService';
+import { logAuditEvent, AUDIT } from '@/lib/auditLog';
+import { checkInteractions, severityStyles } from '@/lib/drugInteractions';
 import BarcodeScanner from './BarcodeScanner';
 import MedicationImageUpload from './MedicationImageUpload';
 import MedicationDatabaseLookup from './MedicationDatabaseLookup';
-import { AlertTriangle } from 'lucide-react';
 
 export default function AddMedicationDialog({ open, onClose }) {
   const [formData, setFormData] = useState({
@@ -22,6 +25,7 @@ export default function AddMedicationDialog({ open, onClose }) {
     frequency: 'daily',
     times: ['08:00'],
     critical: false,
+    active: true,
     notes: '',
     quantity_remaining: 30,
     refill_reminder_days: 7,
@@ -34,22 +38,29 @@ export default function AddMedicationDialog({ open, onClose }) {
 
   const queryClient = useQueryClient();
 
+  // Fetch existing medications so we can check for interactions as user types
+  const { data: existingMeds = [] } = useQuery({
+    queryKey: ['medications'],
+    queryFn: () => entities.Medication.filter({ active: true }),
+  });
+
+  // Recompute interaction warnings whenever the medication name changes
+  const interactions = useMemo(
+    () => checkInteractions(formData.name, existingMeds),
+    [formData.name, existingMeds]
+  );
+
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Medication.create(data),
-    onMutate: async (newMed) => {
-      await queryClient.cancelQueries(['medications']);
-      const previousMeds = queryClient.getQueryData(['medications']);
-      queryClient.setQueryData(['medications'], (old = []) => [...old, { ...newMed, id: `temp-${Date.now()}` }]);
-      return { previousMeds };
-    },
-    onError: (err, newMed, context) => {
-      queryClient.setQueryData(['medications'], context.previousMeds);
-      toast.error('Failed to add medication');
-    },
-    onSuccess: () => {
+    mutationFn: (data) => entities.Medication.create(data),
+    onSuccess: (created) => {
+      scheduleMedicationNotifications(/** @type {any} */ (created));
+      logAuditEvent(AUDIT.MEDICATION_ADDED, { name: formData.name });
       queryClient.invalidateQueries(['medications']);
       toast.success('Medication added');
       onClose();
+    },
+    onError: () => {
+      toast.error('Failed to add medication');
     }
   });
 
@@ -337,6 +348,33 @@ export default function AddMedicationDialog({ open, onClose }) {
               />
             </div>
           </div>
+
+          {/* Drug interaction warnings — shown as user types the medication name */}
+          {interactions.length > 0 && (
+            <div className="space-y-2">
+              {interactions.map((/** @type {any} */ w, i) => {
+                const styles = severityStyles(w.severity);
+                return (
+                  <div key={i} className={`rounded-lg p-3 border ${styles.bg} ${styles.border}`}>
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className={`w-4 h-4 flex-shrink-0 mt-0.5 ${styles.text}`} />
+                      <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className={`text-xs font-bold uppercase px-1.5 py-0.5 rounded ${styles.badge}`}>
+                            {w.severity}
+                          </span>
+                          <span className={`text-xs font-semibold ${styles.text}`}>
+                            {w.drug1} + {w.drug2}
+                          </span>
+                        </div>
+                        <p className={`text-xs ${styles.text}`}>{w.message}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1 h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white select-none">

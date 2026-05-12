@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
@@ -26,7 +26,7 @@ export default function AddEventDialog({ open, onOpenChange }) {
   });
 
   const createEventMutation = useMutation({
-    mutationFn: (data) => base44.entities.ImportantEvent.create(data),
+    mutationFn: (data) => entities.ImportantEvent.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
       toast.success('Event added successfully!');

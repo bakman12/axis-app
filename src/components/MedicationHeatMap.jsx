@@ -1,5 +1,4 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Flame } from 'lucide-react';
 import { format, subDays, startOfDay } from 'date-fns';
 

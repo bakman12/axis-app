@@ -1,23 +1,24 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
+import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Brain, AlertTriangle, TrendingUp, Clock, RefreshCw } from 'lucide-react';
-import { format, subDays } from 'date-fns';
+import { format } from 'date-fns';
 
 export default function PredictiveInsights({ medications }) {
   const [analyzing, setAnalyzing] = useState(false);
 
   const { data: logs = [] } = useQuery({
     queryKey: ['logs'],
-    queryFn: () => base44.entities.MedicationLog.list('-created_date', 100)
+    queryFn: () => entities.MedicationLog.list('-created_date', 100)
   });
 
   const { data: checkIns = [] } = useQuery({
     queryKey: ['checkins'],
-    queryFn: () => base44.entities.CheckIn.list('-created_date', 30)
+    queryFn: () => entities.CheckIn.list('-created_date', 30)
   });
 
   const { data: predictions, isLoading, refetch } = useQuery({
