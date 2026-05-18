@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-src https://challenges.cloudflare.com;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://challenges.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-src https://challenges.cloudflare.com;" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
   <title>Axis — Never Miss a Dose</title>
@@ -18,395 +18,903 @@
   <meta name="twitter:description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning." />
   <meta name="twitter:image" content="https://axishealth.app/og-image.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #09090b;
-      --bg2:      #111113;
-      --bg3:      #18181b;
-      --bg4:      #1c1c1e;
-      --border:   rgba(255,255,255,0.08);
-      --border2:  rgba(255,255,255,0.12);
-      --orange:   #f97316;
-      --orange-d: #ea580c;
-      --orange-g: rgba(249,115,22,0.15);
-      --text:     #fafafa;
-      --muted:    #a1a1aa;
-      --muted2:   #71717a;
+      --bg:        #ffffff;
+      --bg2:       #f8fafc;
+      --bg3:       #f1f5f9;
+      --bg-dark:   #0f172a;
+      --text:      #0f172a;
+      --body:      #334155;
+      --muted:     #64748b;
+      --muted2:    #94a3b8;
+      --border:    #e2e8f0;
+      --border2:   #cbd5e1;
+      --orange:    #f97316;
+      --orange-d:  #ea580c;
+      --orange-l:  #fff7ed;
+      --orange-m:  #ffedd5;
+      --orange-b:  rgba(249,115,22,0.12);
     }
 
     html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    /* ── Nav ── */
+    /* ── UTILS ─────────────────────────────── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+    @media (max-width: 768px) { .container { padding: 0 20px; } }
+
+    .tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--orange-m); border: 1px solid rgba(249,115,22,0.25);
+      color: var(--orange-d); font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 100px;
+    }
+    .tag-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+
+    .section-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--orange); margin-bottom: 10px;
+    }
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 800; line-height: 1.05;
+      letter-spacing: -0.03em; color: var(--text); margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.05rem; color: var(--body); line-height: 1.7;
+      max-width: 520px;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--orange); color: #fff;
+      padding: 14px 28px; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 600; text-decoration: none;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 14px rgba(249,115,22,.35);
+    }
+    .btn-primary:hover { background: var(--orange-d); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(249,115,22,.4); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--text); padding: 14px 24px; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 600; text-decoration: none;
+      border: 1.5px solid var(--border2);
+      transition: border-color .2s, background .2s;
+    }
+    .btn-outline:hover { border-color: var(--orange); background: var(--orange-l); }
+
+    .fade-up { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+    .fade-up.visible { opacity: 1; transform: none; }
+
+    /* ── NAV ───────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 56px;
-      background: rgba(9,9,11,0.8);
-      backdrop-filter: blur(16px);
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--border);
+      transition: box-shadow .3s;
     }
+    nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,.07); }
+    .nav-inner {
+      max-width: 1160px; margin: 0 auto; padding: 0 48px;
+      height: 64px; display: flex; align-items: center; justify-content: space-between;
+    }
+    @media (max-width: 768px) { .nav-inner { padding: 0 20px; } }
     .nav-logo {
-      font-size: 1.25rem; font-weight: 700; letter-spacing: -0.03em;
-      color: var(--text); text-decoration: none;
+      font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+      color: var(--text); text-decoration: none; letter-spacing: -0.04em;
     }
     .nav-logo span { color: var(--orange); }
     .nav-links { display: flex; gap: 32px; }
-    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color .2s; }
     .nav-links a:hover { color: var(--text); }
     .nav-cta {
-      background: var(--orange); color: #fff;
+      background: var(--text); color: #fff;
       padding: 9px 22px; border-radius: 8px;
       font-size: 0.875rem; font-weight: 600; text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
+      transition: background .2s, transform .15s;
     }
-    .nav-cta:hover { background: var(--orange-d); transform: translateY(-1px); }
+    .nav-cta:hover { background: #1e293b; transform: translateY(-1px); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
 
-    /* ── Hero ── */
+    /* ── HERO ──────────────────────────────── */
     #hero {
-      min-height: 100vh;
-      display: grid; grid-template-columns: 1fr 1fr;
-      align-items: center; gap: 48px;
-      padding: 120px 72px 80px;
+      padding: 132px 0 80px;
+      background: linear-gradient(175deg, #fff 0%, #fff7ed 60%, #fff 100%);
       position: relative; overflow: hidden;
     }
     #hero::before {
       content: ''; position: absolute;
-      width: 700px; height: 700px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(249,115,22,0.18) 0%, transparent 70%);
-      top: -200px; right: -150px; pointer-events: none;
+      width: 900px; height: 900px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,.07) 0%, transparent 70%);
+      top: -300px; right: -200px; pointer-events: none;
     }
-    #hero::after {
-      content: ''; position: absolute;
-      width: 400px; height: 400px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%);
-      bottom: 0; left: -100px; pointer-events: none;
+    .hero-inner {
+      max-width: 1160px; margin: 0 auto; padding: 0 48px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 60px;
     }
-
-    .hero-text { position: relative; z-index: 1; }
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.25);
-      color: var(--orange); font-size: 0.72rem; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 5px 12px; border-radius: 100px; margin-bottom: 24px;
-    }
-    .eyebrow-dot {
-      width: 6px; height: 6px; border-radius: 50%; background: var(--orange);
-      animation: blink 2s ease-in-out infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    @media (max-width: 960px) { .hero-inner { grid-template-columns: 1fr; padding: 0 20px; } }
 
     h1 {
-      font-size: clamp(2.4rem, 4vw, 3.8rem);
-      font-weight: 700; line-height: 1.1; letter-spacing: -0.04em;
-      margin-bottom: 20px; color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 4.5rem);
+      font-weight: 800; line-height: 1.0; letter-spacing: -0.04em;
+      color: var(--text); margin: 20px 0 22px;
     }
     h1 em { font-style: normal; color: var(--orange); }
-
-    .hero-sub {
-      font-size: 1.05rem; color: var(--muted); line-height: 1.7;
-      max-width: 420px; margin-bottom: 36px;
-    }
-
+    .hero-sub { font-size: 1.1rem; color: var(--body); line-height: 1.7; max-width: 440px; margin-bottom: 36px; }
     .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--orange); color: #fff;
-      padding: 12px 24px; border-radius: 8px;
-      font-size: 0.9rem; font-weight: 600; text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
-    }
-    .btn-primary:hover { background: var(--orange-d); transform: translateY(-1px); }
-    .btn-ghost {
-      display: inline-flex; align-items: center; gap: 8px;
-      color: var(--text); padding: 12px 20px; border-radius: 8px;
-      font-size: 0.9rem; font-weight: 600; text-decoration: none;
-      border: 1px solid var(--border2);
-      background: var(--bg3);
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .btn-ghost:hover { border-color: var(--orange); background: var(--bg4); }
-
     .social-proof { display: flex; align-items: center; gap: 10px; margin-top: 28px; }
-    .stars { color: #facc15; letter-spacing: -1px; }
+    .stars { color: #f59e0b; letter-spacing: 1px; font-size: 1rem; }
     .proof-text { font-size: 0.82rem; color: var(--muted); }
 
-    .canvas-wrap { position: relative; z-index: 1; display: flex; justify-content: center; }
-    #phone-canvas { width: 100%; max-width: 480px; height: 580px; cursor: grab; filter: drop-shadow(0 32px 64px rgba(249,115,22,0.15)); }
+    .hero-visual { display: flex; justify-content: center; position: relative; }
+    #phone-canvas {
+      width: 100%; max-width: 420px; height: 540px;
+      cursor: grab; filter: drop-shadow(0 30px 60px rgba(0,0,0,.15)) drop-shadow(0 0 0 1px rgba(0,0,0,.04));
+    }
     #phone-canvas:active { cursor: grabbing; }
 
-    /* ── Ticker ── */
-    .ticker-wrap { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 16px 0; overflow: hidden; }
-    .ticker-track { display: inline-flex; animation: ticker 30s linear infinite; }
-    .ticker-item { display: inline-flex; align-items: center; gap: 14px; padding: 0 28px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
-    .ticker-item span { color: var(--muted); }
+    /* ── TRUST BAR ─────────────────────────── */
+    .trust-bar {
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: var(--bg2); padding: 22px 0;
+    }
+    .trust-inner {
+      max-width: 1160px; margin: 0 auto; padding: 0 48px;
+      display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+    }
+    @media (max-width: 768px) { .trust-inner { padding: 0 20px; flex-direction: column; text-align: center; gap: 14px; } }
+    .trust-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+    .trust-item strong { color: var(--text); }
+    .trust-sep { width: 1px; height: 24px; background: var(--border2); }
+    @media (max-width: 768px) { .trust-sep { display: none; } }
+    .trust-icon { font-size: 1rem; }
+
+    /* ── TICKER ────────────────────────────── */
+    .ticker-wrap { background: var(--bg-dark); padding: 14px 0; overflow: hidden; }
+    .ticker-track { display: inline-flex; animation: ticker 32s linear infinite; }
+    .ticker-item { display: inline-flex; align-items: center; gap: 14px; padding: 0 24px; font-size: 0.75rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+    .ticker-item strong { color: #94a3b8; }
     .ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
     @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-    /* ── Sections ── */
-    section { padding: 100px 72px; position: relative; overflow: hidden; }
-    .section-label {
-      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--orange); margin-bottom: 12px;
-    }
-    h2 {
-      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700;
-      letter-spacing: -0.035em; line-height: 1.15; color: var(--text); margin-bottom: 14px;
-    }
-    .section-sub { font-size: 1rem; color: var(--muted); max-width: 480px; line-height: 1.65; margin-bottom: 56px; }
+    /* ── PROBLEM ───────────────────────────── */
+    #problem { padding: 100px 0; }
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 56px; }
+    @media (max-width: 768px) { .problem-grid { grid-template-columns: 1fr; } }
+    .prob-col { border-radius: 16px; padding: 32px; }
+    .prob-bad { background: #fef2f2; border: 1px solid #fecaca; }
+    .prob-good { background: var(--orange-l); border: 1px solid rgba(249,115,22,0.25); }
+    .prob-head { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1rem; margin-bottom: 20px; }
+    .prob-bad .prob-head { color: #b91c1c; }
+    .prob-good .prob-head { color: var(--orange-d); }
+    .prob-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .prob-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 0.88rem; color: var(--body); line-height: 1.55; }
+    .prob-list li::before { flex-shrink: 0; margin-top: 1px; }
+    .prob-bad .prob-list li::before { content: '✗'; color: #ef4444; font-weight: 700; }
+    .prob-good .prob-list li::before { content: '✓'; color: var(--orange); font-weight: 700; }
 
-    /* ── Features ── */
-    #features { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
-    .fcard {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 12px; padding: 28px;
-      transition: border-color 0.25s, transform 0.2s;
+    /* ── BENTO ─────────────────────────────── */
+    #features { padding: 100px 0; background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .bento { display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: 180px; gap: 14px; margin-top: 52px; }
+    .bcard {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      transition: border-color .25s, transform .2s, box-shadow .2s;
+      overflow: hidden; position: relative;
     }
-    .fcard:hover { border-color: rgba(249,115,22,0.35); transform: translateY(-3px); }
-    .fcard-icon {
-      width: 44px; height: 44px; border-radius: 10px;
-      background: var(--orange-g); border: 1px solid rgba(249,115,22,0.2);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; margin-bottom: 16px;
-    }
-    .fcard h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
-    .fcard p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+    .bcard:hover { border-color: rgba(249,115,22,.4); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,.08); }
+    .bcard-icon { font-size: 1.6rem; margin-bottom: 14px; }
+    .bcard h3 { font-weight: 700; font-size: 1rem; letter-spacing: -0.01em; margin-bottom: 6px; color: var(--text); }
+    .bcard p { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
+    .bcard-accent { position: absolute; bottom: -20px; right: -20px; width: 100px; height: 100px; border-radius: 50%; background: var(--orange-b); pointer-events: none; }
 
-    /* ── Stats ── */
-    #stats { padding: 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); }
-    .stat-cell { padding: 72px; border-right: 1px solid var(--border); }
+    /* Bento layout */
+    .b1 { grid-column: span 5; grid-row: span 2; }
+    .b2 { grid-column: span 4; grid-row: span 2; }
+    .b3 { grid-column: span 3; grid-row: span 1; }
+    .b4 { grid-column: span 3; grid-row: span 1; }
+    .b5 { grid-column: span 4; grid-row: span 1; }
+    .b6 { grid-column: span 8; grid-row: span 1; }
+    @media (max-width: 960px) {
+      .bento { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
+      .b1,.b2,.b3,.b4,.b5,.b6 { grid-column: span 1; grid-row: span 1; }
+      .b1,.b6 { grid-column: span 2; }
+    }
+    @media (max-width: 600px) { .bento { grid-template-columns: 1fr; } .b1,.b6 { grid-column: span 1; } }
+
+    .bcard.b1 { background: var(--bg-dark); border-color: transparent; }
+    .bcard.b1 h3 { color: #f8fafc; font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+    .bcard.b1 p { color: #94a3b8; font-size: 0.9rem; }
+    .bcard.b1 .bcard-accent { background: rgba(249,115,22,0.2); width: 200px; height: 200px; }
+    .reminder-preview {
+      margin-top: 20px; background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .reminder-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); flex-shrink: 0; animation: pulse 2s ease-in-out infinite; }
+    .reminder-text { font-size: 0.82rem; color: #cbd5e1; }
+    .reminder-text strong { color: #f8fafc; display: block; margin-bottom: 2px; }
+    .reminder-time { margin-left: auto; font-size: 0.75rem; color: #64748b; white-space: nowrap; }
+
+    .streak-preview { margin-top: 18px; display: flex; gap: 4px; }
+    .streak-day { width: 22px; height: 22px; border-radius: 5px; }
+    .streak-day.done { background: var(--orange); }
+    .streak-day.miss { background: #e2e8f0; }
+    .streak-day.today { background: var(--orange-d); outline: 2px solid var(--orange); outline-offset: 1px; }
+
+    .ai-preview { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+    .ai-bubble { font-size: 0.78rem; padding: 9px 13px; border-radius: 10px; line-height: 1.5; }
+    .ai-bubble.user { background: #f1f5f9; color: var(--body); align-self: flex-end; }
+    .ai-bubble.bot { background: var(--orange-m); color: var(--orange-d); align-self: flex-start; border: 1px solid rgba(249,115,22,0.2); }
+
+    /* ── TESTIMONIALS ──────────────────────── */
+    #testimonials { padding: 100px 0; }
+    .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 52px; }
+    @media (max-width: 768px) { .testi-grid { grid-template-columns: 1fr; } }
+    .tcard {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .tcard:hover { box-shadow: 0 12px 32px rgba(0,0,0,.08); transform: translateY(-3px); }
+    .tcard-stars { color: #f59e0b; font-size: 0.9rem; margin-bottom: 14px; }
+    .tcard-text { font-size: 0.9rem; color: var(--body); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+    .tcard-author { display: flex; align-items: center; gap: 12px; }
+    .tcard-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .tcard-name { font-weight: 600; font-size: 0.88rem; color: var(--text); }
+    .tcard-role { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── STATS ─────────────────────────────── */
+    #stats {
+      padding: 0;
+      background: var(--bg-dark);
+      border-top: 1px solid rgba(255,255,255,.06);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); }
+    .stat-cell { padding: 64px 48px; border-right: 1px solid rgba(255,255,255,.08); text-align: center; }
     .stat-cell:last-child { border-right: none; }
-    .stat-num { font-size: 3.2rem; font-weight: 700; letter-spacing: -0.05em; color: var(--orange); line-height: 1; margin-bottom: 8px; }
-    .stat-label { font-size: 0.875rem; color: var(--muted); line-height: 1.5; max-width: 180px; }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; letter-spacing: -0.05em; color: var(--orange); line-height: 1; margin-bottom: 8px; }
+    .stat-label { font-size: 0.85rem; color: #64748b; line-height: 1.5; }
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-cell { border-right: none; border-bottom: 1px solid rgba(255,255,255,.06); padding: 40px 24px; }
+    }
 
-    /* ── How ── */
-    #how { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    .steps { display: flex; flex-direction: column; }
-    .step { display: flex; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--border); }
+    /* ── HOW IT WORKS ──────────────────────── */
+    #how { padding: 100px 0; }
+    .how-inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    @media (max-width: 960px) { .how-inner { grid-template-columns: 1fr; gap: 40px; } }
+    .steps { display: flex; flex-direction: column; gap: 0; margin-top: 36px; }
+    .step {
+      display: flex; gap: 20px; padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background .15s; border-radius: 0;
+    }
     .step:last-child { border-bottom: none; }
     .step-num {
-      flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px;
-      background: var(--orange-g); border: 1px solid rgba(249,115,22,0.2);
-      color: var(--orange); font-weight: 700; font-size: 0.85rem;
-      display: flex; align-items: center; justify-content: center; margin-top: 1px;
+      flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px;
+      background: var(--orange-m); border: 1px solid rgba(249,115,22,.25);
+      color: var(--orange-d); font-weight: 800; font-size: 0.9rem;
+      font-family: 'Syne', sans-serif;
+      display: flex; align-items: center; justify-content: center; margin-top: 2px;
     }
-    .step h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 5px; }
-    .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
-
-    .phone-panel {
+    .step h3 { font-weight: 700; font-size: 0.95rem; margin-bottom: 5px; color: var(--text); }
+    .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+    .how-visual {
       background: var(--bg2); border: 1px solid var(--border);
-      border-radius: 16px; overflow: hidden;
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.08);
     }
-    #mini-canvas { width: 100%; height: 400px; display: block; }
+    #mini-canvas { width: 100%; height: 420px; display: block; }
 
-    /* ── Security ── */
-    #security { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .security-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    /* ── SECURITY ──────────────────────────── */
+    #security {
+      padding: 100px 0;
+      background: var(--bg-dark);
+    }
+    #security .section-label { color: #fb923c; }
+    #security h2 { color: #f8fafc; }
+    #security .section-sub { color: #94a3b8; max-width: 520px; }
+    .sec-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-top: 52px; }
+    @media (max-width: 768px) { .sec-grid { grid-template-columns: 1fr; } }
     .sec-card {
       display: flex; gap: 16px; align-items: flex-start;
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: 12px; padding: 22px;
-      transition: border-color 0.2s, transform 0.2s;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 24px;
+      transition: border-color .2s, background .2s;
     }
-    .sec-card:hover { border-color: rgba(249,115,22,0.3); transform: translateY(-2px); }
+    .sec-card:hover { border-color: rgba(249,115,22,.35); background: rgba(249,115,22,.04); }
     .sec-icon {
-      flex-shrink: 0; width: 42px; height: 42px; border-radius: 9px;
-      background: var(--orange-g); border: 1px solid rgba(249,115,22,0.15);
+      flex-shrink: 0; width: 44px; height: 44px; border-radius: 10px;
+      background: rgba(249,115,22,.12); border: 1px solid rgba(249,115,22,.2);
       display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
     }
-    .sec-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
-    .sec-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .sec-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; color: #f8fafc; }
+    .sec-card p { font-size: 0.82rem; color: #64748b; line-height: 1.65; }
 
-    /* ── CTA ── */
-    #cta { text-align: center; }
-    #cta::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 50% 100%, rgba(249,115,22,0.12) 0%, transparent 65%);
-      pointer-events: none;
+    /* ── PRICING ───────────────────────────── */
+    #pricing { padding: 100px 0; background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 780px; margin: 52px auto 0; }
+    @media (max-width: 640px) { .pricing-grid { grid-template-columns: 1fr; } }
+    .pcard {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 20px; padding: 36px; position: relative;
     }
-    #cta h2, #cta .section-label, #cta .section-sub, #cta .btn-row { position: relative; z-index: 1; }
-    #cta .section-sub { margin: 0 auto 36px; }
+    .pcard.featured { border: 2px solid var(--orange); box-shadow: 0 8px 40px rgba(249,115,22,.15); }
+    .pcard-badge {
+      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+      background: var(--orange); color: #fff;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 100px;
+    }
+    .pcard-name { font-weight: 700; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .pcard-price { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; letter-spacing: -0.04em; color: var(--text); line-height: 1; }
+    .pcard-price span { font-size: 1rem; font-family: 'Inter', sans-serif; font-weight: 500; color: var(--muted); }
+    .pcard-desc { font-size: 0.85rem; color: var(--muted); margin: 10px 0 24px; line-height: 1.55; }
+    .pcard-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .pcard-features li { display: flex; gap: 9px; align-items: flex-start; font-size: 0.85rem; color: var(--body); line-height: 1.5; }
+    .pcard-features li::before { content: '✓'; color: var(--orange); font-weight: 700; flex-shrink: 0; }
+    .pcard-features li.dim::before { color: var(--muted2); }
+    .pcard-features li.dim { color: var(--muted); }
+    .pcard-btn {
+      display: block; text-align: center; text-decoration: none;
+      padding: 13px; border-radius: 10px; font-weight: 600; font-size: 0.9rem;
+      transition: background .2s, transform .15s;
+    }
+    .pcard-btn.primary { background: var(--orange); color: #fff; box-shadow: 0 4px 14px rgba(249,115,22,.3); }
+    .pcard-btn.primary:hover { background: var(--orange-d); transform: translateY(-1px); }
+    .pcard-btn.outline { border: 1.5px solid var(--border2); color: var(--text); }
+    .pcard-btn.outline:hover { border-color: var(--orange); background: var(--orange-l); }
+
+    /* ── FAQ ───────────────────────────────── */
+    #faq { padding: 100px 0; }
+    .faq-wrap { max-width: 720px; margin: 52px auto 0; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-btn {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 22px 0; text-align: left; font-size: 0.95rem; font-weight: 600;
+      color: var(--text); transition: color .2s;
+    }
+    .faq-btn:hover { color: var(--orange); }
+    .faq-chevron { width: 18px; height: 18px; flex-shrink: 0; transition: transform .3s; color: var(--muted); }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); color: var(--orange); }
+    .faq-body { overflow: hidden; max-height: 0; transition: max-height .35s ease, padding .35s; }
+    .faq-item.open .faq-body { max-height: 300px; }
+    .faq-body p { font-size: 0.88rem; color: var(--body); line-height: 1.7; padding-bottom: 20px; }
+
+    /* ── CTA ───────────────────────────────── */
+    #cta {
+      padding: 120px 0; text-align: center;
+      background: linear-gradient(180deg, #fff 0%, #fff7ed 100%);
+      border-top: 1px solid var(--border);
+    }
+    #cta h2 { font-size: clamp(2.4rem, 4vw, 3.5rem); margin-bottom: 16px; }
+    #cta .section-sub { margin: 0 auto 40px; text-align: center; }
     #cta .btn-row { justify-content: center; }
 
-    /* ── Footer ── */
+    /* ── FOOTER ────────────────────────────── */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 28px 72px;
-      display: flex; align-items: center; justify-content: space-between;
-      background: var(--bg2);
+      background: var(--bg-dark);
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding: 52px 0 32px;
     }
-    .footer-logo { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text); text-decoration: none; }
-    .footer-logo span { color: var(--orange); }
-    .footer-links { display: flex; gap: 24px; }
-    .footer-links a { color: var(--muted2); text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--text); }
-    footer p { font-size: 0.82rem; color: var(--muted2); }
-
-    /* ── Scroll fade ── */
-    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
-    .fade-up.visible { opacity: 1; transform: none; }
-
-    @media (max-width: 960px) {
-      nav { padding: 14px 20px; }
-      .nav-links { display: none; }
-      #hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
-      #phone-canvas { height: 420px; }
-      section { padding: 70px 24px; }
-      .features-grid { grid-template-columns: 1fr 1fr; }
-      .stats-grid { grid-template-columns: 1fr; }
-      .stat-cell { border-right: none; border-bottom: 1px solid var(--border); padding: 44px 24px; }
-      #how { grid-template-columns: 1fr; gap: 40px; padding: 70px 24px; }
-      .security-grid { grid-template-columns: 1fr; }
-      footer { flex-direction: column; gap: 16px; padding: 24px; text-align: center; }
+    .footer-inner { max-width: 1160px; margin: 0 auto; padding: 0 48px; }
+    @media (max-width: 768px) { .footer-inner { padding: 0 20px; } }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,.06); }
+    @media (max-width: 768px) { .footer-top { grid-template-columns: 1fr 1fr; gap: 28px; } }
+    @media (max-width: 480px) { .footer-top { grid-template-columns: 1fr; } }
+    .footer-brand .footer-logo {
+      font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800;
+      color: #f8fafc; text-decoration: none; letter-spacing: -0.03em;
+      display: block; margin-bottom: 12px;
     }
-    @media (max-width: 600px) { .features-grid { grid-template-columns: 1fr; } }
+    .footer-brand .footer-logo span { color: var(--orange); }
+    .footer-brand p { font-size: 0.83rem; color: #475569; line-height: 1.65; max-width: 240px; }
+    .footer-col h4 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #475569; margin-bottom: 14px; }
+    .footer-col a { display: block; font-size: 0.85rem; color: #64748b; text-decoration: none; margin-bottom: 9px; transition: color .2s; }
+    .footer-col a:hover { color: #94a3b8; }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 24px; flex-wrap: wrap; gap: 12px; }
+    .footer-bottom p { font-size: 0.78rem; color: #334155; }
+    .footer-bottom a { font-size: 0.78rem; color: #475569; text-decoration: none; transition: color .2s; }
+    .footer-bottom a:hover { color: #64748b; }
   </style>
 </head>
 <body>
 
+<!-- ── NAV ── -->
 <nav id="nav">
-  <a class="nav-logo" href="#">Axis<span>.</span></a>
-  <div class="nav-links">
-    <a href="#features">Features</a>
-    <a href="#how">How it works</a>
-    <a href="#security">Security</a>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">Axis<span>.</span></a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="nav-cta" href="#cta">Download Free</a>
   </div>
-  <a class="nav-cta" href="#cta">Download Free</a>
 </nav>
 
-<!-- ── Hero ── -->
+<!-- ── HERO ── -->
 <section id="hero">
-  <div class="hero-text">
-    <div class="eyebrow"><div class="eyebrow-dot"></div>Now on iOS &amp; Android</div>
-    <h1>Your medication,<br /><em>managed.</em></h1>
-    <p class="hero-sub">AI-powered reminders, biometric security, and travel planning — so you never miss a dose, wherever life takes you.</p>
-    <div class="btn-row">
-      <a class="btn-primary" href="#">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-        App Store
-      </a>
-      <a class="btn-ghost" href="#">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
-        Google Play
-      </a>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="tag"><div class="tag-dot"></div>Now on iOS &amp; Android</div>
+      <h1>Never miss<br />a <em>dose</em><br />again.</h1>
+      <p class="hero-sub">Axis combines AI-powered reminders, biometric security, and travel planning into the medication app your health actually deserves.</p>
+      <div class="btn-row">
+        <a class="btn-primary" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          App Store
+        </a>
+        <a class="btn-outline" href="#">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
+          Google Play
+        </a>
+      </div>
+      <div class="social-proof">
+        <span class="stars">★★★★★</span>
+        <span class="proof-text">4.9 · Trusted by thousands of patients worldwide</span>
+      </div>
     </div>
-    <div class="social-proof">
-      <span class="stars">★★★★★</span>
-      <span class="proof-text">4.9 · Trusted by thousands of patients</span>
+    <div class="hero-visual">
+      <canvas id="phone-canvas"></canvas>
     </div>
-  </div>
-  <div class="canvas-wrap">
-    <canvas id="phone-canvas"></canvas>
   </div>
 </section>
 
-<!-- ── Ticker ── -->
+<!-- ── TRUST BAR ── -->
+<div class="trust-bar">
+  <div class="trust-inner">
+    <div class="trust-item"><span class="trust-icon">🔐</span><span>AES-256-GCM encrypted</span></div>
+    <div class="trust-sep"></div>
+    <div class="trust-item"><span class="trust-icon">📴</span><span>Works fully <strong>offline</strong></span></div>
+    <div class="trust-sep"></div>
+    <div class="trust-item"><span class="trust-icon">👆</span><span>Face ID &amp; fingerprint unlock</span></div>
+    <div class="trust-sep"></div>
+    <div class="trust-item"><span class="trust-icon">✈️</span><span>Built-in <strong>travel planning</strong></span></div>
+    <div class="trust-sep"></div>
+    <div class="trust-item"><span class="trust-icon">🛡️</span><span>Zero data sold. Ever.</span></div>
+  </div>
+</div>
+
+<!-- ── TICKER ── -->
 <div class="ticker-wrap" aria-hidden="true">
   <div class="ticker-track">
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Smart Reminders</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>AI Health Coach</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Travel Planning</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Biometric Security</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Offline First</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>AES-256 Encryption</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Refill Tracker</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Adherence Analytics</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Smart Reminders</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>AI Health Coach</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Travel Planning</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Biometric Security</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Offline First</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>AES-256 Encryption</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Refill Tracker</span></span>
-    <span class="ticker-item"><div class="ticker-dot"></div><span>Adherence Analytics</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Smart Reminders</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>AI Health Coach</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Travel Planning</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Biometric Lock</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Offline First</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>AES-256 Encryption</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Refill Tracker</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Adherence Analytics</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Smart Reminders</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>AI Health Coach</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Travel Planning</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Biometric Lock</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Offline First</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>AES-256 Encryption</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Refill Tracker</strong></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><strong>Adherence Analytics</strong></span>
   </div>
 </div>
 
-<!-- ── Features ── -->
-<section id="features">
-  <div class="section-label">Features</div>
-  <h2 class="fade-up">Everything your medication<br />routine needs</h2>
-  <p class="section-sub fade-up">Built for real patients with real schedules — not a generic pill reminder.</p>
-  <div class="features-grid">
-    <div class="fcard fade-up"><div class="fcard-icon">💊</div><h3>Smart Reminders</h3><p>Adaptive notifications that fit your schedule. Mark doses taken directly from the notification shade.</p></div>
-    <div class="fcard fade-up"><div class="fcard-icon">🤖</div><h3>AI Health Coach</h3><p>Personalised insights from your adherence history, mood check-ins, and symptom logs.</p></div>
-    <div class="fcard fade-up"><div class="fcard-icon">✈️</div><h3>Travel Planning</h3><p>Auto-calculate packing quantities, adjust schedules for time zones, trip-specific reminders.</p></div>
-    <div class="fcard fade-up"><div class="fcard-icon">📊</div><h3>Adherence Analytics</h3><p>30-day heatmaps, streak tracking, and detailed history to share with your doctor.</p></div>
-    <div class="fcard fade-up"><div class="fcard-icon">🔔</div><h3>Refill Tracker</h3><p>Never run out. Axis monitors your supply and reminds you to reorder before you gap.</p></div>
-    <div class="fcard fade-up"><div class="fcard-icon">📴</div><h3>Works Offline</h3><p>Full functionality without internet. Data is cached locally and syncs when you reconnect.</p></div>
-  </div>
-</section>
-
-<!-- ── Stats ── -->
-<div id="stats">
-  <div class="stats-grid">
-    <div class="stat-cell fade-up"><div class="stat-num">99%</div><div class="stat-label">Adherence rate reported by daily users</div></div>
-    <div class="stat-cell fade-up"><div class="stat-num">50k+</div><div class="stat-label">Doses logged every month</div></div>
-    <div class="stat-cell fade-up"><div class="stat-num">0</div><div class="stat-label">User data sold to third parties. Ever.</div></div>
-  </div>
-</div>
-
-<!-- ── How ── -->
-<section id="how">
-  <div>
-    <div class="section-label">How it works</div>
-    <h2 class="fade-up">Up and running<br />in minutes</h2>
-    <p class="section-sub fade-up">No lengthy setup. Add a medication and you're done.</p>
-    <div class="steps">
-      <div class="step fade-up"><div class="step-num">1</div><div><h3>Add your medications</h3><p>Scan a barcode or search the built-in database. Set dosage, frequency, and times in a few taps.</p></div></div>
-      <div class="step fade-up"><div class="step-num">2</div><div><h3>Get smart reminders</h3><p>Notifications arrive at exactly the right time. Snooze or mark taken without opening the app.</p></div></div>
-      <div class="step fade-up"><div class="step-num">3</div><div><h3>Track your progress</h3><p>Your adherence score, streaks, and history build automatically. Export a clean report anytime.</p></div></div>
+<!-- ── PROBLEM ── -->
+<section id="problem">
+  <div class="container">
+    <div class="section-label">Why Axis</div>
+    <h2 class="fade-up">Most people forget.<br />Most apps don't help.</h2>
+    <p class="section-sub fade-up">Generic pill reminders don't understand your life — travel, complex schedules, or the need for real privacy.</p>
+    <div class="problem-grid">
+      <div class="prob-col prob-bad fade-up">
+        <div class="prob-head">😩 Without Axis</div>
+        <ul class="prob-list">
+          <li>Missed doses because reminders fire at the wrong time</li>
+          <li>No idea how many pills to pack before a trip</li>
+          <li>Health data stored in plain text on servers you don't control</li>
+          <li>No way to know if a dose is late or already taken</li>
+          <li>Manually counting tablets at the pharmacy counter</li>
+          <li>No insight into adherence patterns or trends</li>
+        </ul>
+      </div>
+      <div class="prob-col prob-good fade-up">
+        <div class="prob-head">✅ With Axis</div>
+        <ul class="prob-list">
+          <li>Smart reminders that adapt to your real schedule</li>
+          <li>Auto-calculated packing lists and timezone adjustments</li>
+          <li>AES-256 encrypted, biometric locked — only you can see your data</li>
+          <li>Live today view: taken, pending, missed — at a glance</li>
+          <li>Refill tracker alerts you before you run out</li>
+          <li>30-day adherence heatmap and export for your doctor</li>
+        </ul>
+      </div>
     </div>
   </div>
-  <div class="phone-panel fade-up">
-    <canvas id="mini-canvas"></canvas>
+</section>
+
+<!-- ── BENTO FEATURES ── -->
+<section id="features">
+  <div class="container">
+    <div class="section-label">Features</div>
+    <h2 class="fade-up">Built for how you<br />actually live</h2>
+    <p class="section-sub fade-up">Not a generic reminder app. Axis is built around real medication routines.</p>
+    <div class="bento">
+
+      <div class="bcard b1 fade-up">
+        <div class="bcard-icon">🔔</div>
+        <h3>Smart Reminders</h3>
+        <p>Adaptive notifications that arrive at exactly the right time — and let you log a dose without ever opening the app.</p>
+        <div class="reminder-preview">
+          <div class="reminder-dot"></div>
+          <div class="reminder-text">
+            <strong>Time for Metformin 500mg</strong>
+            Tap to mark taken or snooze 15 min
+          </div>
+          <div class="reminder-time">8:00 AM</div>
+        </div>
+        <div class="bcard-accent"></div>
+      </div>
+
+      <div class="bcard b2 fade-up">
+        <div class="bcard-icon">🤖</div>
+        <h3>AI Health Coach</h3>
+        <p>Ask questions about your adherence, interactions, and symptoms in plain language.</p>
+        <div class="ai-preview">
+          <div class="ai-bubble user">Why do I feel tired after Lisinopril?</div>
+          <div class="ai-bubble bot">That's common in the first 2 weeks. Your body is adjusting to the lower blood pressure. If it persists past week 3, mention it to your doctor.</div>
+        </div>
+      </div>
+
+      <div class="bcard b3 fade-up">
+        <div class="bcard-icon">✈️</div>
+        <h3>Travel Mode</h3>
+        <p>Auto-packs quantities, adjusts for time zones, and sets trip-specific reminders.</p>
+      </div>
+
+      <div class="bcard b4 fade-up">
+        <div class="bcard-icon">📊</div>
+        <h3>Adherence Calendar</h3>
+        <p>30-day heatmap, streaks, and detailed history you can share with your GP.</p>
+        <div class="streak-preview" style="margin-top:14px">
+          <div class="streak-day done"></div><div class="streak-day done"></div><div class="streak-day done"></div>
+          <div class="streak-day done"></div><div class="streak-day miss"></div><div class="streak-day done"></div>
+          <div class="streak-day done"></div><div class="streak-day today"></div>
+        </div>
+      </div>
+
+      <div class="bcard b5 fade-up">
+        <div class="bcard-icon">💊</div>
+        <h3>Refill Tracker</h3>
+        <p>Monitors your supply and reminds you to reorder before you run out — never gap again.</p>
+      </div>
+
+      <div class="bcard b6 fade-up">
+        <div class="bcard-icon">📴</div>
+        <h3>Works Fully Offline</h3>
+        <p>Every feature — reminders, logging, analytics — works without internet. Your data is cached locally and synced when you reconnect. Perfect for travel, underground commutes, or areas with poor signal.</p>
+      </div>
+
+    </div>
   </div>
 </section>
 
-<!-- ── Security ── -->
+<!-- ── TESTIMONIALS ── -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-label">Testimonials</div>
+    <h2 class="fade-up">Patients love it</h2>
+    <p class="section-sub fade-up">From complex multi-medication regimens to simple daily vitamins — Axis works for everyone.</p>
+    <div class="testi-grid">
+      <div class="tcard fade-up">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"I take 6 medications at different times. Before Axis I was constantly unsure if I'd taken something or not. Now I have a clear record and my adherence is finally consistent."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background:#f97316">S</div>
+          <div>
+            <div class="tcard-name">Sarah M.</div>
+            <div class="tcard-role">Type 2 diabetes, 3 years on Axis</div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard fade-up">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"The travel feature alone is worth it. It told me exactly how many tablets to pack for a 10-day trip and adjusted my reminder times automatically when I landed in Tokyo."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background:#0ea5e9">J</div>
+          <div>
+            <div class="tcard-name">James R.</div>
+            <div class="tcard-role">Frequent traveller, heart medication</div>
+          </div>
+        </div>
+      </div>
+      <div class="tcard fade-up">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"As a nurse I recommended this to a patient with hypertension who kept missing evening doses. Six months later their GP has reduced their dosage because their BP is so well controlled now."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar" style="background:#8b5cf6">A</div>
+          <div>
+            <div class="tcard-name">Amara T., RN</div>
+            <div class="tcard-role">NHS Community Nurse</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div id="stats">
+  <div class="stats-grid">
+    <div class="stat-cell fade-up"><div class="stat-num">99%</div><div class="stat-label">Adherence rate reported by daily users after 30 days</div></div>
+    <div class="stat-cell fade-up"><div class="stat-num">50k+</div><div class="stat-label">Doses logged every month across all platforms</div></div>
+    <div class="stat-cell fade-up"><div class="stat-num">4.9★</div><div class="stat-label">Average App Store & Play Store rating</div></div>
+    <div class="stat-cell fade-up"><div class="stat-num">0</div><div class="stat-label">User health records ever shared or sold to third parties</div></div>
+  </div>
+</div>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how">
+  <div class="container">
+    <div class="how-inner">
+      <div>
+        <div class="section-label">How it works</div>
+        <h2 class="fade-up">Up and running<br />in 2 minutes</h2>
+        <div class="steps">
+          <div class="step fade-up">
+            <div class="step-num">1</div>
+            <div>
+              <h3>Add your medications</h3>
+              <p>Scan a barcode or search the built-in database. Set dosage, frequency, start date, and notification times in a few taps.</p>
+            </div>
+          </div>
+          <div class="step fade-up">
+            <div class="step-num">2</div>
+            <div>
+              <h3>Get smart reminders</h3>
+              <p>Notifications arrive at exactly the right time. Mark a dose taken or snooze 15 minutes without even opening the app.</p>
+            </div>
+          </div>
+          <div class="step fade-up">
+            <div class="step-num">3</div>
+            <div>
+              <h3>Watch your health improve</h3>
+              <p>Your adherence score, streaks, and history build automatically. Export a clean PDF report for your next GP visit.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="how-visual fade-up">
+        <canvas id="mini-canvas"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SECURITY ── -->
 <section id="security">
-  <div class="section-label">Security &amp; Privacy</div>
-  <h2 class="fade-up">Your health data<br />stays yours</h2>
-  <p class="section-sub fade-up">End-to-end encrypted. Biometric locked. Zero data sold.</p>
-  <div class="security-grid">
-    <div class="sec-card fade-up"><div class="sec-icon">🔐</div><div><h3>AES-GCM Encryption</h3><p>All sensitive fields are encrypted on-device with AES-256-GCM before they touch our servers.</p></div></div>
-    <div class="sec-card fade-up"><div class="sec-icon">👆</div><div><h3>Biometric Unlock</h3><p>Face ID, fingerprint, or PIN — every session requires authentication before data is decrypted.</p></div></div>
-    <div class="sec-card fade-up"><div class="sec-icon">🔒</div><div><h3>Auto-Lock</h3><p>Locks after inactivity and when you switch away. No stale sessions left open.</p></div></div>
-    <div class="sec-card fade-up"><div class="sec-icon">🛡️</div><div><h3>Screen Guard</h3><p>Prevents your medication list appearing in app-switcher screenshots or recordings.</p></div></div>
+  <div class="container">
+    <div class="section-label">Security &amp; Privacy</div>
+    <h2 class="fade-up">Your health data<br />stays yours. Always.</h2>
+    <p class="section-sub fade-up">We built Axis with the assumption that health data is among the most sensitive data that exists. Here's how we protect it.</p>
+    <div class="sec-grid">
+      <div class="sec-card fade-up">
+        <div class="sec-icon">🔐</div>
+        <div>
+          <h3>AES-256-GCM Encryption</h3>
+          <p>Every sensitive field is encrypted on your device before it reaches our servers. The decryption key never leaves your phone.</p>
+        </div>
+      </div>
+      <div class="sec-card fade-up">
+        <div class="sec-icon">👆</div>
+        <div>
+          <h3>Biometric Unlock</h3>
+          <p>Face ID, fingerprint, or PIN — every session requires authentication before any data is decrypted or displayed.</p>
+        </div>
+      </div>
+      <div class="sec-card fade-up">
+        <div class="sec-icon">🔒</div>
+        <div>
+          <h3>Auto-Lock on Background</h3>
+          <p>Locks immediately when you switch apps and after 60 seconds of inactivity. No stale sessions left open.</p>
+        </div>
+      </div>
+      <div class="sec-card fade-up">
+        <div class="sec-icon">🛡️</div>
+        <div>
+          <h3>Screen Guard</h3>
+          <p>Blocks screenshots and prevents your medication list from appearing in the app switcher or screen recordings.</p>
+        </div>
+      </div>
+      <div class="sec-card fade-up">
+        <div class="sec-icon">📱</div>
+        <div>
+          <h3>Hardware-Backed Keys</h3>
+          <p>On iOS, keys are stored in the Secure Enclave. On Android, in the hardware Keystore. Root and jailbreak detected.</p>
+        </div>
+      </div>
+      <div class="sec-card fade-up">
+        <div class="sec-icon">🚫</div>
+        <div>
+          <h3>Zero Data Selling</h3>
+          <p>We do not sell, rent, or share your health data with advertisers, insurers, or any third party. Ever. Full stop.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ── -->
+<section id="pricing">
+  <div class="container" style="text-align:center">
+    <div class="section-label">Pricing</div>
+    <h2 class="fade-up">Simple, honest pricing</h2>
+    <p class="section-sub fade-up" style="margin:0 auto">Start free. Upgrade only when you need more.</p>
+    <div class="pricing-grid">
+      <div class="pcard fade-up">
+        <div class="pcard-name">Free</div>
+        <div class="pcard-price">£0<span> / forever</span></div>
+        <div class="pcard-desc">Everything most people need, with no strings attached.</div>
+        <ul class="pcard-features">
+          <li>Up to 5 medications</li>
+          <li>Smart reminders &amp; dose logging</li>
+          <li>30-day adherence history</li>
+          <li>Biometric lock &amp; AES encryption</li>
+          <li>Offline support</li>
+          <li class="dim">AI health coach</li>
+          <li class="dim">Travel planning mode</li>
+          <li class="dim">Unlimited medication history</li>
+        </ul>
+        <a href="#" class="pcard-btn outline">Download Free</a>
+      </div>
+      <div class="pcard featured fade-up">
+        <div class="pcard-badge">Most popular</div>
+        <div class="pcard-name">Pro</div>
+        <div class="pcard-price">£2.99<span> / month</span></div>
+        <div class="pcard-desc">For patients who rely on Axis every single day.</div>
+        <ul class="pcard-features">
+          <li>Unlimited medications</li>
+          <li>Smart reminders &amp; dose logging</li>
+          <li>Full adherence history &amp; PDF export</li>
+          <li>Biometric lock &amp; AES encryption</li>
+          <li>Offline support</li>
+          <li>AI health coach</li>
+          <li>Travel planning mode</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="pcard-btn primary">Start Free Trial</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ── -->
+<section id="faq">
+  <div class="container" style="text-align:center">
+    <div class="section-label">FAQ</div>
+    <h2 class="fade-up">Common questions</h2>
+    <p class="section-sub fade-up" style="margin:0 auto 0">Can't find what you're after? <a href="support.html" style="color:var(--orange);text-decoration:none;font-weight:600">Visit support →</a></p>
+    <div class="faq-wrap">
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          Is my health data really private?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-body"><p>Yes. All sensitive data is AES-256-GCM encrypted on your device before it ever leaves your phone. The encryption key is stored in your device's secure hardware (Secure Enclave on iOS, Keystore on Android) and protected by your biometrics or PIN. We cannot read your medication data, and we never sell or share it.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          Does it work without an internet connection?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-body"><p>Fully. Reminders fire, dose logging works, your history is accessible, and analytics are computed — all without a network connection. Data syncs automatically when you reconnect. This is especially useful when travelling or in areas with poor signal.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          Can I use Axis for more than one person?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-body"><p>Each Axis account is tied to one person's medications for privacy reasons. If you're a carer managing medications for a family member, we recommend they have their own account. A shared carer view is on our roadmap.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          What happens if I lose my phone?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-body"><p>Your data is securely backed up (encrypted). Install Axis on your new phone, log in, and everything restores automatically. The encryption key is re-derived from your credentials and new device biometrics — your old device's key is invalidated.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          Is Axis approved for medical use?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-body"><p>Axis is a personal medication management tool, not a medical device. It does not provide medical advice, diagnose conditions, or replace professional healthcare. Always follow guidance from your doctor or pharmacist. The AI coach provides general wellness information only.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          How do I cancel my Pro subscription?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-body"><p>Cancel any time through your App Store or Google Play subscription settings — no forms, no emails required. You keep Pro features until the end of the billing period and automatically revert to the free tier. Your data is never deleted.</p></div>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ── CTA ── -->
 <section id="cta">
-  <div class="section-label">Get started</div>
-  <h2 class="fade-up">Take control of<br />your health today</h2>
-  <p class="section-sub fade-up">Free to download. No subscription required for core features.</p>
-  <div class="btn-row">
-    <a class="btn-primary" href="#">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-      Download on App Store
-    </a>
-    <a class="btn-ghost" href="#">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
-      Get it on Google Play
-    </a>
+  <div class="container">
+    <div class="section-label">Get started</div>
+    <h2 class="fade-up">Take control of<br />your health today</h2>
+    <p class="section-sub fade-up">Free to download. No subscription needed for core features. No health data ever sold.</p>
+    <div class="btn-row">
+      <a class="btn-primary" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Download on App Store
+      </a>
+      <a class="btn-outline" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
+        Get it on Google Play
+      </a>
+    </div>
   </div>
 </section>
 
+<!-- ── FOOTER ── -->
 <footer>
-  <a class="footer-logo" href="#">Axis<span>.</span></a>
-  <div class="footer-links">
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="#">NHS Guidelines</a>
-    <a href="support.html">Support</a>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="footer-logo" href="#">Axis<span>.</span></a>
+        <p>AI-powered medication tracking with biometric security, smart reminders, and travel planning.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <a href="support.html">Help Centre</a>
+        <a href="support.html#contact-form">Contact Us</a>
+        <a href="#">NHS Guidelines</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Axis. All rights reserved. Not a medical device.</p>
+      <a href="privacy.html">Privacy</a>
+    </div>
   </div>
-  <p>© 2026 Axis. All rights reserved.</p>
 </footer>
 
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js" } }</script>
@@ -415,75 +923,72 @@ import * as THREE from 'three';
 
 function makeScreenTexture() {
   const W = 512, H = 1058;
-  const c = document.createElement('canvas');
-  c.width = W; c.height = H;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
   const ctx = c.getContext('2d');
 
-  // Dark app background — matches #09090b
-  const bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, '#09090b'); bg.addColorStop(1, '#111113');
-  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  // White/light background — different from app's dark theme
+  ctx.fillStyle = '#f8fafc'; ctx.fillRect(0, 0, W, H);
 
   // Status bar
-  ctx.fillStyle = '#fafafa'; ctx.font = 'bold 22px -apple-system,sans-serif';
+  ctx.fillStyle = '#0f172a'; ctx.font = 'bold 22px -apple-system,sans-serif';
   ctx.fillText('9:41', 28, 52);
-  ctx.fillStyle = '#71717a'; ctx.font = '19px -apple-system,sans-serif';
+  ctx.fillStyle = '#94a3b8'; ctx.font = '18px -apple-system,sans-serif';
   ctx.fillText('●●●', W - 72, 52);
 
   // Dynamic island
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = '#0f172a';
   roundRect(ctx, W/2 - 52, 18, 104, 28, 14, true);
 
-  // App name + date
-  ctx.fillStyle = '#fafafa'; ctx.font = 'bold 38px -apple-system,sans-serif';
-  ctx.fillText('Axis', 28, 122);
-  ctx.fillStyle = '#f97316'; ctx.fillRect(28, 130, 7, 7); // orange accent dot before date
-  ctx.fillStyle = '#a1a1aa'; ctx.font = '20px -apple-system,sans-serif';
-  ctx.fillText('  Sunday, 18 May', 28, 158);
+  // Header
+  ctx.fillStyle = '#0f172a'; ctx.font = 'bold 36px -apple-system,sans-serif';
+  ctx.fillText('Today', 24, 116);
+  ctx.fillStyle = '#64748b'; ctx.font = '19px -apple-system,sans-serif';
+  ctx.fillText('Sunday, 18 May · 3 taken', 24, 148);
 
-  // Stats cards
-  const cards = [
-    { label: 'Taken', val: '3', color: '#22c55e' },
-    { label: 'Pending', val: '2', color: '#3b82f6' },
-    { label: 'Total', val: '5', color: '#fafafa' },
+  // Stat cards
+  const stats = [
+    { label: 'Taken', val: '3', color: '#22c55e', bg: '#f0fdf4' },
+    { label: 'Pending', val: '2', color: '#f97316', bg: '#fff7ed' },
+    { label: 'Streak', val: '12d', color: '#0ea5e9', bg: '#f0f9ff' },
   ];
-  const cw = (W - 48) / 3, cy = 182, ch = 92;
-  cards.forEach((card, i) => {
-    const cx = 16 + i * (cw + 8);
-    ctx.fillStyle = '#18181b'; roundRect(ctx, cx, cy, cw, ch, 10, true);
-    ctx.fillStyle = card.color; ctx.font = 'bold 32px -apple-system,sans-serif';
-    ctx.fillText(card.val, cx + 12, cy + 50);
-    ctx.fillStyle = '#71717a'; ctx.font = '16px -apple-system,sans-serif';
-    ctx.fillText(card.label, cx + 12, cy + 74);
+  const cw = (W - 52) / 3, cy = 170, ch = 86;
+  stats.forEach((s, i) => {
+    const cx = 16 + i * (cw + 10);
+    ctx.fillStyle = s.bg; roundRect(ctx, cx, cy, cw, ch, 12, true);
+    ctx.fillStyle = s.color; ctx.font = 'bold 30px -apple-system,sans-serif';
+    ctx.fillText(s.val, cx + 14, cy + 46);
+    ctx.fillStyle = '#94a3b8'; ctx.font = '15px -apple-system,sans-serif';
+    ctx.fillText(s.label, cx + 14, cy + 68);
   });
 
-  // Schedule header
-  ctx.fillStyle = '#fafafa'; ctx.font = 'bold 22px -apple-system,sans-serif';
-  ctx.fillText("Today's Schedule", 16, cy + ch + 30);
+  // Section header
+  ctx.fillStyle = '#0f172a'; ctx.font = 'bold 20px -apple-system,sans-serif';
+  ctx.fillText("Today's schedule", 16, cy + ch + 28);
 
   // Dose rows
   const doses = [
     { name: 'Metformin 500mg', time: '8:00 AM', done: true },
     { name: 'Lisinopril 10mg', time: '8:00 AM', done: true },
-    { name: 'Atorvastatin 20mg', time: '12:00 PM', done: true },
+    { name: 'Atorvastatin', time: '12:00 PM', done: true },
     { name: 'Vitamin D3', time: '6:00 PM', done: false },
     { name: 'Omeprazole 20mg', time: '9:00 PM', done: false },
   ];
   doses.forEach((d, i) => {
-    const ry = cy + ch + 48 + i * 72;
-    ctx.fillStyle = '#18181b'; roundRect(ctx, 16, ry, W - 32, 60, 10, true);
-    ctx.fillStyle = d.done ? '#22c55e' : '#71717a';
-    ctx.fillRect(16, ry, 3, 60);
-    ctx.fillStyle = '#fafafa'; ctx.font = 'bold 19px -apple-system,sans-serif';
-    ctx.fillText(d.name, 30, ry + 24);
-    ctx.fillStyle = '#71717a'; ctx.font = '16px -apple-system,sans-serif';
-    ctx.fillText(d.time, 30, ry + 46);
-    // status dot — orange for pending
+    const ry = cy + ch + 44 + i * 70;
+    ctx.fillStyle = '#ffffff'; roundRect(ctx, 16, ry, W - 32, 58, 12, true);
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
+    roundRect(ctx, 16, ry, W - 32, 58, 12, false); ctx.stroke();
     ctx.fillStyle = d.done ? '#22c55e' : '#f97316';
-    ctx.beginPath(); ctx.arc(W - 34, ry + 30, 9, 0, Math.PI * 2); ctx.fill();
+    roundRect(ctx, 16, ry, 4, 58, 2, true);
+    ctx.fillStyle = '#0f172a'; ctx.font = 'bold 18px -apple-system,sans-serif';
+    ctx.fillText(d.name, 30, ry + 22);
+    ctx.fillStyle = '#94a3b8'; ctx.font = '15px -apple-system,sans-serif';
+    ctx.fillText(d.time, 30, ry + 44);
+    ctx.fillStyle = d.done ? '#22c55e' : '#f97316';
+    ctx.beginPath(); ctx.arc(W - 36, ry + 29, 10, 0, Math.PI*2); ctx.fill();
     if (d.done) {
-      ctx.strokeStyle = '#09090b'; ctx.lineWidth = 2; ctx.beginPath();
-      ctx.moveTo(W - 40, ry + 30); ctx.lineTo(W - 36, ry + 34); ctx.lineTo(W - 29, ry + 25);
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.beginPath();
+      ctx.moveTo(W - 42, ry + 29); ctx.lineTo(W - 38, ry + 33); ctx.lineTo(W - 31, ry + 23);
       ctx.stroke();
     }
   });
@@ -497,62 +1002,54 @@ function roundRect(ctx, x, y, w, h, r, fill) {
   ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
   ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
   ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
-  if (fill) ctx.fill();
+  if (fill) ctx.fill(); else ctx.stroke();
 }
 
 function makePhone() {
   const g = new THREE.Group();
-  // Body — dark, matching #1c1c1e
-  g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1,2,0.1),
-    new THREE.MeshPhysicalMaterial({color:0x1c1c1e,metalness:0.65,roughness:0.25})), {}));
-  // Rails
-  const rm = new THREE.MeshPhysicalMaterial({color:0x2a2a2c,metalness:0.85,roughness:0.15});
-  [[new THREE.BoxGeometry(1.02,0.04,0.12),[0,1.02,0]],[new THREE.BoxGeometry(1.02,0.04,0.12),[0,-1.02,0]],
-   [new THREE.BoxGeometry(0.04,2.04,0.12),[-0.53,0,0]],[new THREE.BoxGeometry(0.04,2.04,0.12),[0.53,0,0]]]
-    .forEach(([geo,pos]) => { const m = new THREE.Mesh(geo,rm); m.position.set(...pos); g.add(m); });
-  // Screen
-  const s = new THREE.Mesh(new THREE.PlaneGeometry(0.88,1.82),
+  // Body — light silver/white finish — matches the light website theme
+  g.add(new THREE.Mesh(new THREE.BoxGeometry(1,2,0.1),
+    new THREE.MeshPhysicalMaterial({color:0xf1f5f9,metalness:0.5,roughness:0.2})));
+  const rm = new THREE.MeshPhysicalMaterial({color:0xe2e8f0,metalness:0.7,roughness:0.1});
+  [[new THREE.BoxGeometry(1.02,.04,.12),[0,1.02,0]],[new THREE.BoxGeometry(1.02,.04,.12),[0,-1.02,0]],
+   [new THREE.BoxGeometry(.04,2.04,.12),[-.53,0,0]],[new THREE.BoxGeometry(.04,2.04,.12),[.53,0,0]]]
+    .forEach(([geo,pos])=>{ const m = new THREE.Mesh(geo,rm); m.position.set(...pos); g.add(m); });
+  const s = new THREE.Mesh(new THREE.PlaneGeometry(.88,1.82),
     new THREE.MeshBasicMaterial({map:makeScreenTexture()}));
   s.position.z = 0.056; g.add(s);
-  // Island
-  const ni = new THREE.Mesh(new THREE.CapsuleGeometry(0.038,0.13,4,8),
-    new THREE.MeshBasicMaterial({color:0x000000}));
-  ni.rotation.z = Math.PI/2; ni.position.set(0,0.83,0.058); g.add(ni);
-  // Home bar
-  const hb = new THREE.Mesh(new THREE.CapsuleGeometry(0.015,0.2,4,8),
-    new THREE.MeshBasicMaterial({color:0x555555}));
-  hb.rotation.z = Math.PI/2; hb.position.set(0,-0.82,0.058); g.add(hb);
+  const ni = new THREE.Mesh(new THREE.CapsuleGeometry(.038,.13,4,8),
+    new THREE.MeshBasicMaterial({color:0x0f172a}));
+  ni.rotation.z = Math.PI/2; ni.position.set(0,.83,.058); g.add(ni);
+  const hb = new THREE.Mesh(new THREE.CapsuleGeometry(.015,.2,4,8),
+    new THREE.MeshBasicMaterial({color:0xd1d5db}));
+  hb.rotation.z = Math.PI/2; hb.position.set(0,-.82,.058); g.add(hb);
   return g;
 }
 
-// ── Hero ────────────────────────────────────────────────────────────────────
+// ── Hero ──
 (function() {
   const canvas = document.getElementById('phone-canvas');
   const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.3;
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(36,1,0.1,100);
-  camera.position.set(0,0,5);
-  scene.add(new THREE.AmbientLight(0xffffff,0.3));
-  const key = new THREE.PointLight(0xf97316,5,14); key.position.set(3,3,4); scene.add(key);
-  const fill = new THREE.PointLight(0xfb923c,2,12); fill.position.set(-3,-1,3); scene.add(fill);
-  const top = new THREE.PointLight(0xffffff,1.5,10); top.position.set(0,4,3); scene.add(top);
-  const phone = makePhone(); phone.rotation.y=0.25; phone.rotation.x=-0.06; scene.add(phone);
+  const camera = new THREE.PerspectiveCamera(36,1,0.1,100); camera.position.set(0,0,5);
+  scene.add(new THREE.AmbientLight(0xffffff,.7));
+  const key = new THREE.DirectionalLight(0xffffff,1.2); key.position.set(2,3,4); scene.add(key);
+  const fill = new THREE.PointLight(0xf97316,2,12); fill.position.set(-3,-1,3); scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xf1f5f9,.8); rim.position.set(-2,0,-3); scene.add(rim);
+  const phone = makePhone(); phone.rotation.y=0.22; phone.rotation.x=-0.06; scene.add(phone);
 
-  // Floating orbs — orange tones to match app palette
-  const orbs = Array.from({length:6},(_,i) => {
-    const m = new THREE.Mesh(new THREE.SphereGeometry(0.05+Math.random()*0.05,14,14),
-      new THREE.MeshPhysicalMaterial({
-        color: i%2===0?0xf97316:0xea580c, emissive:i%2===0?0xf97316:0xea580c,
-        emissiveIntensity:0.4, roughness:0.15, metalness:0.4, transparent:true, opacity:0.7
-      }));
-    m.position.set((Math.random()-.5)*4.5,(Math.random()-.5)*4,(Math.random()-.5)*1.5-.5);
+  // Floating pill shapes — orange accent
+  const orbs = Array.from({length:5},(_,i) => {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(.04+Math.random()*.04,12,12),
+      new THREE.MeshPhysicalMaterial({color:0xf97316,emissive:0xf97316,emissiveIntensity:.3,roughness:.2,metalness:.3,transparent:true,opacity:.6}));
+    m.position.set((Math.random()-.5)*4,(Math.random()-.5)*3.5,(Math.random()-.5)*.8-.3);
     scene.add(m);
-    return {mesh:m,phase:Math.random()*Math.PI*2,speed:.25+Math.random()*.35,amp:.12+Math.random()*.18};
+    return {mesh:m,phase:Math.random()*Math.PI*2,speed:.2+Math.random()*.3,amp:.1+Math.random()*.15};
   });
 
-  let drag=false,lx=0,ly=0,vy=0.002,vx=0,ry=0.25,rx=-0.06;
+  let drag=false,lx=0,ly=0,vy=.002,vx=0,ry=.22,rx=-.06;
   canvas.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;});
   canvas.addEventListener('touchstart',e=>{drag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;},{passive:true});
   addEventListener('mouseup',()=>drag=false); addEventListener('touchend',()=>drag=false);
@@ -565,43 +1062,53 @@ function makePhone() {
   let t=0;
   (function loop(){requestAnimationFrame(loop);t+=.016;
     if(drag){ry+=vy;rx+=vx;vy*=.82;vx*=.82;}
-    else{vy+=(0.002-vy)*.025;ry+=vy;rx+=(Math.sin(t*.18)*.05-rx)*.04;}
-    rx=Math.max(-.45,Math.min(.45,rx));
-    phone.rotation.y=ry;phone.rotation.x=rx;phone.position.y=Math.sin(t*.55)*.07;
-    orbs.forEach(o=>{o.mesh.position.y+=Math.sin(t*o.speed+o.phase)*o.amp*.01;o.mesh.rotation.y+=.01;});
+    else{vy+=(.002-vy)*.025;ry+=vy;rx+=(Math.sin(t*.18)*.05-rx)*.04;}
+    rx=Math.max(-.4,Math.min(.4,rx));
+    phone.rotation.y=ry;phone.rotation.x=rx;phone.position.y=Math.sin(t*.5)*.06;
+    orbs.forEach(o=>{o.mesh.position.y+=Math.sin(t*o.speed+o.phase)*o.amp*.01;o.mesh.rotation.y+=.008;});
     renderer.render(scene,camera);
   })();
 })();
 
-// ── Mini ─────────────────────────────────────────────────────────────────────
+// ── Mini ──
 (function() {
   const canvas = document.getElementById('mini-canvas');
   const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40,1,0.1,100); camera.position.set(0,0,4.2);
-  scene.add(new THREE.AmbientLight(0xffffff,.3));
-  const k = new THREE.PointLight(0xf97316,4,10); k.position.set(2,2,3); scene.add(k);
-  const f = new THREE.PointLight(0xfb923c,2,8); f.position.set(-2,-1,2); scene.add(f);
-  const phone = makePhone(); phone.rotation.y=-.4; phone.rotation.x=.08; scene.add(phone);
+  scene.add(new THREE.AmbientLight(0xffffff,.7));
+  const k = new THREE.DirectionalLight(0xffffff,1.1); k.position.set(2,2,3); scene.add(k);
+  const f = new THREE.PointLight(0xf97316,1.8,10); f.position.set(-2,-1,2); scene.add(f);
+  const phone = makePhone(); phone.rotation.y=-.35; phone.rotation.x=.07; scene.add(phone);
   const resize=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();};
   resize(); addEventListener('resize',resize);
   let t=0;(function loop(){requestAnimationFrame(loop);t+=.016;
-    phone.rotation.y=-.4+Math.sin(t*.45)*.18;phone.position.y=Math.sin(t*.65)*.055;
+    phone.rotation.y=-.35+Math.sin(t*.4)*.16;phone.position.y=Math.sin(t*.6)*.05;
     renderer.render(scene,camera);
   })();
 })();
 
-// ── Scroll fade ───────────────────────────────────────────────────────────────
+// ── Scroll fade ──
 const obs = new IntersectionObserver(entries=>entries.forEach((e,i)=>{
-  if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*70);obs.unobserve(e.target);}
-}),{threshold:.12});
+  if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*60);obs.unobserve(e.target);}
+}),{threshold:.1});
 document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
 
-// ── Nav ───────────────────────────────────────────────────────────────────────
+// ── Nav scroll ──
 addEventListener('scroll',()=>{
-  document.getElementById('nav').style.background=scrollY>50?'rgba(9,9,11,0.95)':'rgba(9,9,11,0.8)';
+  document.getElementById('nav').classList.toggle('scrolled',scrollY>40);
+});
+
+// ── FAQ ──
+document.querySelectorAll('.faq-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.closest('.faq-item');
+    const open=item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el=>{el.classList.remove('open');el.querySelector('.faq-btn').setAttribute('aria-expanded','false');});
+    if(!open){item.classList.add('open');btn.setAttribute('aria-expanded','true');}
+  });
 });
 </script>
 </body>
