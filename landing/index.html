@@ -3,366 +3,271 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Axis — Medication, Managed</title>
-  <meta name="description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning. Available on iOS and Android." />
+  <title>Axis — Never Miss a Dose</title>
+  <meta name="description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://axishealth.app/" />
+  <meta property="og:title" content="Axis — Never Miss a Dose" />
+  <meta property="og:description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning. Free on iOS and Android." />
+  <meta property="og:image" content="https://axishealth.app/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Axis — Never Miss a Dose" />
+  <meta name="twitter:description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning." />
+  <meta name="twitter:image" content="https://axishealth.app/og-image.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --orange: #f97316;
-      --orange-dark: #ea580c;
-      --orange-glow: rgba(249, 115, 22, 0.35);
-      --bg: #09090b;
-      --bg2: #111113;
-      --bg3: #18181b;
-      --border: rgba(255,255,255,0.08);
-      --text: #fafafa;
-      --muted: #a1a1aa;
+      --bg:       #09090b;
+      --bg2:      #111113;
+      --bg3:      #18181b;
+      --bg4:      #1c1c1e;
+      --border:   rgba(255,255,255,0.08);
+      --border2:  rgba(255,255,255,0.12);
+      --orange:   #f97316;
+      --orange-d: #ea580c;
+      --orange-g: rgba(249,115,22,0.15);
+      --text:     #fafafa;
+      --muted:    #a1a1aa;
+      --muted2:   #71717a;
     }
 
     html { scroll-behavior: smooth; }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-    }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
 
     /* ── Nav ── */
     nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 48px;
-      background: rgba(9,9,11,0.7);
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 56px;
+      background: rgba(9,9,11,0.8);
       backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--border);
     }
     .nav-logo {
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: var(--text);
-      text-decoration: none;
+      font-size: 1.25rem; font-weight: 700; letter-spacing: -0.03em;
+      color: var(--text); text-decoration: none;
     }
     .nav-logo span { color: var(--orange); }
     .nav-links { display: flex; gap: 32px; }
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
-    }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
     .nav-links a:hover { color: var(--text); }
     .nav-cta {
-      background: var(--orange);
-      color: #fff;
-      padding: 9px 22px;
-      border-radius: 9px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-decoration: none;
+      background: var(--orange); color: #fff;
+      padding: 9px 22px; border-radius: 8px;
+      font-size: 0.875rem; font-weight: 600; text-decoration: none;
       transition: background 0.2s, transform 0.15s;
     }
-    .nav-cta:hover { background: var(--orange-dark); transform: translateY(-1px); }
+    .nav-cta:hover { background: var(--orange-d); transform: translateY(-1px); }
 
     /* ── Hero ── */
     #hero {
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      gap: 0;
-      padding: 100px 80px 60px;
-      position: relative;
-      overflow: hidden;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; gap: 48px;
+      padding: 120px 72px 80px;
+      position: relative; overflow: hidden;
     }
     #hero::before {
-      content: '';
-      position: absolute;
-      top: -200px; right: -100px;
-      width: 700px; height: 700px;
-      background: radial-gradient(circle, var(--orange-glow) 0%, transparent 70%);
-      pointer-events: none;
+      content: ''; position: absolute;
+      width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.18) 0%, transparent 70%);
+      top: -200px; right: -150px; pointer-events: none;
+    }
+    #hero::after {
+      content: ''; position: absolute;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%);
+      bottom: 0; left: -100px; pointer-events: none;
     }
 
-    .hero-text { max-width: 520px; }
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(249,115,22,0.12);
-      border: 1px solid rgba(249,115,22,0.3);
-      color: var(--orange);
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 5px 12px;
-      border-radius: 100px;
-      margin-bottom: 24px;
+    .hero-text { position: relative; z-index: 1; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(249,115,22,0.1); border: 1px solid rgba(249,115,22,0.25);
+      color: var(--orange); font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 100px; margin-bottom: 24px;
     }
-    .hero-eyebrow::before { content: '●'; font-size: 0.5rem; }
+    .eyebrow-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--orange);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
     h1 {
       font-size: clamp(2.4rem, 4vw, 3.8rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.04em;
-      margin-bottom: 20px;
+      font-weight: 700; line-height: 1.1; letter-spacing: -0.04em;
+      margin-bottom: 20px; color: var(--text);
     }
     h1 em { font-style: normal; color: var(--orange); }
 
     .hero-sub {
-      font-size: 1.1rem;
-      color: var(--muted);
-      line-height: 1.65;
-      margin-bottom: 36px;
-      max-width: 440px;
+      font-size: 1.05rem; color: var(--muted); line-height: 1.7;
+      max-width: 420px; margin-bottom: 36px;
     }
 
-    .btn-group { display: flex; gap: 12px; flex-wrap: wrap; }
-
-    .btn-store {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--orange); color: #fff;
+      padding: 12px 24px; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600; text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--orange-d); transform: translateY(-1px); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--text); padding: 12px 20px; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600; text-decoration: none;
+      border: 1px solid var(--border2);
       background: var(--bg3);
-      border: 1px solid var(--border);
-      color: var(--text);
-      text-decoration: none;
-      padding: 13px 20px;
-      border-radius: 12px;
-      transition: border-color 0.2s, transform 0.15s, background 0.2s;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .btn-store:hover {
-      border-color: var(--orange);
-      background: rgba(249,115,22,0.07);
-      transform: translateY(-2px);
-    }
-    .btn-store svg { width: 22px; height: 22px; flex-shrink: 0; }
-    .btn-store-text { display: flex; flex-direction: column; }
-    .btn-store-sub { font-size: 0.7rem; color: var(--muted); line-height: 1; }
-    .btn-store-name { font-size: 0.95rem; font-weight: 600; line-height: 1.3; }
+    .btn-ghost:hover { border-color: var(--orange); background: var(--bg4); }
 
-    .hero-social-proof {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 28px;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-    .stars { color: #facc15; letter-spacing: -1px; font-size: 0.9rem; }
+    .social-proof { display: flex; align-items: center; gap: 10px; margin-top: 28px; }
+    .stars { color: #facc15; letter-spacing: -1px; }
+    .proof-text { font-size: 0.82rem; color: var(--muted); }
 
-    /* ── 3-D canvas ── */
-    #phone-canvas {
-      width: 100%;
-      height: 580px;
-      cursor: grab;
-    }
+    .canvas-wrap { position: relative; z-index: 1; display: flex; justify-content: center; }
+    #phone-canvas { width: 100%; max-width: 480px; height: 580px; cursor: grab; filter: drop-shadow(0 32px 64px rgba(249,115,22,0.15)); }
     #phone-canvas:active { cursor: grabbing; }
 
-    /* ── Section shared ── */
-    section { padding: 100px 80px; }
+    /* ── Ticker ── */
+    .ticker-wrap { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 16px 0; overflow: hidden; }
+    .ticker-track { display: inline-flex; animation: ticker 30s linear infinite; }
+    .ticker-item { display: inline-flex; align-items: center; gap: 14px; padding: 0 28px; font-size: 0.8rem; font-weight: 600; color: var(--muted2); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .ticker-item span { color: var(--muted); }
+    .ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* ── Sections ── */
+    section { padding: 100px 72px; position: relative; overflow: hidden; }
     .section-label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 14px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--orange); margin-bottom: 12px;
     }
     h2 {
-      font-size: clamp(1.8rem, 3vw, 2.8rem);
-      font-weight: 800;
-      letter-spacing: -0.035em;
-      line-height: 1.15;
-      margin-bottom: 16px;
+      font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 700;
+      letter-spacing: -0.035em; line-height: 1.15; color: var(--text); margin-bottom: 14px;
     }
-    .section-sub {
-      font-size: 1.05rem;
-      color: var(--muted);
-      max-width: 520px;
-      line-height: 1.6;
-      margin-bottom: 60px;
-    }
+    .section-sub { font-size: 1rem; color: var(--muted); max-width: 480px; line-height: 1.65; margin-bottom: 56px; }
 
-    /* ── Features grid ── */
-    #features { background: var(--bg2); }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    .feature-card {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
+    /* ── Features ── */
+    #features { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+    .fcard {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px;
       transition: border-color 0.25s, transform 0.2s;
     }
-    .feature-card:hover {
-      border-color: rgba(249,115,22,0.4);
-      transform: translateY(-4px);
+    .fcard:hover { border-color: rgba(249,115,22,0.35); transform: translateY(-3px); }
+    .fcard-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: var(--orange-g); border: 1px solid rgba(249,115,22,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 16px;
     }
-    .feature-icon {
-      width: 44px; height: 44px;
-      border-radius: 11px;
-      background: rgba(249,115,22,0.12);
-      border: 1px solid rgba(249,115,22,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: 16px;
-    }
-    .feature-card h3 {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
-    }
-    .feature-card p {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    .fcard h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .fcard p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
 
     /* ── Stats ── */
-    #stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0;
-      padding: 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .stat-item {
-      padding: 60px 80px;
-      border-right: 1px solid var(--border);
-    }
-    .stat-item:last-child { border-right: none; }
-    .stat-num {
-      font-size: 3rem;
-      font-weight: 800;
-      letter-spacing: -0.05em;
-      color: var(--orange);
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-    .stat-label { font-size: 0.9rem; color: var(--muted); }
+    #stats { padding: 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+    .stat-cell { padding: 72px; border-right: 1px solid var(--border); }
+    .stat-cell:last-child { border-right: none; }
+    .stat-num { font-size: 3.2rem; font-weight: 700; letter-spacing: -0.05em; color: var(--orange); line-height: 1; margin-bottom: 8px; }
+    .stat-label { font-size: 0.875rem; color: var(--muted); line-height: 1.5; max-width: 180px; }
 
-    /* ── How it works ── */
-    #how {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
-    }
-    .steps { display: flex; flex-direction: column; gap: 32px; }
-    .step { display: flex; gap: 20px; }
+    /* ── How ── */
+    #how { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .steps { display: flex; flex-direction: column; }
+    .step { display: flex; gap: 20px; padding: 24px 0; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
     .step-num {
-      flex-shrink: 0;
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      background: var(--orange);
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 2px;
+      flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px;
+      background: var(--orange-g); border: 1px solid rgba(249,115,22,0.2);
+      color: var(--orange); font-weight: 700; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center; margin-top: 1px;
     }
-    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
-    .step p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+    .step h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 5px; }
+    .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
 
-    .mini-canvas-wrap {
-      border-radius: 24px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--bg3);
+    .phone-panel {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
     }
-    #mini-canvas { width: 100%; height: 380px; display: block; }
+    #mini-canvas { width: 100%; height: 400px; display: block; }
 
     /* ── Security ── */
-    #security { background: var(--bg2); }
-    .security-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-top: 0;
+    #security { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .security-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    .sec-card {
+      display: flex; gap: 16px; align-items: flex-start;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px;
+      transition: border-color 0.2s, transform 0.2s;
     }
-    .security-card {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 22px;
+    .sec-card:hover { border-color: rgba(249,115,22,0.3); transform: translateY(-2px); }
+    .sec-icon {
+      flex-shrink: 0; width: 42px; height: 42px; border-radius: 9px;
+      background: var(--orange-g); border: 1px solid rgba(249,115,22,0.15);
+      display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
     }
-    .security-card .icon { font-size: 1.4rem; flex-shrink: 0; }
-    .security-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
-    .security-card p { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+    .sec-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+    .sec-card p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
 
     /* ── CTA ── */
-    #cta {
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
+    #cta { text-align: center; }
     #cta::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 50% 100%, var(--orange-glow) 0%, transparent 65%);
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, rgba(249,115,22,0.12) 0%, transparent 65%);
       pointer-events: none;
     }
-    #cta h2 { margin-bottom: 12px; }
+    #cta h2, #cta .section-label, #cta .section-sub, #cta .btn-row { position: relative; z-index: 1; }
     #cta .section-sub { margin: 0 auto 36px; }
-    #cta .btn-group { justify-content: center; }
+    #cta .btn-row { justify-content: center; }
 
     /* ── Footer ── */
     footer {
       border-top: 1px solid var(--border);
-      padding: 32px 80px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 0.82rem;
+      padding: 28px 72px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg2);
     }
-    footer a { color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--text); }
+    .footer-logo { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text); text-decoration: none; }
+    .footer-logo span { color: var(--orange); }
     .footer-links { display: flex; gap: 24px; }
+    .footer-links a { color: var(--muted2); text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+    footer p { font-size: 0.82rem; color: var(--muted2); }
 
-    /* ── Responsive ── */
-    @media (max-width: 900px) {
-      nav { padding: 16px 24px; }
+    /* ── Scroll fade ── */
+    .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-up.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 960px) {
+      nav { padding: 14px 20px; }
       .nav-links { display: none; }
       #hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
-      .hero-text { max-width: 100%; }
       #phone-canvas { height: 420px; }
       section { padding: 70px 24px; }
-      .features-grid { grid-template-columns: 1fr; }
-      #stats { grid-template-columns: 1fr; }
-      .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding: 40px 24px; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-cell { border-right: none; border-bottom: 1px solid var(--border); padding: 44px 24px; }
       #how { grid-template-columns: 1fr; gap: 40px; padding: 70px 24px; }
       .security-grid { grid-template-columns: 1fr; }
-      footer { flex-direction: column; gap: 16px; padding: 32px 24px; text-align: center; }
+      footer { flex-direction: column; gap: 16px; padding: 24px; text-align: center; }
     }
+    @media (max-width: 600px) { .features-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
 
-<!-- ── Nav ── -->
-<nav>
+<nav id="nav">
   <a class="nav-logo" href="#">Axis<span>.</span></a>
   <div class="nav-links">
     <a href="#features">Features</a>
@@ -375,123 +280,88 @@
 <!-- ── Hero ── -->
 <section id="hero">
   <div class="hero-text">
-    <div class="hero-eyebrow">Now available on iOS &amp; Android</div>
+    <div class="eyebrow"><div class="eyebrow-dot"></div>Now on iOS &amp; Android</div>
     <h1>Your medication,<br /><em>managed.</em></h1>
-    <p class="hero-sub">
-      AI-powered reminders, biometric security, and smart travel planning —
-      so you never miss a dose, wherever life takes you.
-    </p>
-    <div class="btn-group">
-      <a class="btn-store" href="#">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-        <div class="btn-store-text">
-          <span class="btn-store-sub">Download on the</span>
-          <span class="btn-store-name">App Store</span>
-        </div>
+    <p class="hero-sub">AI-powered reminders, biometric security, and travel planning — so you never miss a dose, wherever life takes you.</p>
+    <div class="btn-row">
+      <a class="btn-primary" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        App Store
       </a>
-      <a class="btn-store" href="#">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
-        <div class="btn-store-text">
-          <span class="btn-store-sub">Get it on</span>
-          <span class="btn-store-name">Google Play</span>
-        </div>
+      <a class="btn-ghost" href="#">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
+        Google Play
       </a>
     </div>
-    <div class="hero-social-proof">
+    <div class="social-proof">
       <span class="stars">★★★★★</span>
-      <span>4.9 · Trusted by thousands of patients</span>
+      <span class="proof-text">4.9 · Trusted by thousands of patients</span>
     </div>
   </div>
-
-  <canvas id="phone-canvas"></canvas>
+  <div class="canvas-wrap">
+    <canvas id="phone-canvas"></canvas>
+  </div>
 </section>
 
-<!-- ── Stats ── -->
-<div id="stats">
-  <div class="stat-item">
-    <div class="stat-num">99%</div>
-    <div class="stat-label">Adherence rate reported by daily users</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">50k+</div>
-    <div class="stat-label">Doses logged every month</div>
-  </div>
-  <div class="stat-item">
-    <div class="stat-num">0</div>
-    <div class="stat-label">Data sold to third parties. Ever.</div>
+<!-- ── Ticker ── -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Smart Reminders</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>AI Health Coach</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Travel Planning</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Biometric Security</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Offline First</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>AES-256 Encryption</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Refill Tracker</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Adherence Analytics</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Smart Reminders</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>AI Health Coach</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Travel Planning</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Biometric Security</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Offline First</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>AES-256 Encryption</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Refill Tracker</span></span>
+    <span class="ticker-item"><div class="ticker-dot"></div><span>Adherence Analytics</span></span>
   </div>
 </div>
 
 <!-- ── Features ── -->
 <section id="features">
   <div class="section-label">Features</div>
-  <h2>Everything your medication<br />routine needs</h2>
-  <p class="section-sub">Built for real patients with real schedules — not a one-size-fits-all pill reminder.</p>
+  <h2 class="fade-up">Everything your medication<br />routine needs</h2>
+  <p class="section-sub fade-up">Built for real patients with real schedules — not a generic pill reminder.</p>
   <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon">💊</div>
-      <h3>Smart Reminders</h3>
-      <p>Intelligent notifications that adapt to your schedule. Mark doses taken directly from the notification shade.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🤖</div>
-      <h3>AI Health Coach</h3>
-      <p>Personalised insights based on your adherence history, mood check-ins, and symptom logs.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">✈️</div>
-      <h3>Travel Planning</h3>
-      <p>Auto-calculate how many pills to pack, adjust schedules for time zones, and get trip-specific reminders.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📊</div>
-      <h3>Adherence Analytics</h3>
-      <p>30-day heatmaps, streak tracking, and detailed history so you can spot patterns and share with your doctor.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔔</div>
-      <h3>Refill Tracker</h3>
-      <p>Never run out. Axis monitors your supply and reminds you to reorder with enough lead time.</p>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">📴</div>
-      <h3>Works Offline</h3>
-      <p>Full functionality without an internet connection. Your data is cached locally and syncs when you reconnect.</p>
-    </div>
+    <div class="fcard fade-up"><div class="fcard-icon">💊</div><h3>Smart Reminders</h3><p>Adaptive notifications that fit your schedule. Mark doses taken directly from the notification shade.</p></div>
+    <div class="fcard fade-up"><div class="fcard-icon">🤖</div><h3>AI Health Coach</h3><p>Personalised insights from your adherence history, mood check-ins, and symptom logs.</p></div>
+    <div class="fcard fade-up"><div class="fcard-icon">✈️</div><h3>Travel Planning</h3><p>Auto-calculate packing quantities, adjust schedules for time zones, trip-specific reminders.</p></div>
+    <div class="fcard fade-up"><div class="fcard-icon">📊</div><h3>Adherence Analytics</h3><p>30-day heatmaps, streak tracking, and detailed history to share with your doctor.</p></div>
+    <div class="fcard fade-up"><div class="fcard-icon">🔔</div><h3>Refill Tracker</h3><p>Never run out. Axis monitors your supply and reminds you to reorder before you gap.</p></div>
+    <div class="fcard fade-up"><div class="fcard-icon">📴</div><h3>Works Offline</h3><p>Full functionality without internet. Data is cached locally and syncs when you reconnect.</p></div>
   </div>
 </section>
 
-<!-- ── How it works ── -->
+<!-- ── Stats ── -->
+<div id="stats">
+  <div class="stats-grid">
+    <div class="stat-cell fade-up"><div class="stat-num">99%</div><div class="stat-label">Adherence rate reported by daily users</div></div>
+    <div class="stat-cell fade-up"><div class="stat-num">50k+</div><div class="stat-label">Doses logged every month</div></div>
+    <div class="stat-cell fade-up"><div class="stat-num">0</div><div class="stat-label">User data sold to third parties. Ever.</div></div>
+  </div>
+</div>
+
+<!-- ── How ── -->
 <section id="how">
   <div>
     <div class="section-label">How it works</div>
-    <h2>Up and running<br />in minutes</h2>
-    <p class="section-sub">No lengthy setup, no confusing forms. Add a medication and you're done.</p>
+    <h2 class="fade-up">Up and running<br />in minutes</h2>
+    <p class="section-sub fade-up">No lengthy setup. Add a medication and you're done.</p>
     <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div>
-          <h3>Add your medications</h3>
-          <p>Scan a barcode or search the built-in database. Set dosage, frequency, and times in seconds.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div>
-          <h3>Get smart reminders</h3>
-          <p>Notifications arrive at the right time with one-tap logging. Snooze or mark taken without opening the app.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div>
-          <h3>Track your progress</h3>
-          <p>Your adherence score, streaks, and history build automatically. Share a clean report with your doctor anytime.</p>
-        </div>
-      </div>
+      <div class="step fade-up"><div class="step-num">1</div><div><h3>Add your medications</h3><p>Scan a barcode or search the built-in database. Set dosage, frequency, and times in a few taps.</p></div></div>
+      <div class="step fade-up"><div class="step-num">2</div><div><h3>Get smart reminders</h3><p>Notifications arrive at exactly the right time. Snooze or mark taken without opening the app.</p></div></div>
+      <div class="step fade-up"><div class="step-num">3</div><div><h3>Track your progress</h3><p>Your adherence score, streaks, and history build automatically. Export a clean report anytime.</p></div></div>
     </div>
   </div>
-  <div class="mini-canvas-wrap">
+  <div class="phone-panel fade-up">
     <canvas id="mini-canvas"></canvas>
   </div>
 </section>
@@ -499,414 +369,236 @@
 <!-- ── Security ── -->
 <section id="security">
   <div class="section-label">Security &amp; Privacy</div>
-  <h2>Your health data<br />stays yours</h2>
-  <p class="section-sub">End-to-end encrypted. Biometric locked. Zero data sold.</p>
+  <h2 class="fade-up">Your health data<br />stays yours</h2>
+  <p class="section-sub fade-up">End-to-end encrypted. Biometric locked. Zero data sold.</p>
   <div class="security-grid">
-    <div class="security-card">
-      <div class="icon">🔐</div>
-      <div>
-        <h3>AES-GCM Encryption</h3>
-        <p>All sensitive fields are encrypted on-device with AES-256-GCM before they ever touch our servers.</p>
-      </div>
-    </div>
-    <div class="security-card">
-      <div class="icon">👆</div>
-      <div>
-        <h3>Biometric Unlock</h3>
-        <p>Face ID, fingerprint, or PIN — every session requires authentication before your data is decrypted.</p>
-      </div>
-    </div>
-    <div class="security-card">
-      <div class="icon">🔒</div>
-      <div>
-        <h3>Auto-Lock</h3>
-        <p>The app locks itself after a period of inactivity, and when you switch away. No stale sessions.</p>
-      </div>
-    </div>
-    <div class="security-card">
-      <div class="icon">🛡️</div>
-      <div>
-        <h3>Screen Guard</h3>
-        <p>Prevents your medication list from appearing in app switcher screenshots or screen recordings.</p>
-      </div>
-    </div>
+    <div class="sec-card fade-up"><div class="sec-icon">🔐</div><div><h3>AES-GCM Encryption</h3><p>All sensitive fields are encrypted on-device with AES-256-GCM before they touch our servers.</p></div></div>
+    <div class="sec-card fade-up"><div class="sec-icon">👆</div><div><h3>Biometric Unlock</h3><p>Face ID, fingerprint, or PIN — every session requires authentication before data is decrypted.</p></div></div>
+    <div class="sec-card fade-up"><div class="sec-icon">🔒</div><div><h3>Auto-Lock</h3><p>Locks after inactivity and when you switch away. No stale sessions left open.</p></div></div>
+    <div class="sec-card fade-up"><div class="sec-icon">🛡️</div><div><h3>Screen Guard</h3><p>Prevents your medication list appearing in app-switcher screenshots or recordings.</p></div></div>
   </div>
 </section>
 
 <!-- ── CTA ── -->
 <section id="cta">
   <div class="section-label">Get started</div>
-  <h2>Take control of<br />your health today</h2>
-  <p class="section-sub">Free to download. No subscription required for core features. Works on iPhone and Android.</p>
-  <div class="btn-group">
-    <a class="btn-store" href="#">
-      <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-      <div class="btn-store-text">
-        <span class="btn-store-sub">Download on the</span>
-        <span class="btn-store-name">App Store</span>
-      </div>
+  <h2 class="fade-up">Take control of<br />your health today</h2>
+  <p class="section-sub fade-up">Free to download. No subscription required for core features.</p>
+  <div class="btn-row">
+    <a class="btn-primary" href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Download on App Store
     </a>
-    <a class="btn-store" href="#">
-      <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
-      <div class="btn-store-text">
-        <span class="btn-store-sub">Get it on</span>
-        <span class="btn-store-name">Google Play</span>
-      </div>
+    <a class="btn-ghost" href="#">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
+      Get it on Google Play
     </a>
   </div>
 </section>
 
-<!-- ── Footer ── -->
 <footer>
-  <a class="nav-logo" href="#" style="font-size:1.1rem">Axis<span style="color:#f97316">.</span></a>
+  <a class="footer-logo" href="#">Axis<span>.</span></a>
   <div class="footer-links">
-    <a href="/privacy">Privacy Policy</a>
+    <a href="privacy.html">Privacy Policy</a>
     <a href="#">NHS Guidelines</a>
-    <a href="#">Support</a>
+    <a href="support.html">Support</a>
   </div>
-  <span>© 2026 Axis. All rights reserved.</span>
+  <p>© 2026 Axis. All rights reserved.</p>
 </footer>
 
-<!-- ── Three.js via CDN ── -->
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js"
-  }
-}
-</script>
-
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js" } }</script>
 <script type="module">
 import * as THREE from 'three';
 
-// ─────────────────────────────────────────────
-//  Shared helpers
-// ─────────────────────────────────────────────
-
-function makePhoneGroup(screenColor = '#1a1a2e') {
-  const group = new THREE.Group();
-
-  // Body
-  const bodyGeo = new THREE.BoxGeometry(1, 2, 0.1);
-  const bodyMat = new THREE.MeshPhysicalMaterial({
-    color: 0x1c1c1e,
-    metalness: 0.7,
-    roughness: 0.25,
-    reflectivity: 1,
-  });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
-  group.add(body);
-
-  // Side rails (chamfer illusion via thin boxes)
-  const railMat = new THREE.MeshPhysicalMaterial({ color: 0x2a2a2c, metalness: 0.9, roughness: 0.1 });
-  const railTop = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.04, 0.12), railMat);
-  railTop.position.y = 1.02; group.add(railTop);
-  const railBot = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.04, 0.12), railMat);
-  railBot.position.y = -1.02; group.add(railBot);
-  const railL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.04, 0.12), railMat);
-  railL.position.x = -0.53; group.add(railL);
-  const railR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.04, 0.12), railMat);
-  railR.position.x = 0.53; group.add(railR);
-
-  // Screen
-  const screenGeo = new THREE.PlaneGeometry(0.88, 1.82);
-
-  // Draw the app UI onto a canvas texture
-  const tex = makeScreenTexture();
-  const screenMat = new THREE.MeshBasicMaterial({ map: tex });
-  const screen = new THREE.Mesh(screenGeo, screenMat);
-  screen.position.z = 0.056;
-  group.add(screen);
-
-  // Notch / dynamic island
-  const notchGeo = new THREE.CapsuleGeometry(0.04, 0.14, 4, 8);
-  const notchMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-  const notch = new THREE.Mesh(notchGeo, notchMat);
-  notch.rotation.z = Math.PI / 2;
-  notch.position.set(0, 0.83, 0.058);
-  group.add(notch);
-
-  // Home bar
-  const barGeo = new THREE.CapsuleGeometry(0.018, 0.22, 4, 8);
-  const barMat = new THREE.MeshBasicMaterial({ color: 0x555555 });
-  const bar = new THREE.Mesh(barGeo, barMat);
-  bar.rotation.z = Math.PI / 2;
-  bar.position.set(0, -0.82, 0.058);
-  group.add(bar);
-
-  return group;
-}
-
 function makeScreenTexture() {
-  const size = 512;
+  const W = 512, H = 1058;
   const c = document.createElement('canvas');
-  c.width = size; c.height = Math.round(size * 2.07);
+  c.width = W; c.height = H;
   const ctx = c.getContext('2d');
-  const W = c.width, H = c.height;
 
-  // Background
+  // Dark app background — matches #09090b
   const bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, '#09090b');
-  bg.addColorStop(1, '#111113');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
+  bg.addColorStop(0, '#09090b'); bg.addColorStop(1, '#111113');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
   // Status bar
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 22px -apple-system, sans-serif';
-  ctx.fillText('9:41', 30, 58);
-  ctx.fillStyle = '#a1a1aa';
-  ctx.font = '20px -apple-system, sans-serif';
-  ctx.fillText('●●●', W - 90, 58);
+  ctx.fillStyle = '#fafafa'; ctx.font = 'bold 22px -apple-system,sans-serif';
+  ctx.fillText('9:41', 28, 52);
+  ctx.fillStyle = '#71717a'; ctx.font = '19px -apple-system,sans-serif';
+  ctx.fillText('●●●', W - 72, 52);
 
-  // App name
-  ctx.fillStyle = '#f97316';
-  ctx.font = 'bold 36px -apple-system, sans-serif';
-  ctx.fillText('Axis', 30, 120);
-  ctx.fillStyle = '#a1a1aa';
-  ctx.font = '22px -apple-system, sans-serif';
-  ctx.fillText('Sunday, 18 May', 30, 152);
+  // Dynamic island
+  ctx.fillStyle = '#000';
+  roundRect(ctx, W/2 - 52, 18, 104, 28, 14, true);
 
-  // Stat cards
-  const cardY = 180;
-  const cardH = 90;
+  // App name + date
+  ctx.fillStyle = '#fafafa'; ctx.font = 'bold 38px -apple-system,sans-serif';
+  ctx.fillText('Axis', 28, 122);
+  ctx.fillStyle = '#f97316'; ctx.fillRect(28, 130, 7, 7); // orange accent dot before date
+  ctx.fillStyle = '#a1a1aa'; ctx.font = '20px -apple-system,sans-serif';
+  ctx.fillText('  Sunday, 18 May', 28, 158);
+
+  // Stats cards
   const cards = [
     { label: 'Taken', val: '3', color: '#22c55e' },
     { label: 'Pending', val: '2', color: '#3b82f6' },
-    { label: 'Total', val: '5', color: '#ffffff' },
+    { label: 'Total', val: '5', color: '#fafafa' },
   ];
-  const cw = (W - 48) / 3;
+  const cw = (W - 48) / 3, cy = 182, ch = 92;
   cards.forEach((card, i) => {
     const cx = 16 + i * (cw + 8);
-    ctx.fillStyle = '#18181b';
-    roundRect(ctx, cx, cardY, cw, cardH, 12);
-    ctx.fillStyle = card.color;
-    ctx.font = 'bold 30px -apple-system, sans-serif';
-    ctx.fillText(card.val, cx + 12, cardY + 40);
-    ctx.fillStyle = '#71717a';
-    ctx.font = '18px -apple-system, sans-serif';
-    ctx.fillText(card.label, cx + 12, cardY + 66);
+    ctx.fillStyle = '#18181b'; roundRect(ctx, cx, cy, cw, ch, 10, true);
+    ctx.fillStyle = card.color; ctx.font = 'bold 32px -apple-system,sans-serif';
+    ctx.fillText(card.val, cx + 12, cy + 50);
+    ctx.fillStyle = '#71717a'; ctx.font = '16px -apple-system,sans-serif';
+    ctx.fillText(card.label, cx + 12, cy + 74);
   });
 
-  // Section header
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 24px -apple-system, sans-serif';
-  ctx.fillText("Today's Schedule", 16, cardY + cardH + 32);
+  // Schedule header
+  ctx.fillStyle = '#fafafa'; ctx.font = 'bold 22px -apple-system,sans-serif';
+  ctx.fillText("Today's Schedule", 16, cy + ch + 30);
 
   // Dose rows
   const doses = [
-    { name: 'Metformin', time: '8:00 AM', status: 'taken', color: '#22c55e' },
-    { name: 'Lisinopril', time: '8:00 AM', status: 'taken', color: '#22c55e' },
-    { name: 'Atorvastatin', time: '12:00 PM', status: 'taken', color: '#22c55e' },
-    { name: 'Vitamin D', time: '6:00 PM', status: 'pending', color: '#f97316' },
-    { name: 'Omeprazole', time: '9:00 PM', status: 'pending', color: '#f97316' },
+    { name: 'Metformin 500mg', time: '8:00 AM', done: true },
+    { name: 'Lisinopril 10mg', time: '8:00 AM', done: true },
+    { name: 'Atorvastatin 20mg', time: '12:00 PM', done: true },
+    { name: 'Vitamin D3', time: '6:00 PM', done: false },
+    { name: 'Omeprazole 20mg', time: '9:00 PM', done: false },
   ];
-  doses.forEach((dose, i) => {
-    const ry = cardY + cardH + 50 + i * 72;
-    ctx.fillStyle = '#1c1c1e';
-    roundRect(ctx, 16, ry, W - 32, 60, 10);
-    ctx.fillStyle = dose.color;
-    ctx.beginPath();
-    ctx.arc(W - 36, ry + 30, 8, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 20px -apple-system, sans-serif';
-    ctx.fillText(dose.name, 36, ry + 24);
-    ctx.fillStyle = '#71717a';
-    ctx.font = '17px -apple-system, sans-serif';
-    ctx.fillText(dose.time, 36, ry + 46);
-  });
-
-  const tex = new THREE.CanvasTexture(c);
-  return tex;
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
-  ctx.fill();
-}
-
-// ─────────────────────────────────────────────
-//  Hero canvas — large rotating phone + orbs
-// ─────────────────────────────────────────────
-(function initHero() {
-  const canvas = document.getElementById('phone-canvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-  camera.position.set(0, 0, 5);
-
-  // Lights
-  const amb = new THREE.AmbientLight(0xffffff, 0.3);
-  scene.add(amb);
-  const key = new THREE.PointLight(0xf97316, 4, 12);
-  key.position.set(3, 3, 4);
-  scene.add(key);
-  const fill = new THREE.PointLight(0x3b82f6, 2, 12);
-  fill.position.set(-3, -2, 3);
-  scene.add(fill);
-  const rim = new THREE.PointLight(0xffffff, 1.5, 10);
-  rim.position.set(0, 4, -2);
-  scene.add(rim);
-
-  const phone = makePhoneGroup();
-  phone.rotation.y = 0.3;
-  phone.rotation.x = -0.08;
-  scene.add(phone);
-
-  // Floating orbs
-  const orbData = [];
-  for (let i = 0; i < 5; i++) {
-    const g = new THREE.SphereGeometry(0.06 + Math.random() * 0.06, 16, 16);
-    const m = new THREE.MeshPhysicalMaterial({
-      color: i % 2 === 0 ? 0xf97316 : 0x3b82f6,
-      emissive: i % 2 === 0 ? 0xf97316 : 0x3b82f6,
-      emissiveIntensity: 0.5,
-      roughness: 0.1,
-      metalness: 0.5,
-      transparent: true,
-      opacity: 0.8,
-    });
-    const mesh = new THREE.Mesh(g, m);
-    mesh.position.set(
-      (Math.random() - 0.5) * 4,
-      (Math.random() - 0.5) * 3.5,
-      (Math.random() - 0.5) * 1.5 - 0.5
-    );
-    scene.add(mesh);
-    orbData.push({ mesh, speed: 0.3 + Math.random() * 0.4, phase: Math.random() * Math.PI * 2, amp: 0.15 + Math.random() * 0.2 });
-  }
-
-  // Drag to rotate
-  let isDragging = false, lastX = 0, lastY = 0;
-  let rotY = 0.3, rotX = -0.08;
-  let velY = 0.003, velX = 0;
-
-  canvas.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; lastY = e.clientY; });
-  canvas.addEventListener('touchstart', e => { isDragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; });
-  window.addEventListener('mouseup', () => isDragging = false);
-  window.addEventListener('touchend', () => isDragging = false);
-  window.addEventListener('mousemove', e => {
-    if (!isDragging) return;
-    velY = (e.clientX - lastX) * 0.008;
-    velX = (e.clientY - lastY) * 0.005;
-    lastX = e.clientX; lastY = e.clientY;
-  });
-  window.addEventListener('touchmove', e => {
-    if (!isDragging) return;
-    velY = (e.touches[0].clientX - lastX) * 0.008;
-    velX = (e.touches[0].clientY - lastY) * 0.005;
-    lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
-  });
-
-  function resize() {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  let t = 0;
-  function animate() {
-    requestAnimationFrame(animate);
-    t += 0.016;
-
-    if (isDragging) {
-      rotY += velY; rotX += velX;
-      velY *= 0.85; velX *= 0.85;
-    } else {
-      velY += (0.003 - velY) * 0.02;
-      rotY += velY;
-      rotX += (Math.sin(t * 0.2) * 0.05 - rotX) * 0.03;
+  doses.forEach((d, i) => {
+    const ry = cy + ch + 48 + i * 72;
+    ctx.fillStyle = '#18181b'; roundRect(ctx, 16, ry, W - 32, 60, 10, true);
+    ctx.fillStyle = d.done ? '#22c55e' : '#71717a';
+    ctx.fillRect(16, ry, 3, 60);
+    ctx.fillStyle = '#fafafa'; ctx.font = 'bold 19px -apple-system,sans-serif';
+    ctx.fillText(d.name, 30, ry + 24);
+    ctx.fillStyle = '#71717a'; ctx.font = '16px -apple-system,sans-serif';
+    ctx.fillText(d.time, 30, ry + 46);
+    // status dot — orange for pending
+    ctx.fillStyle = d.done ? '#22c55e' : '#f97316';
+    ctx.beginPath(); ctx.arc(W - 34, ry + 30, 9, 0, Math.PI * 2); ctx.fill();
+    if (d.done) {
+      ctx.strokeStyle = '#09090b'; ctx.lineWidth = 2; ctx.beginPath();
+      ctx.moveTo(W - 40, ry + 30); ctx.lineTo(W - 36, ry + 34); ctx.lineTo(W - 29, ry + 25);
+      ctx.stroke();
     }
-    rotX = Math.max(-0.5, Math.min(0.5, rotX));
+  });
 
-    phone.rotation.y = rotY;
-    phone.rotation.x = rotX;
-    phone.position.y = Math.sin(t * 0.6) * 0.08;
+  return new THREE.CanvasTexture(c);
+}
 
-    orbData.forEach(o => {
-      o.mesh.position.y += Math.sin(t * o.speed + o.phase) * o.amp * 0.01;
-      o.mesh.rotation.y += 0.01;
-    });
+function roundRect(ctx, x, y, w, h, r, fill) {
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+  if (fill) ctx.fill();
+}
 
-    renderer.render(scene, camera);
-  }
-  animate();
-})();
+function makePhone() {
+  const g = new THREE.Group();
+  // Body — dark, matching #1c1c1e
+  g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1,2,0.1),
+    new THREE.MeshPhysicalMaterial({color:0x1c1c1e,metalness:0.65,roughness:0.25})), {}));
+  // Rails
+  const rm = new THREE.MeshPhysicalMaterial({color:0x2a2a2c,metalness:0.85,roughness:0.15});
+  [[new THREE.BoxGeometry(1.02,0.04,0.12),[0,1.02,0]],[new THREE.BoxGeometry(1.02,0.04,0.12),[0,-1.02,0]],
+   [new THREE.BoxGeometry(0.04,2.04,0.12),[-0.53,0,0]],[new THREE.BoxGeometry(0.04,2.04,0.12),[0.53,0,0]]]
+    .forEach(([geo,pos]) => { const m = new THREE.Mesh(geo,rm); m.position.set(...pos); g.add(m); });
+  // Screen
+  const s = new THREE.Mesh(new THREE.PlaneGeometry(0.88,1.82),
+    new THREE.MeshBasicMaterial({map:makeScreenTexture()}));
+  s.position.z = 0.056; g.add(s);
+  // Island
+  const ni = new THREE.Mesh(new THREE.CapsuleGeometry(0.038,0.13,4,8),
+    new THREE.MeshBasicMaterial({color:0x000000}));
+  ni.rotation.z = Math.PI/2; ni.position.set(0,0.83,0.058); g.add(ni);
+  // Home bar
+  const hb = new THREE.Mesh(new THREE.CapsuleGeometry(0.015,0.2,4,8),
+    new THREE.MeshBasicMaterial({color:0x555555}));
+  hb.rotation.z = Math.PI/2; hb.position.set(0,-0.82,0.058); g.add(hb);
+  return g;
+}
 
-// ─────────────────────────────────────────────
-//  Mini canvas — tilted display in "how" section
-// ─────────────────────────────────────────────
-(function initMini() {
-  const canvas = document.getElementById('mini-canvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
-
+// ── Hero ────────────────────────────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('phone-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.2;
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
-  camera.position.set(0, 0, 4.5);
+  const camera = new THREE.PerspectiveCamera(36,1,0.1,100);
+  camera.position.set(0,0,5);
+  scene.add(new THREE.AmbientLight(0xffffff,0.3));
+  const key = new THREE.PointLight(0xf97316,5,14); key.position.set(3,3,4); scene.add(key);
+  const fill = new THREE.PointLight(0xfb923c,2,12); fill.position.set(-3,-1,3); scene.add(fill);
+  const top = new THREE.PointLight(0xffffff,1.5,10); top.position.set(0,4,3); scene.add(top);
+  const phone = makePhone(); phone.rotation.y=0.25; phone.rotation.x=-0.06; scene.add(phone);
 
-  const amb = new THREE.AmbientLight(0xffffff, 0.25);
-  scene.add(amb);
-  const key = new THREE.PointLight(0xf97316, 3, 10);
-  key.position.set(2, 2, 3);
-  scene.add(key);
-  const fill = new THREE.PointLight(0x6366f1, 1.5, 10);
-  fill.position.set(-2, -1, 2);
-  scene.add(fill);
+  // Floating orbs — orange tones to match app palette
+  const orbs = Array.from({length:6},(_,i) => {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(0.05+Math.random()*0.05,14,14),
+      new THREE.MeshPhysicalMaterial({
+        color: i%2===0?0xf97316:0xea580c, emissive:i%2===0?0xf97316:0xea580c,
+        emissiveIntensity:0.4, roughness:0.15, metalness:0.4, transparent:true, opacity:0.7
+      }));
+    m.position.set((Math.random()-.5)*4.5,(Math.random()-.5)*4,(Math.random()-.5)*1.5-.5);
+    scene.add(m);
+    return {mesh:m,phase:Math.random()*Math.PI*2,speed:.25+Math.random()*.35,amp:.12+Math.random()*.18};
+  });
 
-  const phone = makePhoneGroup();
-  phone.rotation.y = -0.5;
-  phone.rotation.x = 0.1;
-  scene.add(phone);
+  let drag=false,lx=0,ly=0,vy=0.002,vx=0,ry=0.25,rx=-0.06;
+  canvas.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;});
+  canvas.addEventListener('touchstart',e=>{drag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;},{passive:true});
+  addEventListener('mouseup',()=>drag=false); addEventListener('touchend',()=>drag=false);
+  addEventListener('mousemove',e=>{if(!drag)return;vy=(e.clientX-lx)*.007;vx=(e.clientY-ly)*.005;lx=e.clientX;ly=e.clientY;});
+  addEventListener('touchmove',e=>{if(!drag)return;vy=(e.touches[0].clientX-lx)*.007;vx=(e.touches[0].clientY-ly)*.005;lx=e.touches[0].clientX;ly=e.touches[0].clientY;},{passive:true});
 
-  function resize() {
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-  }
-  resize();
-  window.addEventListener('resize', resize);
+  const resize=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();};
+  resize(); addEventListener('resize',resize);
 
-  let t = 0;
-  function animate() {
-    requestAnimationFrame(animate);
-    t += 0.016;
-    phone.rotation.y = -0.5 + Math.sin(t * 0.5) * 0.15;
-    phone.position.y = Math.sin(t * 0.7) * 0.06;
-    renderer.render(scene, camera);
-  }
-  animate();
+  let t=0;
+  (function loop(){requestAnimationFrame(loop);t+=.016;
+    if(drag){ry+=vy;rx+=vx;vy*=.82;vx*=.82;}
+    else{vy+=(0.002-vy)*.025;ry+=vy;rx+=(Math.sin(t*.18)*.05-rx)*.04;}
+    rx=Math.max(-.45,Math.min(.45,rx));
+    phone.rotation.y=ry;phone.rotation.x=rx;phone.position.y=Math.sin(t*.55)*.07;
+    orbs.forEach(o=>{o.mesh.position.y+=Math.sin(t*o.speed+o.phase)*o.amp*.01;o.mesh.rotation.y+=.01;});
+    renderer.render(scene,camera);
+  })();
 })();
 
-// ─────────────────────────────────────────────
-//  Scroll-based nav background
-// ─────────────────────────────────────────────
-const nav = document.querySelector('nav');
-window.addEventListener('scroll', () => {
-  nav.style.background = window.scrollY > 60
-    ? 'rgba(9,9,11,0.92)'
-    : 'rgba(9,9,11,0.7)';
+// ── Mini ─────────────────────────────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('mini-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40,1,0.1,100); camera.position.set(0,0,4.2);
+  scene.add(new THREE.AmbientLight(0xffffff,.3));
+  const k = new THREE.PointLight(0xf97316,4,10); k.position.set(2,2,3); scene.add(k);
+  const f = new THREE.PointLight(0xfb923c,2,8); f.position.set(-2,-1,2); scene.add(f);
+  const phone = makePhone(); phone.rotation.y=-.4; phone.rotation.x=.08; scene.add(phone);
+  const resize=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();};
+  resize(); addEventListener('resize',resize);
+  let t=0;(function loop(){requestAnimationFrame(loop);t+=.016;
+    phone.rotation.y=-.4+Math.sin(t*.45)*.18;phone.position.y=Math.sin(t*.65)*.055;
+    renderer.render(scene,camera);
+  })();
+})();
+
+// ── Scroll fade ───────────────────────────────────────────────────────────────
+const obs = new IntersectionObserver(entries=>entries.forEach((e,i)=>{
+  if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*70);obs.unobserve(e.target);}
+}),{threshold:.12});
+document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+
+// ── Nav ───────────────────────────────────────────────────────────────────────
+addEventListener('scroll',()=>{
+  document.getElementById('nav').style.background=scrollY>50?'rgba(9,9,11,0.95)':'rgba(9,9,11,0.8)';
 });
 </script>
 </body>

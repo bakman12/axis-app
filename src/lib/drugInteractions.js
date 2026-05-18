@@ -187,6 +187,42 @@ export function checkInteractions(newMedName, existingMeds) {
   return warnings.sort((a, b) => order[a.severity] - order[b.severity]);
 }
 
+/**
+ * Check every pair of active medications for interactions.
+ * Returns all flagged pairs across the whole formulary.
+ *
+ * @param {object[]} medications — array of active medication entities
+ * @returns {object[]}            — array of { drug1, drug2, severity, message }
+ */
+export function scanAllInteractions(medications) {
+  if (!medications?.length) return [];
+  const results = [];
+
+  for (let i = 0; i < medications.length; i++) {
+    for (let j = i + 1; j < medications.length; j++) {
+      const a = `${medications[i].name ?? ''} ${medications[i].dosage_form ?? ''}`;
+      const b = `${medications[j].name ?? ''} ${medications[j].dosage_form ?? ''}`;
+
+      for (const rule of INTERACTIONS) {
+        const [patA, patB] = rule.drugs;
+        if ((patA.test(a) && patB.test(b)) || (patB.test(a) && patA.test(b))) {
+          if (!results.some(r => r.message === rule.message)) {
+            results.push({
+              drug1:    medications[i].name,
+              drug2:    medications[j].name,
+              severity: rule.severity,
+              message:  rule.message,
+            });
+          }
+        }
+      }
+    }
+  }
+
+  const order = { critical: 0, high: 1, moderate: 2 };
+  return results.sort((a, b) => order[a.severity] - order[b.severity]);
+}
+
 /** Returns the Tailwind colour classes for a given severity. */
 export function severityStyles(severity) {
   return {
