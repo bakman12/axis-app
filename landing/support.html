@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://api.web3forms.com https:; frame-src https://challenges.cloudflare.com;" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
   <title>Support — Axis</title>
   <meta name="description" content="Get help with Axis — FAQs, contact options, and troubleshooting guides." />
   <meta property="og:type" content="website" />
@@ -481,6 +484,12 @@
   <h2>Send us a message</h2>
   <div class="form-wrap">
     <form id="support-form" onsubmit="handleSubmit(event)">
+      <!-- Web3Forms API key — sign up free at web3forms.com to get yours -->
+      <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY_HERE" />
+      <input type="hidden" name="subject" value="Axis Support Request" />
+      <input type="hidden" name="from_name" value="Axis Support Form" />
+      <!-- Honeypot — bots fill this, humans don't; submission is silently dropped if non-empty -->
+      <input type="text" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
       <div class="form-grid">
         <div class="form-group">
           <label for="name">Full name</label>
@@ -570,15 +579,43 @@
     noResults.style.display = visible === 0 ? 'block' : 'none';
   });
 
-  // Form submit
-  function handleSubmit(e) {
+  // Rate limit: one submission per 60 seconds per browser session
+  const RATE_KEY = 'axis_support_last_submit';
+  const RATE_MS  = 60_000;
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    const btn = document.getElementById('submit-btn');
-    btn.textContent = 'Sending…'; btn.disabled = true;
-    setTimeout(() => {
-      document.getElementById('support-form').style.display = 'none';
-      document.getElementById('form-success').style.display = 'block';
-    }, 1200);
+
+    const last = parseInt(sessionStorage.getItem(RATE_KEY) || '0', 10);
+    if (Date.now() - last < RATE_MS) {
+      alert('Please wait a moment before sending another message.');
+      return;
+    }
+
+    const btn  = document.getElementById('submit-btn');
+    const form = document.getElementById('support-form');
+    btn.textContent = 'Sending…';
+    btn.disabled    = true;
+
+    const data = new FormData(form);
+    // Silently drop submission if honeypot is filled
+    if (data.get('botcheck')) { btn.textContent = 'Send message'; btn.disabled = false; return; }
+
+    try {
+      const res  = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: data });
+      const json = await res.json();
+      if (json.success) {
+        sessionStorage.setItem(RATE_KEY, String(Date.now()));
+        form.style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      } else {
+        throw new Error(json.message || 'Submission failed');
+      }
+    } catch (err) {
+      alert('Something went wrong — please email support@axishealth.app directly.');
+      btn.textContent = 'Send message';
+      btn.disabled    = false;
+    }
   }
 </script>
 

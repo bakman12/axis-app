@@ -82,8 +82,10 @@ export default function AutoLock() {
       else resetTimer();
     };
 
-    // All of these events count as "user is active" and reset the inactivity timer.
-    const EVENTS = ['pointerdown', 'pointermove', 'keydown', 'scroll', 'touchstart'];
+    // Intentional interactions only — pointermove and scroll are excluded because
+    // they fire continuously during passive browsing and would prevent the lock
+    // from ever triggering on an unattended device.
+    const EVENTS = ['pointerdown', 'keydown', 'touchstart'];
     EVENTS.forEach(e => document.addEventListener(e, resetTimer, { passive: true, capture: true }));
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
