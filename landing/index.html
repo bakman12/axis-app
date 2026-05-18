@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Axis — Medication, Managed</title>
+  <meta name="description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning. Available on iOS and Android." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #f97316;
+      --orange-dark: #ea580c;
+      --orange-glow: rgba(249, 115, 22, 0.35);
+      --bg: #09090b;
+      --bg2: #111113;
+      --bg3: #18181b;
+      --border: rgba(255,255,255,0.08);
+      --text: #fafafa;
+      --muted: #a1a1aa;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      background: rgba(9,9,11,0.7);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--orange); }
+    .nav-links { display: flex; gap: 32px; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--orange);
+      color: #fff;
+      padding: 9px 22px;
+      border-radius: 9px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .nav-cta:hover { background: var(--orange-dark); transform: translateY(-1px); }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 0;
+      padding: 100px 80px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -100px;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, var(--orange-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-text { max-width: 520px; }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(249,115,22,0.12);
+      border: 1px solid rgba(249,115,22,0.3);
+      color: var(--orange);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .hero-eyebrow::before { content: '●'; font-size: 0.5rem; }
+
+    h1 {
+      font-size: clamp(2.4rem, 4vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      margin-bottom: 20px;
+    }
+    h1 em { font-style: normal; color: var(--orange); }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 36px;
+      max-width: 440px;
+    }
+
+    .btn-group { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    .btn-store {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      padding: 13px 20px;
+      border-radius: 12px;
+      transition: border-color 0.2s, transform 0.15s, background 0.2s;
+    }
+    .btn-store:hover {
+      border-color: var(--orange);
+      background: rgba(249,115,22,0.07);
+      transform: translateY(-2px);
+    }
+    .btn-store svg { width: 22px; height: 22px; flex-shrink: 0; }
+    .btn-store-text { display: flex; flex-direction: column; }
+    .btn-store-sub { font-size: 0.7rem; color: var(--muted); line-height: 1; }
+    .btn-store-name { font-size: 0.95rem; font-weight: 600; line-height: 1.3; }
+
+    .hero-social-proof {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .stars { color: #facc15; letter-spacing: -1px; font-size: 0.9rem; }
+
+    /* ── 3-D canvas ── */
+    #phone-canvas {
+      width: 100%;
+      height: 580px;
+      cursor: grab;
+    }
+    #phone-canvas:active { cursor: grabbing; }
+
+    /* ── Section shared ── */
+    section { padding: 100px 80px; }
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 14px;
+    }
+    h2 {
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 60px;
+    }
+
+    /* ── Features grid ── */
+    #features { background: var(--bg2); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: border-color 0.25s, transform 0.2s;
+    }
+    .feature-card:hover {
+      border-color: rgba(249,115,22,0.4);
+      transform: translateY(-4px);
+    }
+    .feature-icon {
+      width: 44px; height: 44px;
+      border-radius: 11px;
+      background: rgba(249,115,22,0.12);
+      border: 1px solid rgba(249,115,22,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+    }
+    .feature-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+    .feature-card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Stats ── */
+    #stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      padding: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-item {
+      padding: 60px 80px;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      color: var(--orange);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-label { font-size: 0.9rem; color: var(--muted); }
+
+    /* ── How it works ── */
+    #how {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .steps { display: flex; flex-direction: column; gap: 32px; }
+    .step { display: flex; gap: 20px; }
+    .step-num {
+      flex-shrink: 0;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .step h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .step p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
+
+    .mini-canvas-wrap {
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+    }
+    #mini-canvas { width: 100%; height: 380px; display: block; }
+
+    /* ── Security ── */
+    #security { background: var(--bg2); }
+    .security-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 0;
+    }
+    .security-card {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+    }
+    .security-card .icon { font-size: 1.4rem; flex-shrink: 0; }
+    .security-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .security-card p { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── CTA ── */
+    #cta {
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, var(--orange-glow) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    #cta h2 { margin-bottom: 12px; }
+    #cta .section-sub { margin: 0 auto 36px; }
+    #cta .btn-group { justify-content: center; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+    .footer-links { display: flex; gap: 24px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      #hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
+      .hero-text { max-width: 100%; }
+      #phone-canvas { height: 420px; }
+      section { padding: 70px 24px; }
+      .features-grid { grid-template-columns: 1fr; }
+      #stats { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding: 40px 24px; }
+      #how { grid-template-columns: 1fr; gap: 40px; padding: 70px 24px; }
+      .security-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 16px; padding: 32px 24px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Nav ── -->
+<nav>
+  <a class="nav-logo" href="#">Axis<span>.</span></a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#security">Security</a>
+  </div>
+  <a class="nav-cta" href="#cta">Download Free</a>
+</nav>
+
+<!-- ── Hero ── -->
+<section id="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">Now available on iOS &amp; Android</div>
+    <h1>Your medication,<br /><em>managed.</em></h1>
+    <p class="hero-sub">
+      AI-powered reminders, biometric security, and smart travel planning —
+      so you never miss a dose, wherever life takes you.
+    </p>
+    <div class="btn-group">
+      <a class="btn-store" href="#">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        <div class="btn-store-text">
+          <span class="btn-store-sub">Download on the</span>
+          <span class="btn-store-name">App Store</span>
+        </div>
+      </a>
+      <a class="btn-store" href="#">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
+        <div class="btn-store-text">
+          <span class="btn-store-sub">Get it on</span>
+          <span class="btn-store-name">Google Play</span>
+        </div>
+      </a>
+    </div>
+    <div class="hero-social-proof">
+      <span class="stars">★★★★★</span>
+      <span>4.9 · Trusted by thousands of patients</span>
+    </div>
+  </div>
+
+  <canvas id="phone-canvas"></canvas>
+</section>
+
+<!-- ── Stats ── -->
+<div id="stats">
+  <div class="stat-item">
+    <div class="stat-num">99%</div>
+    <div class="stat-label">Adherence rate reported by daily users</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">50k+</div>
+    <div class="stat-label">Doses logged every month</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">0</div>
+    <div class="stat-label">Data sold to third parties. Ever.</div>
+  </div>
+</div>
+
+<!-- ── Features ── -->
+<section id="features">
+  <div class="section-label">Features</div>
+  <h2>Everything your medication<br />routine needs</h2>
+  <p class="section-sub">Built for real patients with real schedules — not a one-size-fits-all pill reminder.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">💊</div>
+      <h3>Smart Reminders</h3>
+      <p>Intelligent notifications that adapt to your schedule. Mark doses taken directly from the notification shade.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3>AI Health Coach</h3>
+      <p>Personalised insights based on your adherence history, mood check-ins, and symptom logs.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✈️</div>
+      <h3>Travel Planning</h3>
+      <p>Auto-calculate how many pills to pack, adjust schedules for time zones, and get trip-specific reminders.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Adherence Analytics</h3>
+      <p>30-day heatmaps, streak tracking, and detailed history so you can spot patterns and share with your doctor.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔔</div>
+      <h3>Refill Tracker</h3>
+      <p>Never run out. Axis monitors your supply and reminds you to reorder with enough lead time.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📴</div>
+      <h3>Works Offline</h3>
+      <p>Full functionality without an internet connection. Your data is cached locally and syncs when you reconnect.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it works ── -->
+<section id="how">
+  <div>
+    <div class="section-label">How it works</div>
+    <h2>Up and running<br />in minutes</h2>
+    <p class="section-sub">No lengthy setup, no confusing forms. Add a medication and you're done.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Add your medications</h3>
+          <p>Scan a barcode or search the built-in database. Set dosage, frequency, and times in seconds.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Get smart reminders</h3>
+          <p>Notifications arrive at the right time with one-tap logging. Snooze or mark taken without opening the app.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Track your progress</h3>
+          <p>Your adherence score, streaks, and history build automatically. Share a clean report with your doctor anytime.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mini-canvas-wrap">
+    <canvas id="mini-canvas"></canvas>
+  </div>
+</section>
+
+<!-- ── Security ── -->
+<section id="security">
+  <div class="section-label">Security &amp; Privacy</div>
+  <h2>Your health data<br />stays yours</h2>
+  <p class="section-sub">End-to-end encrypted. Biometric locked. Zero data sold.</p>
+  <div class="security-grid">
+    <div class="security-card">
+      <div class="icon">🔐</div>
+      <div>
+        <h3>AES-GCM Encryption</h3>
+        <p>All sensitive fields are encrypted on-device with AES-256-GCM before they ever touch our servers.</p>
+      </div>
+    </div>
+    <div class="security-card">
+      <div class="icon">👆</div>
+      <div>
+        <h3>Biometric Unlock</h3>
+        <p>Face ID, fingerprint, or PIN — every session requires authentication before your data is decrypted.</p>
+      </div>
+    </div>
+    <div class="security-card">
+      <div class="icon">🔒</div>
+      <div>
+        <h3>Auto-Lock</h3>
+        <p>The app locks itself after a period of inactivity, and when you switch away. No stale sessions.</p>
+      </div>
+    </div>
+    <div class="security-card">
+      <div class="icon">🛡️</div>
+      <div>
+        <h3>Screen Guard</h3>
+        <p>Prevents your medication list from appearing in app switcher screenshots or screen recordings.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section id="cta">
+  <div class="section-label">Get started</div>
+  <h2>Take control of<br />your health today</h2>
+  <p class="section-sub">Free to download. No subscription required for core features. Works on iPhone and Android.</p>
+  <div class="btn-group">
+    <a class="btn-store" href="#">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <div class="btn-store-text">
+        <span class="btn-store-sub">Download on the</span>
+        <span class="btn-store-name">App Store</span>
+      </div>
+    </a>
+    <a class="btn-store" href="#">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:22px;height:22px"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
+      <div class="btn-store-text">
+        <span class="btn-store-sub">Get it on</span>
+        <span class="btn-store-name">Google Play</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <a class="nav-logo" href="#" style="font-size:1.1rem">Axis<span style="color:#f97316">.</span></a>
+  <div class="footer-links">
+    <a href="/privacy">Privacy Policy</a>
+    <a href="#">NHS Guidelines</a>
+    <a href="#">Support</a>
+  </div>
+  <span>© 2026 Axis. All rights reserved.</span>
+</footer>
+
+<!-- ── Three.js via CDN ── -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+
+// ─────────────────────────────────────────────
+//  Shared helpers
+// ─────────────────────────────────────────────
+
+function makePhoneGroup(screenColor = '#1a1a2e') {
+  const group = new THREE.Group();
+
+  // Body
+  const bodyGeo = new THREE.BoxGeometry(1, 2, 0.1);
+  const bodyMat = new THREE.MeshPhysicalMaterial({
+    color: 0x1c1c1e,
+    metalness: 0.7,
+    roughness: 0.25,
+    reflectivity: 1,
+  });
+  const body = new THREE.Mesh(bodyGeo, bodyMat);
+  group.add(body);
+
+  // Side rails (chamfer illusion via thin boxes)
+  const railMat = new THREE.MeshPhysicalMaterial({ color: 0x2a2a2c, metalness: 0.9, roughness: 0.1 });
+  const railTop = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.04, 0.12), railMat);
+  railTop.position.y = 1.02; group.add(railTop);
+  const railBot = new THREE.Mesh(new THREE.BoxGeometry(1.02, 0.04, 0.12), railMat);
+  railBot.position.y = -1.02; group.add(railBot);
+  const railL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.04, 0.12), railMat);
+  railL.position.x = -0.53; group.add(railL);
+  const railR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 2.04, 0.12), railMat);
+  railR.position.x = 0.53; group.add(railR);
+
+  // Screen
+  const screenGeo = new THREE.PlaneGeometry(0.88, 1.82);
+
+  // Draw the app UI onto a canvas texture
+  const tex = makeScreenTexture();
+  const screenMat = new THREE.MeshBasicMaterial({ map: tex });
+  const screen = new THREE.Mesh(screenGeo, screenMat);
+  screen.position.z = 0.056;
+  group.add(screen);
+
+  // Notch / dynamic island
+  const notchGeo = new THREE.CapsuleGeometry(0.04, 0.14, 4, 8);
+  const notchMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+  const notch = new THREE.Mesh(notchGeo, notchMat);
+  notch.rotation.z = Math.PI / 2;
+  notch.position.set(0, 0.83, 0.058);
+  group.add(notch);
+
+  // Home bar
+  const barGeo = new THREE.CapsuleGeometry(0.018, 0.22, 4, 8);
+  const barMat = new THREE.MeshBasicMaterial({ color: 0x555555 });
+  const bar = new THREE.Mesh(barGeo, barMat);
+  bar.rotation.z = Math.PI / 2;
+  bar.position.set(0, -0.82, 0.058);
+  group.add(bar);
+
+  return group;
+}
+
+function makeScreenTexture() {
+  const size = 512;
+  const c = document.createElement('canvas');
+  c.width = size; c.height = Math.round(size * 2.07);
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+
+  // Background
+  const bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#09090b');
+  bg.addColorStop(1, '#111113');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Status bar
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 22px -apple-system, sans-serif';
+  ctx.fillText('9:41', 30, 58);
+  ctx.fillStyle = '#a1a1aa';
+  ctx.font = '20px -apple-system, sans-serif';
+  ctx.fillText('●●●', W - 90, 58);
+
+  // App name
+  ctx.fillStyle = '#f97316';
+  ctx.font = 'bold 36px -apple-system, sans-serif';
+  ctx.fillText('Axis', 30, 120);
+  ctx.fillStyle = '#a1a1aa';
+  ctx.font = '22px -apple-system, sans-serif';
+  ctx.fillText('Sunday, 18 May', 30, 152);
+
+  // Stat cards
+  const cardY = 180;
+  const cardH = 90;
+  const cards = [
+    { label: 'Taken', val: '3', color: '#22c55e' },
+    { label: 'Pending', val: '2', color: '#3b82f6' },
+    { label: 'Total', val: '5', color: '#ffffff' },
+  ];
+  const cw = (W - 48) / 3;
+  cards.forEach((card, i) => {
+    const cx = 16 + i * (cw + 8);
+    ctx.fillStyle = '#18181b';
+    roundRect(ctx, cx, cardY, cw, cardH, 12);
+    ctx.fillStyle = card.color;
+    ctx.font = 'bold 30px -apple-system, sans-serif';
+    ctx.fillText(card.val, cx + 12, cardY + 40);
+    ctx.fillStyle = '#71717a';
+    ctx.font = '18px -apple-system, sans-serif';
+    ctx.fillText(card.label, cx + 12, cardY + 66);
+  });
+
+  // Section header
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 24px -apple-system, sans-serif';
+  ctx.fillText("Today's Schedule", 16, cardY + cardH + 32);
+
+  // Dose rows
+  const doses = [
+    { name: 'Metformin', time: '8:00 AM', status: 'taken', color: '#22c55e' },
+    { name: 'Lisinopril', time: '8:00 AM', status: 'taken', color: '#22c55e' },
+    { name: 'Atorvastatin', time: '12:00 PM', status: 'taken', color: '#22c55e' },
+    { name: 'Vitamin D', time: '6:00 PM', status: 'pending', color: '#f97316' },
+    { name: 'Omeprazole', time: '9:00 PM', status: 'pending', color: '#f97316' },
+  ];
+  doses.forEach((dose, i) => {
+    const ry = cardY + cardH + 50 + i * 72;
+    ctx.fillStyle = '#1c1c1e';
+    roundRect(ctx, 16, ry, W - 32, 60, 10);
+    ctx.fillStyle = dose.color;
+    ctx.beginPath();
+    ctx.arc(W - 36, ry + 30, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 20px -apple-system, sans-serif';
+    ctx.fillText(dose.name, 36, ry + 24);
+    ctx.fillStyle = '#71717a';
+    ctx.font = '17px -apple-system, sans-serif';
+    ctx.fillText(dose.time, 36, ry + 46);
+  });
+
+  const tex = new THREE.CanvasTexture(c);
+  return tex;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// ─────────────────────────────────────────────
+//  Hero canvas — large rotating phone + orbs
+// ─────────────────────────────────────────────
+(function initHero() {
+  const canvas = document.getElementById('phone-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.2;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  camera.position.set(0, 0, 5);
+
+  // Lights
+  const amb = new THREE.AmbientLight(0xffffff, 0.3);
+  scene.add(amb);
+  const key = new THREE.PointLight(0xf97316, 4, 12);
+  key.position.set(3, 3, 4);
+  scene.add(key);
+  const fill = new THREE.PointLight(0x3b82f6, 2, 12);
+  fill.position.set(-3, -2, 3);
+  scene.add(fill);
+  const rim = new THREE.PointLight(0xffffff, 1.5, 10);
+  rim.position.set(0, 4, -2);
+  scene.add(rim);
+
+  const phone = makePhoneGroup();
+  phone.rotation.y = 0.3;
+  phone.rotation.x = -0.08;
+  scene.add(phone);
+
+  // Floating orbs
+  const orbData = [];
+  for (let i = 0; i < 5; i++) {
+    const g = new THREE.SphereGeometry(0.06 + Math.random() * 0.06, 16, 16);
+    const m = new THREE.MeshPhysicalMaterial({
+      color: i % 2 === 0 ? 0xf97316 : 0x3b82f6,
+      emissive: i % 2 === 0 ? 0xf97316 : 0x3b82f6,
+      emissiveIntensity: 0.5,
+      roughness: 0.1,
+      metalness: 0.5,
+      transparent: true,
+      opacity: 0.8,
+    });
+    const mesh = new THREE.Mesh(g, m);
+    mesh.position.set(
+      (Math.random() - 0.5) * 4,
+      (Math.random() - 0.5) * 3.5,
+      (Math.random() - 0.5) * 1.5 - 0.5
+    );
+    scene.add(mesh);
+    orbData.push({ mesh, speed: 0.3 + Math.random() * 0.4, phase: Math.random() * Math.PI * 2, amp: 0.15 + Math.random() * 0.2 });
+  }
+
+  // Drag to rotate
+  let isDragging = false, lastX = 0, lastY = 0;
+  let rotY = 0.3, rotX = -0.08;
+  let velY = 0.003, velX = 0;
+
+  canvas.addEventListener('mousedown', e => { isDragging = true; lastX = e.clientX; lastY = e.clientY; });
+  canvas.addEventListener('touchstart', e => { isDragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY; });
+  window.addEventListener('mouseup', () => isDragging = false);
+  window.addEventListener('touchend', () => isDragging = false);
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    velY = (e.clientX - lastX) * 0.008;
+    velX = (e.clientY - lastY) * 0.005;
+    lastX = e.clientX; lastY = e.clientY;
+  });
+  window.addEventListener('touchmove', e => {
+    if (!isDragging) return;
+    velY = (e.touches[0].clientX - lastX) * 0.008;
+    velX = (e.touches[0].clientY - lastY) * 0.005;
+    lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+  });
+
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.016;
+
+    if (isDragging) {
+      rotY += velY; rotX += velX;
+      velY *= 0.85; velX *= 0.85;
+    } else {
+      velY += (0.003 - velY) * 0.02;
+      rotY += velY;
+      rotX += (Math.sin(t * 0.2) * 0.05 - rotX) * 0.03;
+    }
+    rotX = Math.max(-0.5, Math.min(0.5, rotX));
+
+    phone.rotation.y = rotY;
+    phone.rotation.x = rotX;
+    phone.position.y = Math.sin(t * 0.6) * 0.08;
+
+    orbData.forEach(o => {
+      o.mesh.position.y += Math.sin(t * o.speed + o.phase) * o.amp * 0.01;
+      o.mesh.rotation.y += 0.01;
+    });
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ─────────────────────────────────────────────
+//  Mini canvas — tilted display in "how" section
+// ─────────────────────────────────────────────
+(function initMini() {
+  const canvas = document.getElementById('mini-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.set(0, 0, 4.5);
+
+  const amb = new THREE.AmbientLight(0xffffff, 0.25);
+  scene.add(amb);
+  const key = new THREE.PointLight(0xf97316, 3, 10);
+  key.position.set(2, 2, 3);
+  scene.add(key);
+  const fill = new THREE.PointLight(0x6366f1, 1.5, 10);
+  fill.position.set(-2, -1, 2);
+  scene.add(fill);
+
+  const phone = makePhoneGroup();
+  phone.rotation.y = -0.5;
+  phone.rotation.x = 0.1;
+  scene.add(phone);
+
+  function resize() {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.016;
+    phone.rotation.y = -0.5 + Math.sin(t * 0.5) * 0.15;
+    phone.position.y = Math.sin(t * 0.7) * 0.06;
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ─────────────────────────────────────────────
+//  Scroll-based nav background
+// ─────────────────────────────────────────────
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  nav.style.background = window.scrollY > 60
+    ? 'rgba(9,9,11,0.92)'
+    : 'rgba(9,9,11,0.7)';
+});
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@ import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plane, Calendar } from 'lucide-react';
+import { Plane, Calendar, AlertTriangle } from 'lucide-react';
 import RootPageHeader from '../components/RootPageHeader';
 import AddTripDialog from '../components/AddTripDialog';
 import AddEventDialog from '../components/AddEventDialog';
@@ -11,7 +11,6 @@ import TripCard from '../components/TripCard';
 import EventCard from '../components/EventCard';
 import PackingCalculator from '../components/PackingCalculator';
 import ActiveTripSchedule from '../components/ActiveTripSchedule';
-import { AlertTriangle } from 'lucide-react';
 
 export default function Travel() {
   const [showAddTrip, setShowAddTrip] = useState(false);

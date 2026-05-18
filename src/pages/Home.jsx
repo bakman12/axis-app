@@ -1,4 +1,3 @@
-import React from 'react';
 import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMissedDoseChecker } from '@/lib/useMissedDoseChecker';
@@ -27,12 +26,12 @@ export default function Home() {
   const { data: todayLogs = [] } = useQuery({
     queryKey: ['logs', 'today'],
     queryFn: async () => {
-      const start = startOfDay(new Date()).toISOString();
-      const end   = endOfDay(new Date()).toISOString();
-      const logs  = await entities.MedicationLog.list();
+      const start = startOfDay(new Date());
+      const end   = endOfDay(new Date());
+      const logs  = await entities.MedicationLog.list('-created_date', 500);
       return logs.filter(log => {
         const t = new Date(log.taken_time || log.created_date);
-        return t >= new Date(start) && t <= new Date(end);
+        return t >= start && t <= end;
       });
     }
   });
