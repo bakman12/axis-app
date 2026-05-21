@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<!--
+  OG Image generator — screenshot this page at EXACTLY 1200×630 px
+  then save as og-image.png in the same folder.
+
+  How to screenshot at the right size:
+    1. Open this file in Chrome
+    2. Open DevTools (F12) → Toggle Device Toolbar (Ctrl+Shift+M)
+    3. Set dimensions to 1200 × 630, device pixel ratio 1
+    4. Close DevTools
+    5. Press Ctrl+Shift+P → "Capture screenshot"
+    6. Save the file as og-image.png in the landing/ folder
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=1200"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{width:1200px;height:630px;overflow:hidden}
+    body{
+      font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+      background:#030309;
+      -webkit-font-smoothing:antialiased;
+    }
+    .wrap{
+      width:1200px;height:630px;
+      background:linear-gradient(135deg,#030309 0%,#0c0c18 100%);
+      position:relative;overflow:hidden;
+      display:flex;align-items:center;
+      padding:0 80px;gap:60px;
+    }
+    /* Glow orbs */
+    .wrap::before{
+      content:'';position:absolute;
+      width:700px;height:700px;border-radius:50%;
+      background:radial-gradient(circle,rgba(249,115,22,.2) 0%,transparent 65%);
+      top:-250px;right:-60px;pointer-events:none;
+    }
+    .wrap::after{
+      content:'';position:absolute;
+      width:500px;height:500px;border-radius:50%;
+      background:radial-gradient(circle,rgba(139,92,246,.16) 0%,transparent 65%);
+      bottom:-200px;left:-60px;pointer-events:none;
+    }
+    /* Grid lines */
+    .grid{position:absolute;inset:0;pointer-events:none}
+    .grid::before{
+      content:'';position:absolute;inset:0;
+      background:
+        linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+      background-size:80px 80px;
+    }
+
+    /* Left side */
+    .left{flex:1;position:relative;z-index:2}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(249,115,22,0.09);border:1px solid rgba(249,115,22,0.22);
+      color:rgba(249,115,22,0.9);font-size:11px;font-weight:600;
+      letter-spacing:1.8px;text-transform:uppercase;
+      padding:6px 14px;border-radius:100px;margin-bottom:24px;
+    }
+    .badge-dot{width:6px;height:6px;border-radius:50%;background:#f97316;flex-shrink:0}
+    h1{
+      font-size:88px;font-weight:700;line-height:.94;
+      letter-spacing:-5px;
+      background:linear-gradient(135deg,#f97316 0%,#fb923c 45%,#a78bfa 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      margin-bottom:24px;
+    }
+    .sub{
+      font-size:19px;color:rgba(136,146,164,0.9);
+      line-height:1.6;margin-bottom:40px;
+    }
+    .brand{font-size:26px;font-weight:700;color:#f0f0f8;letter-spacing:-1px}
+    .brand span{color:#f97316}
+    .domain{font-size:13px;color:rgba(82,92,110,0.9);margin-top:4px;letter-spacing:.3px}
+
+    /* Right card */
+    .card{
+      width:390px;flex-shrink:0;
+      background:#07070f;border:1px solid rgba(255,255,255,0.11);
+      border-radius:20px;overflow:hidden;
+      box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 60px rgba(249,115,22,.07);
+      position:relative;z-index:2;
+    }
+    .card-top{
+      background:#0c0c18;border-bottom:1px solid rgba(255,255,255,0.06);
+      padding:14px 20px;display:flex;align-items:center;gap:12px;
+    }
+    .dots{display:flex;gap:6px}
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot-r{background:#ef4444;opacity:.6}
+    .dot-y{background:#f59e0b;opacity:.6}
+    .dot-g{background:#22c55e;opacity:.6}
+    .card-title{
+      flex:1;text-align:center;font-size:12px;font-weight:600;
+      color:rgba(240,240,248,0.55);
+    }
+    .card-body{padding:18px 20px 20px}
+    .date-chip{
+      display:inline-block;
+      background:rgba(249,115,22,0.09);border:1px solid rgba(249,115,22,0.2);
+      color:#f97316;font-size:10.5px;font-weight:600;
+      padding:4px 12px;border-radius:7px;margin-bottom:16px;
+    }
+    .dose{
+      display:flex;align-items:center;gap:12px;
+      background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+      border-radius:10px;padding:12px 14px;margin-bottom:8px;position:relative;
+      overflow:hidden;
+    }
+    .dose::before{
+      content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:2px;
+    }
+    .dose.taken::before{background:#22c55e}
+    .dose.taken{border-color:rgba(34,197,94,0.12)}
+    .dose.soon::before{background:#f97316}
+    .dose.soon{border-color:rgba(249,115,22,0.18)}
+    .dose.later::before{background:#8b5cf6}
+    .dose-icon{
+      width:28px;height:28px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;flex-shrink:0;
+    }
+    .dose.taken .dose-icon{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);color:#22c55e}
+    .dose.soon  .dose-icon{background:rgba(249,115,22,0.12);border:1px solid rgba(249,115,22,0.25)}
+    .dose.later .dose-icon{background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.25)}
+    .dose-info{flex:1;min-width:0}
+    .dose-name{font-size:12.5px;font-weight:600;color:#f0f0f8}
+    .dose-time{font-size:11px;color:rgba(136,146,164,.8);margin-top:2px}
+    .chip{
+      font-size:10px;font-weight:600;padding:3px 10px;border-radius:6px;flex-shrink:0;
+    }
+    .chip.taken{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+    .chip.soon{background:rgba(249,115,22,.1);color:#f97316;border:1px solid rgba(249,115,22,.2)}
+    .chip.later{background:rgba(139,92,246,.1);color:#a78bfa;border:1px solid rgba(139,92,246,.2)}
+    .adhere{
+      margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);
+      display:flex;align-items:center;gap:10px;
+    }
+    .adhere-label{font-size:10.5px;color:rgba(82,92,110,.9);white-space:nowrap}
+    .bar-track{flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+    .bar-fill{height:100%;width:94%;background:linear-gradient(90deg,#f97316,#a78bfa);border-radius:3px}
+    .adhere-pct{font-size:11.5px;font-weight:700;color:#f0f0f8;white-space:nowrap}
+    .enc-note{
+      text-align:center;font-size:10.5px;color:rgba(82,92,110,.75);
+      margin-top:12px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="grid"></div>
+
+  <!-- Left -->
+  <div class="left">
+    <div class="badge"><div class="badge-dot"></div>Medication Tracking</div>
+    <h1>Never<br>Miss a<br>Dose.</h1>
+    <div class="sub">AI reminders · Biometric security<br>Travel mode · Zero knowledge</div>
+    <div class="brand">Axis<span>.</span></div>
+    <div class="domain">axisrx.app</div>
+  </div>
+
+  <!-- Right card -->
+  <div class="card">
+    <div class="card-top">
+      <div class="dots">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <div class="card-title">Today's Schedule</div>
+    </div>
+    <div class="card-body">
+      <div class="date-chip">Mon, 19 May 2026</div>
+
+      <div class="dose taken">
+        <div class="dose-icon">✓</div>
+        <div class="dose-info">
+          <div class="dose-name">Metformin 500mg</div>
+          <div class="dose-time">8:00 AM · With food</div>
+        </div>
+        <div class="chip taken">Taken</div>
+      </div>
+
+      <div class="dose soon">
+        <div class="dose-icon">💊</div>
+        <div class="dose-info">
+          <div class="dose-name">Lisinopril 10mg</div>
+          <div class="dose-time">2:00 PM · 1 hr 20 min</div>
+        </div>
+        <div class="chip soon">Soon</div>
+      </div>
+
+      <div class="dose later">
+        <div class="dose-icon">💊</div>
+        <div class="dose-info">
+          <div class="dose-name">Vitamin D3 · 50mcg</div>
+          <div class="dose-time">6:00 PM · Evening</div>
+        </div>
+        <div class="chip later">Later</div>
+      </div>
+
+      <div class="adhere">
+        <div class="adhere-label">Weekly adherence</div>
+        <div class="bar-track"><div class="bar-fill"></div></div>
+        <div class="adhere-pct">94%</div>
+      </div>
+
+      <div class="enc-note">🔐 AES-256 encrypted · Zero knowledge</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

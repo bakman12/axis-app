@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:;" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+  <title>Terms of Service — Axis</title>
+  <meta name="description" content="Axis Terms of Service — the rules that govern your use of the Axis medication-tracking app." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://axisrx.app/terms.html" />
+  <meta property="og:title" content="Terms of Service — Axis" />
+  <meta property="og:description" content="Read the Axis Terms of Service." />
+  <meta property="og:image" content="https://axisrx.app/og-image.png" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:      #030309;
+      --bg2:     #07070f;
+      --bg3:     #0c0c18;
+      --border:  rgba(255,255,255,0.06);
+      --border2: rgba(255,255,255,0.11);
+      --orange:  #f97316;
+      --violet:  #8b5cf6;
+      --text:    #f0f0f8;
+      --body:    #8892a4;
+      --muted:   #525c6e;
+    }
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Inter',-apple-system,sans-serif;
+      background:var(--bg);color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      line-height:1.75;
+    }
+    body::before{
+      content:'';position:fixed;inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity:.4;pointer-events:none;z-index:0;
+    }
+
+    /* ─── Nav ─── */
+    nav{
+      position:sticky;top:0;z-index:100;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px 56px;
+      background:rgba(3,3,9,0.85);backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+    }
+    @media(max-width:600px){nav{padding:14px 20px}}
+    .nav-logo{
+      font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;
+      letter-spacing:-0.04em;color:var(--text);text-decoration:none;
+    }
+    .nav-logo span{color:var(--orange)}
+    .nav-back{
+      display:flex;align-items:center;gap:6px;
+      color:var(--muted);text-decoration:none;font-size:0.875rem;font-weight:500;
+      transition:color .2s;
+    }
+    .nav-back:hover{color:var(--text)}
+    .nav-back svg{width:16px;height:16px}
+
+    /* ─── Layout ─── */
+    .page{
+      max-width:780px;margin:0 auto;padding:72px 40px 120px;
+      position:relative;z-index:1;
+    }
+    @media(max-width:600px){.page{padding:48px 20px 80px}}
+
+    /* ─── Header ─── */
+    .page-header{margin-bottom:56px}
+    .page-label{
+      font-size:0.68rem;font-weight:600;letter-spacing:0.14em;
+      text-transform:uppercase;color:var(--orange);margin-bottom:14px;opacity:.85;
+    }
+    h1{
+      font-family:'Space Grotesk',sans-serif;
+      font-size:clamp(2.4rem,5vw,3.6rem);font-weight:700;
+      line-height:1;letter-spacing:-0.05em;color:var(--text);
+      margin-bottom:20px;
+    }
+    .page-meta{
+      font-size:0.85rem;color:var(--muted);
+      padding:14px 18px;
+      background:rgba(255,255,255,0.03);
+      border:1px solid var(--border);
+      border-radius:10px;
+      display:inline-block;
+      margin-top:4px;
+    }
+    .page-meta strong{color:var(--body)}
+
+    /* ─── ToC ─── */
+    .toc{
+      background:var(--bg2);border:1px solid var(--border);
+      border-radius:14px;padding:24px 28px;margin-bottom:56px;
+    }
+    .toc-title{
+      font-size:0.75rem;font-weight:600;letter-spacing:.1em;
+      text-transform:uppercase;color:var(--muted);margin-bottom:14px;
+    }
+    .toc ol{list-style:none;counter-reset:toc-c;display:grid;gap:6px}
+    .toc ol li{counter-increment:toc-c;display:flex;align-items:baseline;gap:10px}
+    .toc ol li::before{
+      content:counter(toc-c,decimal-leading-zero);
+      font-size:.72rem;font-weight:600;color:var(--muted);
+      font-variant-numeric:tabular-nums;min-width:22px;flex-shrink:0;
+    }
+    .toc ol li a{
+      font-size:.875rem;color:var(--body);text-decoration:none;
+      transition:color .2s;
+    }
+    .toc ol li a:hover{color:var(--orange)}
+
+    /* ─── Sections ─── */
+    section{margin-bottom:56px}
+    h2{
+      font-family:'Space Grotesk',sans-serif;
+      font-size:1.35rem;font-weight:700;
+      letter-spacing:-0.025em;color:var(--text);
+      margin-bottom:18px;
+      padding-top:8px;
+      scroll-margin-top:90px;
+    }
+    h2 .num{
+      font-size:.75rem;font-weight:600;color:var(--orange);
+      display:inline-block;margin-right:8px;opacity:.85;
+    }
+    p{color:var(--body);margin-bottom:14px}
+    p:last-child{margin-bottom:0}
+    ul,ol{color:var(--body);padding-left:22px;display:grid;gap:8px;margin-bottom:14px}
+    li{padding-left:4px}
+    strong{color:var(--text);font-weight:600}
+    a{color:var(--orange);text-decoration:none;transition:opacity .2s}
+    a:hover{opacity:.8;text-decoration:underline}
+    .callout{
+      background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.18);
+      border-radius:10px;padding:16px 20px;margin:20px 0;
+      font-size:.875rem;color:var(--body);
+    }
+    .callout strong{color:var(--orange)}
+
+    /* ─── Footer ─── */
+    footer{
+      background:var(--bg2);border-top:1px solid var(--border);
+      padding:56px 0 28px;position:relative;z-index:1;
+    }
+    .footer-inner{
+      max-width:1120px;margin:0 auto;padding:0 40px;
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+    }
+    @media(max-width:600px){.footer-inner{padding:0 20px;flex-direction:column;align-items:flex-start}}
+    .f-logo{
+      font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;
+      color:var(--text);text-decoration:none;letter-spacing:-.04em;
+    }
+    .f-logo span{color:var(--orange)}
+    .footer-links{display:flex;gap:24px;flex-wrap:wrap}
+    .footer-links a{font-size:.78rem;color:var(--muted);text-decoration:none;transition:color .2s}
+    .footer-links a:hover{color:var(--body)}
+    .footer-copy{font-size:.75rem;color:var(--muted);width:100%}
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="index.html">Axis<span>.</span></a>
+  <a class="nav-back" href="index.html">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M10 3L5 8l5 5"/>
+    </svg>
+    Back to home
+  </a>
+</nav>
+
+<!-- CONTENT -->
+<main class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-label">Legal</div>
+    <h1>Terms of<br>Service</h1>
+    <div class="page-meta">
+      <strong>Effective date:</strong> 19 May 2026 &nbsp;·&nbsp;
+      <strong>Version:</strong> 1.0
+    </div>
+  </div>
+
+  <!-- Table of contents -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <ol>
+      <li><a href="#s1">Acceptance of Terms</a></li>
+      <li><a href="#s2">Description of Service</a></li>
+      <li><a href="#s3">Eligibility</a></li>
+      <li><a href="#s4">Account Registration</a></li>
+      <li><a href="#s5">Acceptable Use</a></li>
+      <li><a href="#s6">Health Data &amp; Medical Disclaimer</a></li>
+      <li><a href="#s7">Privacy &amp; Data</a></li>
+      <li><a href="#s8">Intellectual Property</a></li>
+      <li><a href="#s9">Subscriptions &amp; Billing</a></li>
+      <li><a href="#s10">Disclaimers &amp; Limitation of Liability</a></li>
+      <li><a href="#s11">Termination</a></li>
+      <li><a href="#s12">Governing Law</a></li>
+      <li><a href="#s13">Changes to These Terms</a></li>
+      <li><a href="#s14">Contact</a></li>
+    </ol>
+  </div>
+
+  <!-- Section 1 -->
+  <section id="s1">
+    <h2><span class="num">01</span>Acceptance of Terms</h2>
+    <p>By downloading, installing, or using the Axis application ("App") or any of its associated websites (including <a href="https://axisrx.app">axisrx.app</a>), you agree to be bound by these Terms of Service ("Terms") and our <a href="privacy.html">Privacy Policy</a>.</p>
+    <p>If you do not agree to these Terms, do not use the App or any part of our services.</p>
+    <p>We may update these Terms from time to time. Continued use of the service after changes are posted constitutes acceptance of those changes. We will notify you of significant changes via in-app notification or email.</p>
+  </section>
+
+  <!-- Section 2 -->
+  <section id="s2">
+    <h2><span class="num">02</span>Description of Service</h2>
+    <p>Axis is a personal medication management application that helps users:</p>
+    <ul>
+      <li>Track medication schedules and dosage history</li>
+      <li>Receive smart reminders and adherence insights</li>
+      <li>Manage medications while travelling across time zones</li>
+      <li>Store health data securely on-device using AES-256-GCM encryption</li>
+    </ul>
+    <p>The App is intended as a personal organisational tool only. It is <strong>not</strong> a medical device, and it does not provide medical advice, diagnosis, or treatment.</p>
+  </section>
+
+  <!-- Section 3 -->
+  <section id="s3">
+    <h2><span class="num">03</span>Eligibility</h2>
+    <p>You must be at least <strong>13 years of age</strong> to use Axis. If you are under 18, you confirm that a parent or legal guardian has reviewed and agreed to these Terms on your behalf.</p>
+    <p>Axis is not designed for clinical use. If you are a healthcare professional using the App in a clinical context, you acknowledge that it does not constitute a clinical decision support system.</p>
+  </section>
+
+  <!-- Section 4 -->
+  <section id="s4">
+    <h2><span class="num">04</span>Account Registration</h2>
+    <p>Some features require you to create an account. You agree to:</p>
+    <ul>
+      <li>Provide accurate and truthful information when registering</li>
+      <li>Keep your account credentials secure and confidential</li>
+      <li>Notify us immediately if you suspect unauthorised access to your account</li>
+      <li>Not share your account with others</li>
+    </ul>
+    <p>We reserve the right to terminate or suspend accounts that violate these Terms.</p>
+  </section>
+
+  <!-- Section 5 -->
+  <section id="s5">
+    <h2><span class="num">05</span>Acceptable Use</h2>
+    <p>You agree not to use Axis to:</p>
+    <ul>
+      <li>Violate any applicable laws or regulations</li>
+      <li>Attempt to reverse engineer, decompile, or extract source code from the App</li>
+      <li>Interfere with or disrupt the integrity or performance of our services</li>
+      <li>Upload or transmit malware, viruses, or any harmful code</li>
+      <li>Misrepresent your identity or impersonate another person</li>
+      <li>Attempt to gain unauthorised access to any part of the service or its related systems</li>
+    </ul>
+    <p>Violation of these rules may result in immediate termination of your access without notice.</p>
+  </section>
+
+  <!-- Section 6 -->
+  <section id="s6">
+    <h2><span class="num">06</span>Health Data &amp; Medical Disclaimer</h2>
+    <div class="callout">
+      <strong>Not medical advice.</strong> Axis is a personal organisational tool, not a medical device. Nothing in the App constitutes medical advice, a prescription, or a substitute for professional healthcare guidance.
+    </div>
+    <p>Always consult a qualified healthcare professional before making any changes to your medication regimen. Axis is not responsible for any harm arising from reliance on information displayed in the App.</p>
+    <p>In the event of a medical emergency, contact the relevant emergency services in your country (e.g., 999 in the UK, 911 in the US, 112 in the EU) immediately.</p>
+    <p>All health data you enter into Axis is <strong>stored locally on your device</strong> and encrypted at rest. We do not access, process, or transmit your health data to our servers unless you explicitly enable cloud sync features (where available).</p>
+  </section>
+
+  <!-- Section 7 -->
+  <section id="s7">
+    <h2><span class="num">07</span>Privacy &amp; Data</h2>
+    <p>Your use of Axis is also governed by our <a href="privacy.html">Privacy Policy</a>, which is incorporated into these Terms by reference.</p>
+    <p>Key principles:</p>
+    <ul>
+      <li>Health data is encrypted on-device with AES-256-GCM encryption</li>
+      <li>We do not sell your personal data to third parties</li>
+      <li>You can delete your account and all associated data at any time from Settings</li>
+      <li>We comply with the UK GDPR and applicable data protection laws</li>
+    </ul>
+  </section>
+
+  <!-- Section 8 -->
+  <section id="s8">
+    <h2><span class="num">08</span>Intellectual Property</h2>
+    <p>All content, code, design, trademarks, and intellectual property associated with Axis are owned by <strong>Axis Health Ltd</strong> or its licensors. You may not copy, reproduce, modify, or distribute any part of the App or its content without express written permission.</p>
+    <p>You retain full ownership of any personal data you enter into the App. By using the App you grant us no rights over that content beyond what is strictly necessary to provide the service.</p>
+  </section>
+
+  <!-- Section 9 -->
+  <section id="s9">
+    <h2><span class="num">09</span>Cost &amp; Access</h2>
+    <p>Axis is currently <strong>free to download and free to use</strong>. All features are available to all users at no charge.</p>
+    <p>We reserve the right to introduce optional paid features or plans in the future. If we do, we will provide clear advance notice and existing free functionality will remain accessible.</p>
+    <p>Any future paid features will be governed by updated terms published at the time of introduction.</p>
+  </section>
+
+  <!-- Section 10 -->
+  <section id="s10">
+    <h2><span class="num">10</span>Disclaimers &amp; Limitation of Liability</h2>
+    <p>The App is provided <strong>"as is"</strong> and <strong>"as available"</strong>, without warranties of any kind, express or implied, including fitness for a particular purpose or uninterrupted availability.</p>
+    <p>To the maximum extent permitted by law, Axis Health Ltd shall not be liable for:</p>
+    <ul>
+      <li>Any indirect, incidental, special, or consequential damages</li>
+      <li>Loss of data, medication adherence failures, or health outcomes arising from use or inability to use the App</li>
+      <li>Actions or inactions taken based on information displayed in the App</li>
+    </ul>
+    <p>Nothing in these Terms excludes liability for death or personal injury caused by negligence, fraud, or fraudulent misrepresentation, or any other liability that cannot be excluded by law.</p>
+    <p>Our aggregate liability to you shall not exceed the amount you paid for the service in the twelve months preceding the claim, or £50, whichever is greater.</p>
+  </section>
+
+  <!-- Section 11 -->
+  <section id="s11">
+    <h2><span class="num">11</span>Termination</h2>
+    <p>You may stop using Axis at any time and delete your account from within the App settings.</p>
+    <p>We reserve the right to suspend or terminate your access to the service at any time, with or without notice, if we reasonably believe you have violated these Terms or if required to do so by law.</p>
+    <p>On termination, your right to use the App ceases immediately. We will retain your data only as long as required by law or as described in the Privacy Policy.</p>
+  </section>
+
+  <!-- Section 12 -->
+  <section id="s12">
+    <h2><span class="num">12</span>Governing Law</h2>
+    <p>These Terms are governed by the laws of <strong>England and Wales</strong>. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales, except where applicable consumer protection law provides otherwise.</p>
+    <p>If any provision of these Terms is found to be unenforceable, the remaining provisions will continue in full force.</p>
+  </section>
+
+  <!-- Section 13 -->
+  <section id="s13">
+    <h2><span class="num">13</span>Changes to These Terms</h2>
+    <p>We may revise these Terms at any time. When we make material changes, we will update the effective date at the top of this page and notify you via in-app message or email where required by law.</p>
+    <p>Your continued use of the App after the revised Terms take effect constitutes your acceptance of the changes.</p>
+  </section>
+
+  <!-- Section 14 -->
+  <section id="s14">
+    <h2><span class="num">14</span>Contact</h2>
+    <p>Questions about these Terms? Contact us:</p>
+    <ul>
+      <li><strong>Email:</strong> <a href="mailto:support@axisrx.app">support@axisrx.app</a></li>
+      <li><strong>Web:</strong> <a href="support.html">axisrx.app/support.html</a></li>
+    </ul>
+    <p>We aim to respond to all legal enquiries within 5 business days.</p>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <a class="f-logo" href="index.html">Axis<span>.</span></a>
+    <div class="footer-links">
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms of Service</a>
+      <a href="support.html">Support</a>
+      <a href="support.html#contact-form">Contact</a>
+    </div>
+    <p class="footer-copy">© 2026 Axis Health Ltd. Not a medical device.</p>
+  </div>
+</footer>
+
+</body>
+</html>

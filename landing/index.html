@@ -9,14 +9,14 @@
   <title>Axis — Never Miss a Dose</title>
   <meta name="description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://axishealth.app/" />
+  <meta property="og:url" content="https://axisrx.app/" />
   <meta property="og:title" content="Axis — Never Miss a Dose" />
   <meta property="og:description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning. Free on iOS and Android." />
-  <meta property="og:image" content="https://axishealth.app/og-image.png" />
+  <meta property="og:image" content="https://axisrx.app/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Axis — Never Miss a Dose" />
   <meta name="twitter:description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning." />
-  <meta name="twitter:image" content="https://axishealth.app/og-image.png" />
+  <meta name="twitter:image" content="https://axisrx.app/og-image.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
 <style>
@@ -190,12 +190,53 @@ h1{
 .proof-text strong{color:var(--text)}
 .stars{color:#f59e0b;letter-spacing:1px;font-size:.85rem}
 
-.hero-visual{display:flex;justify-content:center;align-items:center;position:relative}
-#phone-canvas{
-  width:100%;max-width:380px;height:520px;cursor:grab;
-  filter:drop-shadow(0 40px 80px rgba(0,0,0,.6)) drop-shadow(0 0 40px rgba(249,115,22,.08));
+/* ─── Hero UI card ─── */
+.hero-ui{
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:20px;padding:24px;
+  box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04) inset,
+             0 0 60px rgba(249,115,22,.06);
+  transition:box-shadow .4s ease;
+  flex:0 0 440px;max-width:100%;will-change:transform;
 }
-#phone-canvas:active{cursor:grabbing}
+.hero-ui:hover{box-shadow:0 48px 96px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06) inset,0 0 80px rgba(249,115,22,.09)}
+.hui-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.hui-logo{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;letter-spacing:-.03em;color:var(--text)}
+.hui-logo span{color:var(--orange)}
+.hui-date{font-size:.72rem;color:var(--muted);font-weight:500}
+.hui-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.hui-stat{border-radius:10px;padding:10px 12px;border:1px solid}
+.hui-stat span{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
+.hui-stat small{font-size:.68rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.hui-stat.g{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.2)}
+.hui-stat.g span{color:#22c55e}.hui-stat.g small{color:rgba(34,197,94,.6)}
+.hui-stat.o{background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.2)}
+.hui-stat.o span{color:var(--orange)}.hui-stat.o small{color:rgba(249,115,22,.6)}
+.hui-stat.v{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.2)}
+.hui-stat.v span{color:#a78bfa}.hui-stat.v small{color:rgba(139,92,246,.6)}
+.hui-section{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.hui-doses{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.hui-dose{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;
+}
+.hui-dose-bar{width:3px;height:32px;border-radius:2px;flex-shrink:0}
+.hui-dose-info{flex:1;min-width:0}
+.hui-dose-name{font-size:.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hui-dose-time{font-size:.68rem;color:var(--muted);margin-top:2px}
+.hui-dose-chip{
+  flex-shrink:0;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+  padding:3px 8px;border-radius:6px;
+}
+.hui-dose-chip.done{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.hui-dose-chip.soon{background:rgba(249,115,22,.1);color:var(--orange);border:1px solid rgba(249,115,22,.2);animation:blink 2.4s ease-in-out infinite}
+.hui-dose-chip.later{background:rgba(139,92,246,.1);color:#a78bfa;border:1px solid rgba(139,92,246,.2)}
+.hui-footer{display:flex;align-items:center;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
+.hui-footer-label{font-size:.72rem;color:var(--muted);white-space:nowrap}
+.hui-bar-track{flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.hui-bar-fill{height:100%;width:94%;background:linear-gradient(90deg,var(--orange),#a78bfa);border-radius:3px}
+.hui-footer-pct{font-size:.75rem;font-weight:700;color:var(--text);white-space:nowrap}
 
 /* ─── MARQUEE ─── */
 .marquee-wrap{
@@ -233,6 +274,63 @@ h1{
 }
 .metric-label{font-size:.82rem;color:var(--body);line-height:1.55}
 
+/* ─── COMMITMENTS ─── */
+#commitments{padding:80px 0;border-bottom:1px solid var(--border)}
+.commit-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:16px;overflow:hidden;
+}
+@media(max-width:768px){.commit-grid{grid-template-columns:1fr}}
+.commit-cell{background:var(--bg2);padding:48px 36px;transition:background .25s}
+.commit-cell:hover{background:var(--bg3)}
+.commit-icon{
+  width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(139,92,246,.08));
+  border:1px solid rgba(249,115,22,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;margin-bottom:22px;
+}
+.commit-cell h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.15rem;font-weight:700;letter-spacing:-.03em;
+  color:var(--text);margin-bottom:10px;
+}
+.commit-cell p{font-size:.875rem;color:var(--body);line-height:1.8}
+
+/* ─── USE CASES ─── */
+#usecases{padding:100px 0;border-top:1px solid var(--border)}
+.usecase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:52px}
+@media(max-width:900px){.usecase-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.usecase-grid{grid-template-columns:1fr}}
+.uc-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:16px;padding:30px;
+  display:flex;flex-direction:column;gap:0;
+  transition:border-color .25s,box-shadow .25s;
+}
+.uc-card:hover{border-color:var(--border2);box-shadow:0 16px 40px rgba(0,0,0,.35)}
+.uc-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--orange);margin-bottom:16px;opacity:.9;
+}
+.uc-card h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:1.05rem;font-weight:700;letter-spacing:-.03em;
+  color:var(--text);margin-bottom:10px;line-height:1.25;
+}
+.uc-card>p{font-size:.82rem;color:var(--body);line-height:1.75;margin-bottom:22px;flex:1}
+.uc-features{display:flex;flex-direction:column;gap:8px;padding-top:18px;border-top:1px solid var(--border)}
+.uc-feature{
+  display:flex;align-items:center;gap:9px;
+  font-size:.78rem;color:var(--muted);line-height:1.45;
+}
+.uc-feature::before{
+  content:'→';color:var(--orange);font-weight:700;
+  flex-shrink:0;font-size:.75rem;
+}
+
 /* ─── FEATURES BENTO ─── */
 #features{padding:100px 0}
 .bento{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:190px;gap:12px;margin-top:56px}
@@ -243,7 +341,7 @@ h1{
   padding:28px;overflow:hidden;position:relative;
   transition:border-color .3s,transform .25s,box-shadow .25s;
 }
-.bc:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.bc:hover{border-color:var(--border2);box-shadow:0 16px 40px rgba(0,0,0,.4)}
 .bc-icon{font-size:1.4rem;margin-bottom:14px;display:block}
 .bc h3{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;color:var(--text)}
 .bc p{font-size:.8rem;color:var(--body);line-height:1.65}
@@ -335,7 +433,7 @@ h1{
   transition:border-color .25s,transform .25s,box-shadow .25s;
   display:flex;flex-direction:column;gap:18px;
 }
-.proof-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.proof-card:hover{border-color:var(--border2);box-shadow:0 16px 40px rgba(0,0,0,.4)}
 .proof-stars{display:flex;gap:3px}
 .proof-stars span{font-size:.85rem;color:#f59e0b}
 .proof-quote{font-size:.875rem;color:var(--body);line-height:1.75;font-style:italic;flex:1}
@@ -367,11 +465,24 @@ h1{
 }
 .step h3{font-size:.9rem;font-weight:600;margin-bottom:4px;color:var(--text)}
 .step p{font-size:.82rem;color:var(--body);line-height:1.65}
-.how-visual{
-  background:var(--bg2);border:1px solid var(--border);border-radius:20px;overflow:hidden;
-  box-shadow:0 0 0 1px rgba(255,255,255,.03) inset;
+/* ─── How visual: step cards ─── */
+.how-visual{display:flex;flex-direction:column;gap:10px}
+.hv-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:18px 20px;display:flex;align-items:flex-start;gap:14px;
+  transition:border-color .25s,transform .2s;
 }
-#mini-canvas{width:100%;height:420px;display:block}
+.hv-card:hover{border-color:var(--border2);transform:translateX(4px)}
+.hv-num{
+  flex-shrink:0;width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(139,92,246,.1));
+  border:1px solid rgba(249,115,22,.2);color:var(--orange);
+  font-family:'Space Grotesk',sans-serif;font-size:.8rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.hv-card-title{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:4px}
+.hv-card-body{font-size:.78rem;color:var(--body);line-height:1.6}
+.hv-connector{width:2px;height:14px;background:linear-gradient(180deg,rgba(249,115,22,.3),rgba(139,92,246,.3));margin:0 15px;border-radius:1px}
 
 /* ─── SECURITY ─── */
 #security{
@@ -398,51 +509,6 @@ h1{
 .sec-card h3{font-size:.85rem;font-weight:600;margin-bottom:5px;color:var(--text)}
 .sec-card p{font-size:.78rem;color:var(--body);line-height:1.65}
 
-/* ─── PRICING ─── */
-#pricing{padding:100px 0;border-top:1px solid var(--border)}
-.pricing-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:740px;margin:52px auto 0}
-@media(max-width:600px){.pricing-row{grid-template-columns:1fr}}
-.pc{
-  background:var(--bg2);border:1px solid var(--border);border-radius:18px;
-  padding:32px;position:relative;transition:transform .2s,box-shadow .2s;
-}
-.pc:hover{transform:translateY(-3px);box-shadow:0 20px 60px rgba(0,0,0,.4)}
-.pc.hot{
-  border-color:transparent;
-  background:linear-gradient(var(--bg2),var(--bg2)) padding-box,
-             linear-gradient(135deg,rgba(249,115,22,.6),rgba(139,92,246,.5)) border-box;
-}
-.pc.hot:hover{box-shadow:0 20px 60px rgba(249,115,22,.12)}
-.pc-badge{
-  position:absolute;top:-12px;left:50%;transform:translateX(-50%);
-  background:linear-gradient(135deg,var(--orange),var(--violet));
-  color:#fff;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-  padding:4px 14px;border-radius:100px;white-space:nowrap;
-}
-.pc-name{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
-.pc-price{
-  font-family:'Space Grotesk',sans-serif;font-size:2.8rem;font-weight:700;
-  letter-spacing:-.05em;color:var(--text);line-height:1;
-}
-.pc-price span{font-size:.9rem;font-family:'Inter',sans-serif;font-weight:400;color:var(--muted)}
-.pc-desc{font-size:.82rem;color:var(--body);margin:10px 0 24px;line-height:1.6}
-.pc-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
-.pc-list li{display:flex;align-items:flex-start;gap:9px;font-size:.82rem;color:var(--body);line-height:1.5}
-.pc-list li::before{content:'✓';color:var(--orange);font-weight:700;flex-shrink:0;margin-top:1px}
-.pc-list li.dim{color:var(--muted)}
-.pc-list li.dim::before{color:var(--muted)}
-.pc-btn{
-  display:block;text-align:center;text-decoration:none;
-  padding:12px;border-radius:9px;font-weight:600;font-size:.875rem;
-  transition:background .2s,transform .15s,box-shadow .2s;
-}
-.pc-btn.solid{
-  background:linear-gradient(135deg,var(--orange),#fb923c);color:#fff;
-  box-shadow:0 4px 16px rgba(249,115,22,.3);
-}
-.pc-btn.solid:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(249,115,22,.4)}
-.pc-btn.border{border:1px solid var(--border2);color:var(--text)}
-.pc-btn.border:hover{border-color:var(--border3);background:rgba(255,255,255,.04)}
 
 /* ─── FAQ ─── */
 #faq{padding:100px 0;border-top:1px solid var(--border)}
@@ -505,9 +571,55 @@ footer{
 }
 .footer-bottom p,.footer-bottom a{font-size:.75rem;color:var(--muted);text-decoration:none}
 .footer-bottom a:hover{color:var(--body)}
+
+/* ─── Scroll progress bar ─── */
+#progress-bar{
+  position:fixed;top:0;left:0;z-index:9999;
+  height:2px;width:0%;
+  background:linear-gradient(90deg,var(--orange),var(--violet));
+  pointer-events:none;border-radius:0 2px 2px 0;
+  transition:width .08s linear;
+}
+
+/* ─── Particle canvas ─── */
+#particles{position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.7}
+
+/* ─── Step scroll narrative ─── */
+.step{transition:padding-left .4s ease,border-left .4s ease}
+.step.active{padding-left:14px;border-left:2px solid var(--orange);margin-left:-2px}
+.step.active .step-num{
+  background:linear-gradient(135deg,var(--orange),var(--violet));
+  color:#fff;border-color:transparent;
+  box-shadow:0 0 20px rgba(249,115,22,.4);
+  transition:background .4s,box-shadow .4s;
+}
+.step.active h3{color:var(--orange);transition:color .4s}
+.hv-card.active{
+  border-color:rgba(249,115,22,.4);
+  background:rgba(249,115,22,.04);
+  transform:translateX(8px);
+  box-shadow:0 0 40px rgba(249,115,22,.1);
+}
+.hv-card.active .hv-num{
+  background:linear-gradient(135deg,var(--orange),var(--violet));
+  color:#fff;border-color:transparent;
+}
+
+/* ─── 3D tilt cards: will-change hint ─── */
+.bc,.proof-card,.pc,.sec-card{will-change:transform}
+
+/* ─── CTA glow pulse ─── */
+@keyframes ctaPulse{0%,100%{opacity:.7}50%{opacity:1}}
+.cta-orb{animation:ctaPulse 4s ease-in-out infinite}
+
+/* ─── Section entrance via GSAP (override default fade-in until JS runs) ─── */
+@media(prefers-reduced-motion:reduce){
+  .fade-in{opacity:1;transform:none}
+}
 </style>
 </head>
 <body>
+<div id="progress-bar" aria-hidden="true"></div>
 
 <!-- NAV -->
 <nav id="nav">
@@ -516,7 +628,6 @@ footer{
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
-      <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
     </div>
     <a class="nav-cta" href="#cta">Download Free</a>
@@ -527,6 +638,7 @@ footer{
 <section id="hero">
   <div class="orb hero-orb-1" style="position:absolute"></div>
   <div class="orb hero-orb-2" style="position:absolute"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
   <div class="container">
     <div class="hero-grid">
       <div>
@@ -543,18 +655,30 @@ footer{
             Google Play
           </a>
         </div>
-        <div class="hero-proof">
-          <div class="proof-avatars">
-            <span>S</span><span>J</span><span>A</span><span>R</span>
-          </div>
-          <div class="proof-text">
-            <div class="stars">★★★★★</div>
-            <strong>4.9</strong> · Trusted by thousands of patients
-          </div>
-        </div>
       </div>
-      <div class="hero-visual">
-        <canvas id="phone-canvas"></canvas>
+      <div class="hero-ui fade-in">
+        <div class="hui-header">
+          <span class="hui-logo">Axis<span>.</span></span>
+          <span class="hui-date">Sun, 18 May</span>
+        </div>
+        <div class="hui-stats">
+          <div class="hui-stat g"><span>3</span><small>Taken</small></div>
+          <div class="hui-stat o"><span>2</span><small>Pending</small></div>
+          <div class="hui-stat v"><span>12d</span><small>Streak</small></div>
+        </div>
+        <div class="hui-section">Today's schedule</div>
+        <div class="hui-doses">
+          <div class="hui-dose"><div class="hui-dose-bar" style="background:#22c55e"></div><div class="hui-dose-info"><div class="hui-dose-name">Metformin 500mg</div><div class="hui-dose-time">8:00 AM</div></div><div class="hui-dose-chip done">Done</div></div>
+          <div class="hui-dose"><div class="hui-dose-bar" style="background:#22c55e"></div><div class="hui-dose-info"><div class="hui-dose-name">Lisinopril 10mg</div><div class="hui-dose-time">8:00 AM</div></div><div class="hui-dose-chip done">Done</div></div>
+          <div class="hui-dose"><div class="hui-dose-bar" style="background:#22c55e"></div><div class="hui-dose-info"><div class="hui-dose-name">Atorvastatin 20mg</div><div class="hui-dose-time">12:00 PM</div></div><div class="hui-dose-chip done">Done</div></div>
+          <div class="hui-dose"><div class="hui-dose-bar" style="background:#f97316"></div><div class="hui-dose-info"><div class="hui-dose-name">Vitamin D3</div><div class="hui-dose-time">6:00 PM</div></div><div class="hui-dose-chip soon">Soon</div></div>
+          <div class="hui-dose"><div class="hui-dose-bar" style="background:#8b5cf6"></div><div class="hui-dose-info"><div class="hui-dose-name">Omeprazole 20mg</div><div class="hui-dose-time">9:00 PM</div></div><div class="hui-dose-chip later">Later</div></div>
+        </div>
+        <div class="hui-footer">
+          <span class="hui-footer-label">Weekly adherence</span>
+          <div class="hui-bar-track"><div class="hui-bar-fill"></div></div>
+          <span class="hui-footer-pct">94%</span>
+        </div>
       </div>
     </div>
   </div>
@@ -582,14 +706,26 @@ footer{
   </div>
 </div>
 
-<!-- METRICS -->
-<section id="metrics">
+
+<!-- COMMITMENTS -->
+<section id="commitments">
   <div class="container">
-    <div class="metrics-grid">
-      <div class="metric-cell fade-in"><div class="metric-num">99%</div><div class="metric-label">Adherence rate reported by daily users after 30 days</div></div>
-      <div class="metric-cell fade-in"><div class="metric-num">50k+</div><div class="metric-label">Doses logged every month across all platforms</div></div>
-      <div class="metric-cell fade-in"><div class="metric-num">4.9★</div><div class="metric-label">Average App Store &amp; Play Store rating</div></div>
-      <div class="metric-cell fade-in"><div class="metric-num">0</div><div class="metric-label">Health records sold or shared with third parties</div></div>
+    <div class="commit-grid">
+      <div class="commit-cell fade-in">
+        <div class="commit-icon">🔐</div>
+        <h3>Private by design</h3>
+        <p>Your health data is encrypted on your device before it moves anywhere. We can't read it. Nobody can — except you. The key never leaves your phone.</p>
+      </div>
+      <div class="commit-cell fade-in">
+        <div class="commit-icon">📴</div>
+        <h3>Offline-first, always</h3>
+        <p>Reminders, logging, history, and analytics all work without a signal. Built for the real world — hospital basements, international flights, rural areas.</p>
+      </div>
+      <div class="commit-cell fade-in">
+        <div class="commit-icon">💊</div>
+        <h3>One job, done right</h3>
+        <p>Axis isn't a wellness super-app. It's purpose-built for medication management — with the depth and reliability that a daily routine demands.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -659,46 +795,48 @@ footer{
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section id="proof">
+
+<!-- WHO IT'S FOR -->
+<section id="usecases">
   <div class="container">
-    <div class="section-label">Testimonials</div>
-    <h2 class="fade-in">Patients love it</h2>
-    <p class="section-sub fade-in">From complex multi-medication regimens to simple daily vitamins.</p>
-    <div class="proof-grid">
-      <div class="proof-card fade-in">
-        <div class="proof-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-        <p class="proof-quote">"I take 6 medications at different times. Before Axis I was constantly unsure if I'd taken something. Now I have a clear record and my adherence is finally consistent."</p>
-        <div class="proof-author">
-          <div class="proof-av" style="background:linear-gradient(135deg,#f97316,#fb923c)">S</div>
-          <div>
-            <div class="proof-name">Sarah M.</div>
-            <div class="proof-role">Type 2 diabetes · 3 years on Axis</div>
-          </div>
+    <div class="section-label">Who it's for</div>
+    <h2 class="fade-in">Built for real<br /><span class="g-text-subtle">medication routines</span></h2>
+    <p class="section-sub fade-in">Whether you manage two tablets or fourteen, Axis adapts to your life.</p>
+    <div class="usecase-grid">
+
+      <div class="uc-card fade-in">
+        <div class="uc-tag">✈️ Frequent travellers</div>
+        <h3>Never stress about packing again</h3>
+        <p>Travel mode calculates exact quantities, adjusts reminder times for your destination timezone, and keeps you on schedule across any border crossing.</p>
+        <div class="uc-features">
+          <div class="uc-feature">Trip packing calculator</div>
+          <div class="uc-feature">Timezone-aware reminders</div>
+          <div class="uc-feature">Works fully offline in flight</div>
         </div>
       </div>
-      <div class="proof-card fade-in">
-        <div class="proof-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-        <p class="proof-quote">"The travel feature alone is worth it. It told me exactly how many tablets to pack for 10 days and adjusted my reminder times automatically when I landed in Tokyo."</p>
-        <div class="proof-author">
-          <div class="proof-av" style="background:linear-gradient(135deg,#0ea5e9,#6366f1)">J</div>
-          <div>
-            <div class="proof-name">James R.</div>
-            <div class="proof-role">Frequent traveller · Heart medication</div>
-          </div>
+
+      <div class="uc-card fade-in">
+        <div class="uc-tag">💊 Complex regimens</div>
+        <h3>Six medications, zero confusion</h3>
+        <p>Manage multiple medications at different times, frequencies, and doses. Every day's schedule is clear — and every dose is logged with a full timestamp history.</p>
+        <div class="uc-features">
+          <div class="uc-feature">Unlimited medications</div>
+          <div class="uc-feature">Per-dose logging with timestamps</div>
+          <div class="uc-feature">GP-ready adherence reports</div>
         </div>
       </div>
-      <div class="proof-card fade-in">
-        <div class="proof-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-        <p class="proof-quote">"I recommended this to a patient with hypertension who kept missing evening doses. Six months later their GP reduced their dosage because their BP is so well controlled."</p>
-        <div class="proof-author">
-          <div class="proof-av" style="background:linear-gradient(135deg,#8b5cf6,#6366f1)">A</div>
-          <div>
-            <div class="proof-name">Amara T., RN</div>
-            <div class="proof-role">NHS Community Nurse</div>
-          </div>
+
+      <div class="uc-card fade-in">
+        <div class="uc-tag">👨‍👩‍👧 Caregivers</div>
+        <h3>Stay on top of someone else's schedule</h3>
+        <p>Managing medication for a family member or patient? Axis keeps everything organised in one place, with clear status at a glance and reliable alerts before supplies run out.</p>
+        <div class="uc-features">
+          <div class="uc-feature">Multiple profiles</div>
+          <div class="uc-feature">Refill alerts before you run out</div>
+          <div class="uc-feature">Offline access, always available</div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
@@ -735,7 +873,20 @@ footer{
         </div>
       </div>
       <div class="how-visual fade-in">
-        <canvas id="mini-canvas"></canvas>
+        <div class="hv-card">
+          <div class="hv-num">1</div>
+          <div><div class="hv-card-title">Add your medications</div><div class="hv-card-body">Scan a barcode or search our database. Set dosage, frequency, and notification times in a few taps.</div></div>
+        </div>
+        <div class="hv-connector"></div>
+        <div class="hv-card">
+          <div class="hv-num">2</div>
+          <div><div class="hv-card-title">Get smart reminders</div><div class="hv-card-body">Notifications fire at exactly the right time. Mark taken or snooze without even opening the app.</div></div>
+        </div>
+        <div class="hv-connector"></div>
+        <div class="hv-card">
+          <div class="hv-num">3</div>
+          <div><div class="hv-card-title">Watch your health improve</div><div class="hv-card-body">Adherence scores and history build automatically. Export a PDF report for your next GP visit.</div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -762,47 +913,6 @@ footer{
   </div>
 </section>
 
-<!-- PRICING -->
-<section id="pricing">
-  <div class="container" style="text-align:center">
-    <div class="section-label">Pricing</div>
-    <h2 class="fade-in">Simple, honest pricing</h2>
-    <p class="section-sub fade-in" style="margin:0 auto">Start free. Upgrade only when you need more.</p>
-    <div class="pricing-row">
-      <div class="pc fade-in">
-        <div class="pc-name">Free</div>
-        <div class="pc-price">£0<span> / forever</span></div>
-        <div class="pc-desc">Everything most people need, no strings attached.</div>
-        <ul class="pc-list">
-          <li>Up to 5 medications</li>
-          <li>Smart reminders &amp; dose logging</li>
-          <li>30-day adherence history</li>
-          <li>Biometric lock &amp; AES encryption</li>
-          <li>Offline support</li>
-          <li class="dim">AI health coach</li>
-          <li class="dim">Travel planning mode</li>
-        </ul>
-        <a href="#" class="pc-btn border">Download Free</a>
-      </div>
-      <div class="pc hot fade-in">
-        <div class="pc-badge">Most popular</div>
-        <div class="pc-name">Pro</div>
-        <div class="pc-price">£2.99<span> / month</span></div>
-        <div class="pc-desc">For patients who rely on Axis every single day.</div>
-        <ul class="pc-list">
-          <li>Unlimited medications</li>
-          <li>Smart reminders &amp; dose logging</li>
-          <li>Full adherence history &amp; PDF export</li>
-          <li>Biometric lock &amp; AES encryption</li>
-          <li>Offline support</li>
-          <li>AI health coach</li>
-          <li>Travel planning mode</li>
-        </ul>
-        <a href="#" class="pc-btn solid">Start Free Trial</a>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- FAQ -->
 <section id="faq">
@@ -829,10 +939,6 @@ footer{
         <button class="faq-btn" aria-expanded="false">Is Axis a medical device?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="faq-body"><p>No. Axis is a personal medication management tool, not a regulated medical device. It doesn't provide medical advice or replace professional healthcare. Always follow your doctor's guidance.</p></div>
       </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">How do I cancel Pro?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="faq-body"><p>Cancel any time through App Store or Google Play subscription settings — no forms or emails needed. You keep Pro features until the end of your billing period. Your data is never deleted.</p></div>
-      </div>
     </div>
   </div>
 </section>
@@ -843,7 +949,7 @@ footer{
   <div class="container">
     <div class="section-label">Get started</div>
     <h2 class="fade-in">Take control of<br /><span class="g-text">your health today</span></h2>
-    <p class="section-sub fade-in">Free to download. No subscription needed for core features.</p>
+    <p class="section-sub fade-in">Free to download. Free to use. Always.</p>
     <div class="btn-row">
       <a class="btn-primary" href="#">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
@@ -869,14 +975,13 @@ footer{
         <h4>Product</h4>
         <a href="#features">Features</a>
         <a href="#how">How it works</a>
-        <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
       </div>
       <div class="footer-col">
         <h4>Legal</h4>
         <a href="privacy.html">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Cookie Policy</a>
+        <a href="terms.html">Terms of Service</a>
+        <a href="privacy.html#cookies">Cookie Policy</a>
       </div>
       <div class="footer-col">
         <h4>Support</h4>
@@ -892,229 +997,219 @@ footer{
   </div>
 </footer>
 
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js"}}</script>
-<script type="module">
-import * as THREE from 'three';
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
 
-function roundRect(ctx,x,y,w,h,r,fill,stroke){
-  ctx.beginPath();
-  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
-  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
-  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
-  if(fill)ctx.fill();if(stroke)ctx.stroke();
-}
+/* ══ 1. Scroll progress bar ══ */
+const progressBar = document.getElementById('progress-bar');
+window.addEventListener('scroll', () => {
+  const pct = scrollY / (document.documentElement.scrollHeight - innerHeight);
+  progressBar.style.width = (pct * 100) + '%';
+}, {passive:true});
 
-function makeScreenTexture(){
-  const W=512,H=1058,c=document.createElement('canvas');
-  c.width=W;c.height=H;
-  const ctx=c.getContext('2d');
+/* ══ 2. Particle canvas ══ */
+(function(){
+  const canvas = document.getElementById('particles');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, pts = [];
 
-  /* Background — deep dark */
-  const bg=ctx.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,'#07070f');bg.addColorStop(1,'#0c0c18');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  const resize = () => {
+    W = canvas.width  = canvas.offsetWidth;
+    H = canvas.height = canvas.offsetHeight;
+  };
+  resize();
+  new ResizeObserver(resize).observe(canvas.parentElement);
 
-  /* Noise texture */
-  for(let i=0;i<2000;i++){
-    ctx.fillStyle=`rgba(255,255,255,${Math.random()*.025})`;
-    ctx.fillRect(Math.random()*W,Math.random()*H,1,1);
+  const COLS = ['249,115,22','139,92,246','251,146,60','167,139,250'];
+  for(let i = 0; i < 65; i++){
+    pts.push({
+      x: Math.random() * 1400,
+      y: Math.random() * 800,
+      r: Math.random() * 1.5 + 0.4,
+      vx:(Math.random()-.5) * .28,
+      vy:(Math.random()-.5) * .28,
+      c: COLS[i % COLS.length],
+      a: Math.random() * .22 + .06,
+    });
   }
 
-  /* Status bar */
-  ctx.fillStyle='rgba(240,240,248,.85)';ctx.font='bold 21px -apple-system,sans-serif';
-  ctx.fillText('9:41',28,52);
-  ctx.fillStyle='rgba(240,240,248,.4)';ctx.font='18px -apple-system,sans-serif';
-  ctx.fillText('●●●',W-74,52);
+  (function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p => {
+      p.x = (p.x + p.vx + W) % W;
+      p.y = (p.y + p.vy + H) % H;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${p.c},${p.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  })();
+})();
 
-  /* Dynamic island */
-  ctx.fillStyle='#000';roundRect(ctx,W/2-54,16,108,30,15,true);
+/* ══ 3. Hero card: float + mouse tilt (JS-driven) ══ */
+(function(){
+  const card = document.querySelector('.hero-ui');
+  const hero = document.getElementById('hero');
+  if(!card || !hero) return;
 
-  /* Header area */
-  const hg=ctx.createLinearGradient(0,68,0,110);
-  hg.addColorStop(0,'rgba(249,115,22,.06)');hg.addColorStop(1,'transparent');
-  ctx.fillStyle=hg;ctx.fillRect(0,68,W,42);
+  // current and target angles
+  let rx = 2, ry = -4, tx = 2, ty = -4;
+  let ft = 0; // float time
 
-  ctx.fillStyle='rgba(240,240,248,.9)';ctx.font='bold 36px -apple-system,sans-serif';
-  ctx.fillText('Axis',24,116);
-  ctx.fillStyle='rgba(249,115,22,.7)';
-  roundRect(ctx,W-54,96,30,7,3.5,true);
-  roundRect(ctx,W-54,108,20,7,3.5,true);
+  hero.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    tx = -((e.clientY - r.top  - r.height/2) / r.height) * 14;
+    ty =  ((e.clientX - r.left - r.width /2) / r.width ) * 10 - 2;
+  }, {passive:true});
 
-  ctx.fillStyle='rgba(140,152,164,.7)';ctx.font='17px -apple-system,sans-serif';
-  ctx.fillText('Sunday, 18 May',24,140);
+  hero.addEventListener('mouseleave', () => { tx = 2; ty = -4; });
 
-  /* Stat cards */
-  const stats=[
-    {label:'Taken',val:'3',color:'#22c55e',glow:'rgba(34,197,94,.15)'},
-    {label:'Pending',val:'2',color:'#f97316',glow:'rgba(249,115,22,.15)'},
-    {label:'Streak',val:'12d',color:'#8b5cf6',glow:'rgba(139,92,246,.15)'},
-  ];
-  const cw=(W-52)/3,cy=158,ch=82;
-  stats.forEach((s,i)=>{
-    const cx=16+i*(cw+10);
-    ctx.fillStyle=s.glow;roundRect(ctx,cx,cy,cw,ch,10,true);
-    ctx.strokeStyle=s.color.replace(')',',0.2)').replace('rgb','rgba');
-    ctx.lineWidth=1;roundRect(ctx,cx,cy,cw,ch,10,false,true);
-    ctx.fillStyle=s.color;ctx.font='bold 28px -apple-system,sans-serif';
-    ctx.fillText(s.val,cx+12,cy+44);
-    ctx.fillStyle='rgba(140,152,164,.6)';ctx.font='14px -apple-system,sans-serif';
-    ctx.fillText(s.label,cx+12,cy+66);
+  (function loop(){
+    ft += .0075;
+    rx += (tx - rx) * .065;
+    ry += (ty - ry) * .065;
+    const floatY = Math.sin(ft) * 11;
+    card.style.transform =
+      `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(${floatY}px)`;
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ══ 4. Orb mouse parallax ══ */
+(function(){
+  const o1 = document.querySelector('.hero-orb-1');
+  const o2 = document.querySelector('.hero-orb-2');
+  if(!o1 || !o2) return;
+  let mx=0,my=0,x1=0,y1=0,x2=0,y2=0;
+  window.addEventListener('mousemove', e => {
+    mx = (e.clientX/innerWidth  - .5)*2;
+    my = (e.clientY/innerHeight - .5)*2;
+  }, {passive:true});
+  (function loop(){
+    x1 += (mx*24 - x1)*.05; y1 += (my*15 - y1)*.05;
+    x2 += (-mx*18- x2)*.04; y2 += (-my*11- y2)*.04;
+    o1.style.transform = `translate(${x1}px,${y1}px)`;
+    o2.style.transform = `translate(${x2}px,${y2}px)`;
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ══ 5. Hero scroll parallax (content drifts up as you leave) ══ */
+gsap.to('#hero .hero-grid', {
+  scrollTrigger:{trigger:'#hero', start:'top top', end:'bottom top', scrub:1.2},
+  y: 70, opacity: .5,
+});
+
+/* ══ 6. Hero entrance stagger ══ */
+gsap.timeline({defaults:{ease:'power3.out', duration:.9}})
+  .from('#hero .badge',      {y:22, opacity:0},         .15)
+  .from('#hero h1',          {y:44, opacity:0, duration:1.1}, .28)
+  .from('#hero .hero-sub',   {y:28, opacity:0},         .44)
+  .from('#hero .btn-row',    {y:22, opacity:0},         .58)
+  .from('#hero .hero-proof', {y:18, opacity:0},         .70)
+  .from('.hero-ui',          {x:80, opacity:0, duration:1.2}, .32);
+
+
+/* ══ 8a. Commitments stagger ══ */
+gsap.from('.commit-cell', {
+  scrollTrigger:{trigger:'#commitments .commit-grid', start:'top 82%'},
+  y:36, opacity:0, stagger:.12, duration:.8, ease:'power2.out'
+});
+
+/* ══ 8b. Use cases stagger ══ */
+gsap.from('.uc-card', {
+  scrollTrigger:{trigger:'.usecase-grid', start:'top 82%'},
+  y:40, opacity:0, stagger:.11, duration:.8, ease:'power2.out'
+});
+
+/* ══ 8. Features bento stagger ══ */
+gsap.from('.bc', {
+  scrollTrigger:{trigger:'#features .bento', start:'top 82%'},
+  y:42, opacity:0, stagger:.08, duration:.8, ease:'power2.out'
+});
+
+
+/* ══ 10. How it works — scroll narrative ══ */
+(function(){
+  const steps   = [...document.querySelectorAll('.step')];
+  const hvCards = [...document.querySelectorAll('.hv-card')];
+  if(!steps.length) return;
+
+  const activate = i => {
+    steps.forEach((s,j)   => s.classList.toggle('active',   j===i));
+    hvCards.forEach((c,j) => c.classList.toggle('active',   j===i));
+  };
+  activate(0);
+
+  steps.forEach((step, i) => {
+    ScrollTrigger.create({
+      trigger:step, start:'top 54%',
+      onEnter:     () => activate(i),
+      onEnterBack: () => activate(i),
+    });
   });
+})();
 
-  /* Section header */
-  ctx.fillStyle='rgba(240,240,248,.8)';ctx.font='bold 19px -apple-system,sans-serif';
-  ctx.fillText("Today's schedule",16,cy+ch+28);
+/* ══ 11. Security cards stagger ══ */
+gsap.from('.sec-card', {
+  scrollTrigger:{trigger:'.sec-grid', start:'top 82%'},
+  y:30, opacity:0, scale:.96, stagger:.07, duration:.65, ease:'power2.out'
+});
 
-  /* Orange accent line */
-  const lg=ctx.createLinearGradient(0,0,W,0);
-  lg.addColorStop(0,'rgba(249,115,22,.6)');lg.addColorStop(1,'transparent');
-  ctx.fillStyle=lg;ctx.fillRect(16,cy+ch+34,W-32,1);
+/* ══ 12. FAQ stagger ══ */
+gsap.from('.faq-item', {
+  scrollTrigger:{trigger:'.faq-inner', start:'top 82%'},
+  y:22, opacity:0, stagger:.07, duration:.6, ease:'power2.out'
+});
 
-  /* Dose rows */
-  const doses=[
-    {name:'Metformin 500mg',time:'8:00 AM',done:true,color:'#22c55e'},
-    {name:'Lisinopril 10mg',time:'8:00 AM',done:true,color:'#22c55e'},
-    {name:'Atorvastatin',time:'12:00 PM',done:true,color:'#22c55e'},
-    {name:'Vitamin D3',time:'6:00 PM',done:false,color:'#f97316'},
-    {name:'Omeprazole 20mg',time:'9:00 PM',done:false,color:'#8b5cf6'},
-  ];
-  doses.forEach((d,i)=>{
-    const ry=cy+ch+46+i*72;
-    ctx.fillStyle='rgba(255,255,255,.03)';roundRect(ctx,16,ry,W-32,60,10,true);
-    ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;roundRect(ctx,16,ry,W-32,60,10,false,true);
-    /* left bar */
-    const barG=ctx.createLinearGradient(0,ry,0,ry+60);
-    barG.addColorStop(0,d.color);barG.addColorStop(1,d.color.replace(')',',0.4)').replace('rgb','rgba'));
-    ctx.fillStyle=barG;roundRect(ctx,16,ry,3,60,1.5,true);
-    ctx.fillStyle='rgba(240,240,248,.85)';ctx.font='bold 17px -apple-system,sans-serif';
-    ctx.fillText(d.name,28,ry+22);
-    ctx.fillStyle='rgba(140,152,164,.6)';ctx.font='14px -apple-system,sans-serif';
-    ctx.fillText(d.time,28,ry+42);
-    /* status */
-    if(d.done){
-      ctx.fillStyle='rgba(34,197,94,.15)';
-      roundRect(ctx,W-54,ry+16,38,28,6,true);
-      ctx.strokeStyle='rgba(34,197,94,.4)';ctx.lineWidth=1;
-      roundRect(ctx,W-54,ry+16,38,28,6,false,true);
-      ctx.strokeStyle='#22c55e';ctx.lineWidth=2;ctx.beginPath();
-      ctx.moveTo(W-45,ry+30);ctx.lineTo(W-40,ry+36);ctx.lineTo(W-32,ry+22);ctx.stroke();
-    }else{
-      ctx.fillStyle=`${d.color}26`;
-      roundRect(ctx,W-54,ry+16,38,28,6,true);
-      ctx.strokeStyle=`${d.color}66`;ctx.lineWidth=1;
-      roundRect(ctx,W-54,ry+16,38,28,6,false,true);
-      ctx.fillStyle=d.color;ctx.font='bold 10px -apple-system,sans-serif';
-      ctx.textAlign='center';ctx.fillText('soon',W-35,ry+34);ctx.textAlign='left';
+/* ══ 14. CTA section ══ */
+gsap.from('#cta h2, #cta .section-sub, #cta .btn-row', {
+  scrollTrigger:{trigger:'#cta', start:'top 80%'},
+  y:36, opacity:0, stagger:.12, duration:.9, ease:'power3.out'
+});
+
+/* ══ 15. 3D card tilt on mouse ══ */
+document.querySelectorAll('.bc, .proof-card, .pc, .sec-card, .uc-card, .commit-cell').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r  = card.getBoundingClientRect();
+    const ry = ((e.clientX - r.left)/r.width  - .5) *  10;
+    const rx = ((e.clientY - r.top) /r.height - .5) * -8;
+    card.style.transform =
+      `perspective(520px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-5px) scale(1.015)`;
+  }, {passive:true});
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+});
+
+/* ══ 16. Scroll fade (preserved) ══ */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if(e.isIntersecting){
+      setTimeout(() => e.target.classList.add('visible'), i*55);
+      obs.unobserve(e.target);
     }
   });
+}, {threshold:.08});
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 
-  return new THREE.CanvasTexture(c);
-}
+/* ══ 17. Nav scroll state ══ */
+addEventListener('scroll', () =>
+  document.getElementById('nav').classList.toggle('scrolled', scrollY > 30),
+{passive:true});
 
-function makePhone(){
-  const g=new THREE.Group();
-  g.add(new THREE.Mesh(new THREE.BoxGeometry(1,2,.1),
-    new THREE.MeshPhysicalMaterial({color:0x0d0d1a,metalness:.7,roughness:.2})));
-  const rm=new THREE.MeshPhysicalMaterial({color:0x1a1a2e,metalness:.85,roughness:.1});
-  [[new THREE.BoxGeometry(1.02,.04,.12),[0,1.02,0]],[new THREE.BoxGeometry(1.02,.04,.12),[0,-1.02,0]],
-   [new THREE.BoxGeometry(.04,2.04,.12),[-.53,0,0]],[new THREE.BoxGeometry(.04,2.04,.12),[.53,0,0]]]
-    .forEach(([geo,pos])=>{const m=new THREE.Mesh(geo,rm);m.position.set(...pos);g.add(m);});
-  const s=new THREE.Mesh(new THREE.PlaneGeometry(.88,1.82),
-    new THREE.MeshBasicMaterial({map:makeScreenTexture()}));
-  s.position.z=.056;g.add(s);
-  const ni=new THREE.Mesh(new THREE.CapsuleGeometry(.038,.13,4,8),
-    new THREE.MeshBasicMaterial({color:0x000}));
-  ni.rotation.z=Math.PI/2;ni.position.set(0,.83,.058);g.add(ni);
-  const hb=new THREE.Mesh(new THREE.CapsuleGeometry(.014,.18,4,8),
-    new THREE.MeshBasicMaterial({color:0x333355}));
-  hb.rotation.z=Math.PI/2;hb.position.set(0,-.82,.058);g.add(hb);
-  return g;
-}
-
-/* ── Hero canvas ── */
-(function(){
-  const canvas=document.getElementById('phone-canvas');
-  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
-  const scene=new THREE.Scene();
-  const camera=new THREE.PerspectiveCamera(36,1,.1,100);camera.position.set(0,0,5);
-  scene.add(new THREE.AmbientLight(0xffffff,.25));
-  const key=new THREE.PointLight(0xf97316,6,14);key.position.set(3,3,4);scene.add(key);
-  const fill=new THREE.PointLight(0x8b5cf6,3,12);fill.position.set(-3,-1,3);scene.add(fill);
-  const top=new THREE.PointLight(0xffffff,1.5,10);top.position.set(0,5,4);scene.add(top);
-  const phone=makePhone();phone.rotation.y=.24;phone.rotation.x=-.06;scene.add(phone);
-
-  const orbs=Array.from({length:7},(_,i)=>{
-    const colors=[0xf97316,0x8b5cf6,0xfb923c];
-    const m=new THREE.Mesh(new THREE.SphereGeometry(.03+Math.random()*.04,10,10),
-      new THREE.MeshPhysicalMaterial({
-        color:colors[i%3],emissive:colors[i%3],emissiveIntensity:.5,
-        roughness:.1,metalness:.3,transparent:true,opacity:.55
-      }));
-    m.position.set((Math.random()-.5)*5,(Math.random()-.5)*4,(Math.random()-.5)*1.2-.6);
-    scene.add(m);
-    return{mesh:m,phase:Math.random()*Math.PI*2,speed:.2+Math.random()*.3,amp:.08+Math.random()*.12};
-  });
-
-  let drag=false,lx=0,ly=0,vy=.002,vx=0,ry=.24,rx=-.06;
-  canvas.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY});
-  canvas.addEventListener('touchstart',e=>{drag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY},{passive:true});
-  addEventListener('mouseup',()=>drag=false);addEventListener('touchend',()=>drag=false);
-  addEventListener('mousemove',e=>{if(!drag)return;vy=(e.clientX-lx)*.007;vx=(e.clientY-ly)*.005;lx=e.clientX;ly=e.clientY});
-  addEventListener('touchmove',e=>{if(!drag)return;vy=(e.touches[0].clientX-lx)*.007;vx=(e.touches[0].clientY-ly)*.005;lx=e.touches[0].clientX;ly=e.touches[0].clientY},{passive:true});
-
-  const resize=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
-  resize();addEventListener('resize',resize);
-
-  let t=0;
-  (function loop(){requestAnimationFrame(loop);t+=.016;
-    if(drag){ry+=vy;rx+=vx;vy*=.82;vx*=.82}
-    else{vy+=(.002-vy)*.025;ry+=vy;rx+=(Math.sin(t*.18)*.05-rx)*.04}
-    rx=Math.max(-.4,Math.min(.4,rx));
-    phone.rotation.y=ry;phone.rotation.x=rx;phone.position.y=Math.sin(t*.5)*.07;
-    orbs.forEach(o=>{o.mesh.position.y+=Math.sin(t*o.speed+o.phase)*o.amp*.01;o.mesh.rotation.y+=.009});
-    renderer.render(scene,camera);
-  })();
-})();
-
-/* ── Mini canvas ── */
-(function(){
-  const canvas=document.getElementById('mini-canvas');
-  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
-  const scene=new THREE.Scene();
-  const camera=new THREE.PerspectiveCamera(40,1,.1,100);camera.position.set(0,0,4.2);
-  scene.add(new THREE.AmbientLight(0xffffff,.25));
-  const k=new THREE.PointLight(0xf97316,5,10);k.position.set(2,2,3);scene.add(k);
-  const v=new THREE.PointLight(0x8b5cf6,2.5,8);v.position.set(-2,-1,2);scene.add(v);
-  const phone=makePhone();phone.rotation.y=-.38;phone.rotation.x=.07;scene.add(phone);
-  const resize=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()};
-  resize();addEventListener('resize',resize);
-  let t=0;(function loop(){requestAnimationFrame(loop);t+=.016;
-    phone.rotation.y=-.38+Math.sin(t*.38)*.16;phone.position.y=Math.sin(t*.58)*.055;
-    renderer.render(scene,camera);
-  })();
-})();
-
-/* ── Scroll fade ── */
-const obs=new IntersectionObserver(entries=>entries.forEach((e,i)=>{
-  if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*55);obs.unobserve(e.target)}
-}),{threshold:.08});
-document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
-
-/* ── Nav ── */
-addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>30));
-
-/* ── FAQ ── */
-document.querySelectorAll('.faq-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const item=btn.closest('.faq-item');
-    const open=item.classList.contains('open');
-    document.querySelectorAll('.faq-item.open').forEach(el=>{el.classList.remove('open');el.querySelector('.faq-btn').setAttribute('aria-expanded','false')});
-    if(!open){item.classList.add('open');btn.setAttribute('aria-expanded','true')}
+/* ══ 18. FAQ accordion ══ */
+document.querySelectorAll('.faq-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const open = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => {
+      el.classList.remove('open');
+      el.querySelector('.faq-btn').setAttribute('aria-expanded','false');
+    });
+    if(!open){ item.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
   });
 });
 </script>
