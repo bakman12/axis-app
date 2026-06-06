@@ -3,52 +3,52 @@
 @tailwind utilities;
 
 @layer base {
-  /* ── Light mode (website-toned warm neutrals) ── */
+  /* ── Light mode — axis-cream palette ── */
   :root {
-    --background: 240 20% 98%;
-    --foreground: 240 10% 8%;
+    --background: 44 27% 97%;          /* #faf9f6 cream */
+    --foreground: 0 0% 17%;            /* #2c2c2c charcoal */
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 8%;
+    --card-foreground: 0 0% 17%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 8%;
-    --primary: 24.6 95% 53.1%;        /* #f97316 orange */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 10% 94%;
-    --secondary-foreground: 240 10% 20%;
-    --muted: 240 10% 94%;
-    --muted-foreground: 240 5% 45%;
-    --accent: 258 90% 66%;             /* #8b5cf6 violet */
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 240 8% 88%;
-    --input: 240 8% 88%;
-    --ring: 24.6 95% 53.1%;
-    --radius: 0.65rem;
-  }
-
-  /* ── Dark mode — matches website exactly ── */
-  .dark {
-    --background: 240 50% 2.4%;       /* #030309 */
-    --foreground: 240 33% 96%;        /* #f0f0f8 */
-    --card: 240 43% 4.5%;             /* #07070f */
-    --card-foreground: 240 33% 96%;
-    --popover: 240 43% 7%;            /* #0c0c18 */
-    --popover-foreground: 240 33% 96%;
-    --primary: 24.6 95% 53.1%;        /* #f97316 orange */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 240 35% 9%;          /* #11111f */
-    --secondary-foreground: 240 33% 96%;
-    --muted: 240 30% 10%;
-    --muted-foreground: 220 14% 55%;  /* #8892a4 */
-    --accent: 258 90% 66%;            /* #8b5cf6 violet */
-    --accent-foreground: 0 0% 100%;
+    --popover-foreground: 0 0% 17%;
+    --primary: 14 56% 50%;             /* #c75b3a terracotta */
+    --primary-foreground: 44 27% 97%;
+    --secondary: 44 20% 92%;
+    --secondary-foreground: 0 0% 17%;
+    --muted: 44 15% 91%;
+    --muted-foreground: 0 0% 54%;      /* #8a8a8a stone */
+    --accent: 39 46% 61%;              /* #c9a96e gold */
+    --accent-foreground: 0 0% 17%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 20% 11%;            /* rgba(255,255,255,0.06) equivalent */
-    --input: 240 30% 10%;
-    --ring: 24.6 95% 53.1%;
-    --radius: 0.65rem;
+    --border: 44 15% 87%;
+    --input: 44 15% 87%;
+    --ring: 14 56% 50%;
+    --radius: 0.75rem;
+  }
+
+  /* ── Dark mode — axis-ink-deep palette ── */
+  .dark {
+    --background: 0 0% 5%;            /* #0d0d0d ink-deep */
+    --foreground: 44 27% 97%;          /* #faf9f6 cream */
+    --card: 0 0% 10%;                  /* #1a1a1a ink */
+    --card-foreground: 44 27% 97%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 44 27% 97%;
+    --primary: 14 56% 50%;             /* #c75b3a terracotta */
+    --primary-foreground: 44 27% 97%;
+    --secondary: 0 0% 13%;
+    --secondary-foreground: 44 27% 97%;
+    --muted: 0 0% 13%;
+    --muted-foreground: 0 0% 54%;      /* #8a8a8a stone */
+    --accent: 39 46% 61%;              /* #c9a96e gold */
+    --accent-foreground: 0 0% 5%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 44 27% 97%;
+    --border: 0 0% 16%;
+    --input: 0 0% 13%;
+    --ring: 14 56% 50%;
+    --radius: 0.75rem;
   }
 }
 
@@ -61,24 +61,24 @@
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
-    letter-spacing: -0.03em;
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.02em;
   }
 }
 
-/* ── Axis app global chrome ── */
+/* ── Subtle grain texture on dark mode ── */
 .dark body::before {
   content: '';
   position: fixed;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: .35;
+  opacity: .25;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Orange primary replaces all blue-600 / blue-500 focus rings */
-:root { --tw-ring-color: hsl(24.6 95% 53.1% / 0.35); }
+/* Terracotta ring color */
+:root { --tw-ring-color: hsl(14 56% 50% / 0.35); }
 
 /* iOS-specific optimizations */
 @supports (-webkit-touch-callout: none) {

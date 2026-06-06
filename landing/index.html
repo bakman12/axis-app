@@ -6,834 +6,1144 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://challenges.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; frame-src https://challenges.cloudflare.com;" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+
   <title>Axis — Never Miss a Dose</title>
-  <meta name="description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning." />
+  <meta name="description" content="Encrypted medication tracking with smart reminders, travel planning, and drug interaction checks. Free on iOS and Android." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://axisrx.app/" />
   <meta property="og:title" content="Axis — Never Miss a Dose" />
-  <meta property="og:description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning. Free on iOS and Android." />
+  <meta property="og:description" content="Encrypted medication tracking with smart reminders, travel planning, and drug interaction checks. Free on iOS and Android." />
   <meta property="og:image" content="https://axisrx.app/og-image.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Axis — Never Miss a Dose" />
-  <meta name="twitter:description" content="AI-powered medication tracking with biometric security, smart reminders, and travel planning." />
+  <meta name="twitter:description" content="Encrypted medication tracking with smart reminders, travel planning, and drug interaction checks." />
   <meta name="twitter:image" content="https://axisrx.app/og-image.png" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* ─── Reset ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
 
-:root{
-  --bg:       #030309;
-  --bg2:      #07070f;
-  --bg3:      #0c0c18;
-  --bg4:      #11111f;
-  --border:   rgba(255,255,255,0.06);
-  --border2:  rgba(255,255,255,0.11);
-  --border3:  rgba(255,255,255,0.16);
-  --orange:   #f97316;
-  --orange-d: #ea580c;
-  --orange-g: rgba(249,115,22,0.13);
-  --violet:   #8b5cf6;
-  --violet-g: rgba(139,92,246,0.13);
-  --text:     #f0f0f8;
-  --body:     #8892a4;
-  --muted:    #525c6e;
-}
-
-html{scroll-behavior:smooth}
-body{
-  font-family:'Inter',-apple-system,sans-serif;
-  background:var(--bg);color:var(--text);
-  overflow-x:hidden;-webkit-font-smoothing:antialiased;
-}
-
-/* ─── Noise overlay ─── */
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity:.4;pointer-events:none;z-index:0;
+/* ─── Tokens ─────────────────────────────────────── */
+:root {
+  --cream:      #faf9f6;
+  --cream-d:    #f2f0ea;
+  --ink:        #1a1a1a;
+  --charcoal:   #2c2c2c;
+  --stone:      #8a8a8a;
+  --stone-l:    #b8b8b8;
+  --terra:      #c75b3a;
+  --terra-d:    #a84a2d;
+  --terra-g:    rgba(199,91,58,0.08);
+  --gold:       #c9a96e;
+  --white:      #ffffff;
+  --border:     rgba(44,44,44,0.1);
+  --border-d:   rgba(44,44,44,0.16);
+  --shadow-sm:  0 1px 8px rgba(44,44,44,0.06);
+  --shadow-md:  0 4px 24px rgba(44,44,44,0.1);
+  --shadow-lg:  0 8px 48px rgba(44,44,44,0.12);
+  --r:          14px;
+  --r-sm:       8px;
+  --serif:      'Playfair Display', Georgia, serif;
+  --sans:       'Inter', -apple-system, sans-serif;
 }
 
-/* ─── Utility ─── */
-.container{max-width:1120px;margin:0 auto;padding:0 40px;position:relative;z-index:1}
-@media(max-width:768px){.container{padding:0 20px}}
-
-.g-text{
-  background:linear-gradient(135deg,#f97316 0%,#fb923c 45%,#a78bfa 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.g-text-subtle{
-  background:linear-gradient(135deg,#f0f0f8 0%,#a78bfa 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+/* ─── Base ─────────────────────────────────────── */
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: var(--charcoal);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.6;
 }
 
-.badge{
-  display:inline-flex;align-items:center;gap:7px;
-  background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.2);
-  color:rgba(249,115,22,0.9);font-size:0.68rem;font-weight:600;
-  letter-spacing:0.1em;text-transform:uppercase;
-  padding:5px 14px;border-radius:100px;
-}
-.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--orange);
-  animation:blink 2.4s ease-in-out infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
+button { cursor: pointer; font-family: var(--sans); border: none; background: none; }
 
-h2{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(2rem,3.5vw,2.9rem);font-weight:700;
-  line-height:1.08;letter-spacing:-0.04em;color:var(--text);margin-bottom:16px;
-}
-.section-label{
-  font-size:0.68rem;font-weight:600;letter-spacing:0.14em;
-  text-transform:uppercase;color:var(--orange);margin-bottom:12px;opacity:.85;
-}
-.section-sub{font-size:1rem;color:var(--body);line-height:1.75;max-width:480px}
+/* ─── Utility ─────────────────────────────────────── */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+@media (max-width: 768px) { .container { padding: 0 20px; } }
 
-.btn-primary{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--orange);color:#fff;
-  padding:13px 26px;border-radius:9px;
-  font-size:0.875rem;font-weight:600;text-decoration:none;
-  transition:background .2s,transform .15s,box-shadow .2s;
-  box-shadow:0 0 0 0 rgba(249,115,22,0);
-}
-.btn-primary:hover{background:var(--orange-d);transform:translateY(-2px);box-shadow:0 8px 28px rgba(249,115,22,.35)}
-.btn-ghost{
-  display:inline-flex;align-items:center;gap:8px;
-  color:var(--text);padding:13px 22px;border-radius:9px;
-  font-size:0.875rem;font-weight:600;text-decoration:none;
-  border:1px solid var(--border2);background:rgba(255,255,255,0.04);
-  backdrop-filter:blur(8px);
-  transition:border-color .2s,background .2s,transform .15s;
-}
-.btn-ghost:hover{border-color:var(--border3);background:rgba(255,255,255,0.07);transform:translateY(-2px)}
+.serif { font-family: var(--serif); }
 
-.fade-in{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
-.fade-in.visible{opacity:1;transform:none}
-
-/* ─── Glow orbs ─── */
-.orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(80px)}
-
-/* ─── NAV ─── */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:300;
-  border-bottom:1px solid transparent;
-  transition:background .4s,border-color .4s,backdrop-filter .4s;
-}
-nav.scrolled{
-  background:rgba(3,3,9,0.75);backdrop-filter:blur(20px);
-  border-color:var(--border);
-}
-.nav-inner{
-  max-width:1120px;margin:0 auto;padding:0 40px;
-  height:62px;display:flex;align-items:center;justify-content:space-between;
-}
-@media(max-width:768px){.nav-inner{padding:0 20px}}
-.nav-logo{
-  font-family:'Space Grotesk',sans-serif;font-size:1.25rem;font-weight:700;
-  color:var(--text);text-decoration:none;letter-spacing:-0.04em;
-}
-.nav-logo span{color:var(--orange)}
-.nav-links{display:flex;gap:28px}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:0.82rem;font-weight:500;
-  transition:color .2s;letter-spacing:0.01em}
-.nav-links a:hover{color:var(--text)}
-.nav-cta{
-  background:rgba(255,255,255,0.06);border:1px solid var(--border2);
-  color:var(--text);padding:8px 20px;border-radius:8px;
-  font-size:0.82rem;font-weight:600;text-decoration:none;
-  transition:background .2s,border-color .2s;
-}
-.nav-cta:hover{background:rgba(255,255,255,0.1);border-color:var(--border3)}
-@media(max-width:768px){.nav-links{display:none}}
-
-/* ─── HERO ─── */
-#hero{
-  min-height:100vh;padding:120px 0 80px;
-  display:flex;align-items:center;
-  position:relative;overflow:hidden;
-}
-.hero-orb-1{
-  width:700px;height:700px;
-  background:radial-gradient(circle,rgba(249,115,22,.18) 0%,transparent 65%);
-  top:-200px;right:-100px;
-}
-.hero-orb-2{
-  width:500px;height:500px;
-  background:radial-gradient(circle,rgba(139,92,246,.14) 0%,transparent 65%);
-  bottom:-100px;left:-80px;
-}
-.hero-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  align-items:center;gap:56px;
-}
-@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:48px}}
-
-h1{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(3rem,5.5vw,5rem);font-weight:700;
-  line-height:.98;letter-spacing:-0.05em;color:var(--text);
-  margin:18px 0 24px;
-}
-.hero-sub{font-size:1.05rem;color:var(--body);line-height:1.75;max-width:420px;margin-bottom:36px}
-.btn-row{display:flex;gap:10px;flex-wrap:wrap}
-.hero-proof{display:flex;align-items:center;gap:12px;margin-top:32px}
-.proof-avatars{display:flex}
-.proof-avatars span{
-  width:30px;height:30px;border-radius:50%;border:2px solid var(--bg);
-  background:linear-gradient(135deg,#f97316,#8b5cf6);
-  display:flex;align-items:center;justify-content:center;
-  font-size:.65rem;font-weight:700;color:#fff;
-  margin-right:-8px;flex-shrink:0;
-}
-.proof-text{font-size:.8rem;color:var(--body);margin-left:16px}
-.proof-text strong{color:var(--text)}
-.stars{color:#f59e0b;letter-spacing:1px;font-size:.85rem}
-
-/* ─── Hero UI card ─── */
-.hero-ui{
-  background:var(--bg2);border:1px solid var(--border2);
-  border-radius:20px;padding:24px;
-  box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.04) inset,
-             0 0 60px rgba(249,115,22,.06);
-  transition:box-shadow .4s ease;
-  flex:0 0 440px;max-width:100%;will-change:transform;
-}
-.hero-ui:hover{box-shadow:0 48px 96px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.06) inset,0 0 80px rgba(249,115,22,.09)}
-.hui-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.hui-logo{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;letter-spacing:-.03em;color:var(--text)}
-.hui-logo span{color:var(--orange)}
-.hui-date{font-size:.72rem;color:var(--muted);font-weight:500}
-.hui-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
-.hui-stat{border-radius:10px;padding:10px 12px;border:1px solid}
-.hui-stat span{display:block;font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:3px}
-.hui-stat small{font-size:.68rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em}
-.hui-stat.g{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.2)}
-.hui-stat.g span{color:#22c55e}.hui-stat.g small{color:rgba(34,197,94,.6)}
-.hui-stat.o{background:rgba(249,115,22,.08);border-color:rgba(249,115,22,.2)}
-.hui-stat.o span{color:var(--orange)}.hui-stat.o small{color:rgba(249,115,22,.6)}
-.hui-stat.v{background:rgba(139,92,246,.08);border-color:rgba(139,92,246,.2)}
-.hui-stat.v span{color:#a78bfa}.hui-stat.v small{color:rgba(139,92,246,.6)}
-.hui-section{font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
-.hui-doses{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
-.hui-dose{
-  display:flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,.03);border:1px solid var(--border);
-  border-radius:10px;padding:10px 12px;
-}
-.hui-dose-bar{width:3px;height:32px;border-radius:2px;flex-shrink:0}
-.hui-dose-info{flex:1;min-width:0}
-.hui-dose-name{font-size:.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hui-dose-time{font-size:.68rem;color:var(--muted);margin-top:2px}
-.hui-dose-chip{
-  flex-shrink:0;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-  padding:3px 8px;border-radius:6px;
-}
-.hui-dose-chip.done{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
-.hui-dose-chip.soon{background:rgba(249,115,22,.1);color:var(--orange);border:1px solid rgba(249,115,22,.2);animation:blink 2.4s ease-in-out infinite}
-.hui-dose-chip.later{background:rgba(139,92,246,.1);color:#a78bfa;border:1px solid rgba(139,92,246,.2)}
-.hui-footer{display:flex;align-items:center;gap:8px;padding-top:14px;border-top:1px solid var(--border)}
-.hui-footer-label{font-size:.72rem;color:var(--muted);white-space:nowrap}
-.hui-bar-track{flex:1;height:5px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
-.hui-bar-fill{height:100%;width:94%;background:linear-gradient(90deg,var(--orange),#a78bfa);border-radius:3px}
-.hui-footer-pct{font-size:.75rem;font-weight:700;color:var(--text);white-space:nowrap}
-
-/* ─── MARQUEE ─── */
-.marquee-wrap{
-  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
-  padding:14px 0;overflow:hidden;background:var(--bg2);
-}
-.marquee-track{display:inline-flex;animation:marquee 28s linear infinite}
-.marquee-item{
-  display:inline-flex;align-items:center;gap:12px;padding:0 28px;
-  font-size:.72rem;font-weight:600;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;
-}
-.marquee-item strong{color:rgba(240,240,248,.5)}
-.m-dot{width:3px;height:3px;border-radius:50%;background:var(--orange);flex-shrink:0}
-@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
-/* ─── METRICS ─── */
-#metrics{padding:80px 0;border-bottom:1px solid var(--border)}
-.metrics-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;
-}
-@media(max-width:768px){.metrics-grid{grid-template-columns:1fr 1fr}}
-.metric-cell{
-  background:var(--bg2);padding:48px 36px;
-  transition:background .25s;
-}
-.metric-cell:hover{background:var(--bg3)}
-.metric-num{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:2.8rem;font-weight:700;letter-spacing:-0.05em;line-height:1;
-  background:linear-gradient(135deg,#f97316,#fb923c);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  margin-bottom:8px;
-}
-.metric-label{font-size:.82rem;color:var(--body);line-height:1.55}
-
-/* ─── COMMITMENTS ─── */
-#commitments{padding:80px 0;border-bottom:1px solid var(--border)}
-.commit-grid{
-  display:grid;grid-template-columns:repeat(3,1fr);
-  gap:1px;background:var(--border);
-  border:1px solid var(--border);border-radius:16px;overflow:hidden;
-}
-@media(max-width:768px){.commit-grid{grid-template-columns:1fr}}
-.commit-cell{background:var(--bg2);padding:48px 36px;transition:background .25s}
-.commit-cell:hover{background:var(--bg3)}
-.commit-icon{
-  width:48px;height:48px;border-radius:12px;
-  background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(139,92,246,.08));
-  border:1px solid rgba(249,115,22,.15);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.3rem;margin-bottom:22px;
-}
-.commit-cell h3{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:1.15rem;font-weight:700;letter-spacing:-.03em;
-  color:var(--text);margin-bottom:10px;
-}
-.commit-cell p{font-size:.875rem;color:var(--body);line-height:1.8}
-
-/* ─── USE CASES ─── */
-#usecases{padding:100px 0;border-top:1px solid var(--border)}
-.usecase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:52px}
-@media(max-width:900px){.usecase-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.usecase-grid{grid-template-columns:1fr}}
-.uc-card{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:16px;padding:30px;
-  display:flex;flex-direction:column;gap:0;
-  transition:border-color .25s,box-shadow .25s;
-}
-.uc-card:hover{border-color:var(--border2);box-shadow:0 16px 40px rgba(0,0,0,.35)}
-.uc-tag{
-  display:inline-flex;align-items:center;gap:7px;
-  font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--orange);margin-bottom:16px;opacity:.9;
-}
-.uc-card h3{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:1.05rem;font-weight:700;letter-spacing:-.03em;
-  color:var(--text);margin-bottom:10px;line-height:1.25;
-}
-.uc-card>p{font-size:.82rem;color:var(--body);line-height:1.75;margin-bottom:22px;flex:1}
-.uc-features{display:flex;flex-direction:column;gap:8px;padding-top:18px;border-top:1px solid var(--border)}
-.uc-feature{
-  display:flex;align-items:center;gap:9px;
-  font-size:.78rem;color:var(--muted);line-height:1.45;
-}
-.uc-feature::before{
-  content:'→';color:var(--orange);font-weight:700;
-  flex-shrink:0;font-size:.75rem;
+.section-label {
+  font-family: var(--sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--terra);
+  margin-bottom: 20px;
 }
 
-/* ─── FEATURES BENTO ─── */
-#features{padding:100px 0}
-.bento{display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:190px;gap:12px;margin-top:56px}
-
-/* Card base */
-.bc{
-  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
-  padding:28px;overflow:hidden;position:relative;
-  transition:border-color .3s,transform .25s,box-shadow .25s;
+/* ─── Fade-in animations ─────────────────────────── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
-.bc:hover{border-color:var(--border2);box-shadow:0 16px 40px rgba(0,0,0,.4)}
-.bc-icon{font-size:1.4rem;margin-bottom:14px;display:block}
-.bc h3{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;color:var(--text)}
-.bc p{font-size:.8rem;color:var(--body);line-height:1.65}
+.fade-up.visible { opacity: 1; transform: none; }
 
-/* Bento spans */
-.b1{grid-column:span 5;grid-row:span 2}
-.b2{grid-column:span 4;grid-row:span 2}
-.b3{grid-column:span 3;grid-row:span 1}
-.b4{grid-column:span 3;grid-row:span 1}
-.b5{grid-column:span 4;grid-row:span 1}
-.b6{grid-column:span 8;grid-row:span 1}
-
-@media(max-width:960px){
-  .bento{grid-template-columns:1fr 1fr;grid-auto-rows:auto}
-  .b1,.b2,.b3,.b4,.b5,.b6{grid-column:span 1;grid-row:span 1}
-  .b1,.b6{grid-column:span 2}
-}
-@media(max-width:540px){.bento{grid-template-columns:1fr}.b1,.b6{grid-column:span 1}}
-
-/* Hero bento card */
-.b1{
-  background:linear-gradient(145deg,#0e0e1e 0%,#0a0a14 100%);
-  border-color:rgba(249,115,22,.15);
-}
-.b1:hover{border-color:rgba(249,115,22,.3);box-shadow:0 16px 40px rgba(249,115,22,.08)}
-.b1 h3{font-size:1.3rem;letter-spacing:-.03em}
-.b1 p{font-size:.85rem;color:#6b7280}
-
-/* Accent glow on b1 */
-.b1::before{
-  content:'';position:absolute;width:200px;height:200px;border-radius:50%;
-  background:radial-gradient(circle,rgba(249,115,22,.15) 0%,transparent 70%);
-  bottom:-40px;right:-40px;pointer-events:none;
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { opacity: 1; transform: none; transition: none; }
 }
 
-/* Reminder card */
-.reminder-pill{
-  margin-top:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
-  border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;
-}
-.r-pulse{
-  width:9px;height:9px;border-radius:50%;background:var(--orange);flex-shrink:0;
-  box-shadow:0 0 0 0 rgba(249,115,22,.5);
-  animation:ripple 2s ease-out infinite;
-}
-@keyframes ripple{
-  0%{box-shadow:0 0 0 0 rgba(249,115,22,.5)}
-  70%{box-shadow:0 0 0 10px rgba(249,115,22,0)}
-  100%{box-shadow:0 0 0 0 rgba(249,115,22,0)}
-}
-.r-text{flex:1;font-size:.78rem;color:#6b7280}
-.r-text strong{color:var(--text);display:block;margin-bottom:2px}
-.r-time{font-size:.7rem;color:var(--muted);font-weight:600}
-
-/* AI card */
-.b2{background:linear-gradient(145deg,#0c0c1a 0%,#08081a 100%);border-color:rgba(139,92,246,.12)}
-.b2:hover{border-color:rgba(139,92,246,.25);box-shadow:0 16px 40px rgba(139,92,246,.07)}
-.b2::before{
-  content:'';position:absolute;width:180px;height:180px;border-radius:50%;
-  background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%);
-  bottom:-30px;right:-30px;pointer-events:none;
-}
-.ai-thread{margin-top:16px;display:flex;flex-direction:column;gap:7px}
-.ai-msg{font-size:.75rem;padding:9px 13px;border-radius:10px;line-height:1.55;max-width:90%}
-.ai-msg.u{background:rgba(255,255,255,.06);color:#94a3b8;align-self:flex-end;border:1px solid rgba(255,255,255,.08)}
-.ai-msg.a{
-  background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(249,115,22,.1));
-  color:#c4b5fd;align-self:flex-start;border:1px solid rgba(139,92,246,.2);
+/* ─── Navigation ─────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(250,249,246,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
 }
 
-/* Streak card */
-.streak-row{display:flex;gap:5px;margin-top:16px;flex-wrap:wrap}
-.sd{width:26px;height:26px;border-radius:6px;transition:transform .2s}
-.sd:hover{transform:scale(1.15)}
-.sd.on{background:var(--orange);box-shadow:0 2px 8px rgba(249,115,22,.4)}
-.sd.off{background:rgba(255,255,255,.06)}
-.sd.today{
-  background:linear-gradient(135deg,var(--orange),var(--violet));
-  box-shadow:0 2px 12px rgba(139,92,246,.4);
-  outline:2px solid rgba(249,115,22,.4);outline-offset:2px;
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  gap: 32px;
 }
 
-/* ─── PROOF ─── */
-#proof{padding:100px 0;border-top:1px solid var(--border)}
-.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:52px}
-@media(max-width:768px){.proof-grid{grid-template-columns:1fr}}
-.proof-card{
-  background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;
-  transition:border-color .25s,transform .25s,box-shadow .25s;
-  display:flex;flex-direction:column;gap:18px;
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
 }
-.proof-card:hover{border-color:var(--border2);box-shadow:0 16px 40px rgba(0,0,0,.4)}
-.proof-stars{display:flex;gap:3px}
-.proof-stars span{font-size:.85rem;color:#f59e0b}
-.proof-quote{font-size:.875rem;color:var(--body);line-height:1.75;font-style:italic;flex:1}
-.proof-author{display:flex;align-items:center;gap:12px}
-.proof-av{
-  width:36px;height:36px;border-radius:50%;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;
-}
-.proof-name{font-size:.85rem;font-weight:600;color:var(--text)}
-.proof-role{font-size:.75rem;color:var(--muted)}
+.nav-logo span { color: var(--terra); }
 
-/* ─── HOW ─── */
-#how{padding:100px 0;border-top:1px solid var(--border)}
-.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
-@media(max-width:900px){.how-grid{grid-template-columns:1fr;gap:48px}}
-.steps{margin-top:36px;display:flex;flex-direction:column;gap:0}
-.step{
-  display:flex;gap:20px;padding:24px 0;border-bottom:1px solid var(--border);
-  transition:background .15s;
-}
-.step:last-child{border-bottom:none}
-.step-num{
-  flex-shrink:0;width:36px;height:36px;border-radius:9px;
-  background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(139,92,246,.1));
-  border:1px solid rgba(249,115,22,.2);
-  color:var(--orange);font-weight:700;font-size:.82rem;
-  font-family:'Space Grotesk',sans-serif;
-  display:flex;align-items:center;justify-content:center;margin-top:1px;
-}
-.step h3{font-size:.9rem;font-weight:600;margin-bottom:4px;color:var(--text)}
-.step p{font-size:.82rem;color:var(--body);line-height:1.65}
-/* ─── How visual: step cards ─── */
-.how-visual{display:flex;flex-direction:column;gap:10px}
-.hv-card{
-  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
-  padding:18px 20px;display:flex;align-items:flex-start;gap:14px;
-  transition:border-color .25s,transform .2s;
-}
-.hv-card:hover{border-color:var(--border2);transform:translateX(4px)}
-.hv-num{
-  flex-shrink:0;width:32px;height:32px;border-radius:8px;
-  background:linear-gradient(135deg,rgba(249,115,22,.15),rgba(139,92,246,.1));
-  border:1px solid rgba(249,115,22,.2);color:var(--orange);
-  font-family:'Space Grotesk',sans-serif;font-size:.8rem;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-}
-.hv-card-title{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:4px}
-.hv-card-body{font-size:.78rem;color:var(--body);line-height:1.6}
-.hv-connector{width:2px;height:14px;background:linear-gradient(180deg,rgba(249,115,22,.3),rgba(139,92,246,.3));margin:0 15px;border-radius:1px}
-
-/* ─── SECURITY ─── */
-#security{
-  padding:100px 0;
-  background:linear-gradient(180deg,var(--bg) 0%,#06060f 100%);
-  border-top:1px solid var(--border);
-}
-.sec-header{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:52px;flex-wrap:wrap}
-.sec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:768px){.sec-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.sec-grid{grid-template-columns:1fr}}
-.sec-card{
-  background:rgba(255,255,255,.02);border:1px solid var(--border);
-  border-radius:14px;padding:22px;
-  transition:border-color .25s,background .25s,transform .2s;
-}
-.sec-card:hover{border-color:rgba(249,115,22,.25);background:rgba(249,115,22,.03);transform:translateY(-2px)}
-.sec-icon{
-  width:40px;height:40px;border-radius:9px;
-  background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(139,92,246,.08));
-  border:1px solid rgba(249,115,22,.15);
-  display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:14px;
-}
-.sec-card h3{font-size:.85rem;font-weight:600;margin-bottom:5px;color:var(--text)}
-.sec-card p{font-size:.78rem;color:var(--body);line-height:1.65}
-
-
-/* ─── FAQ ─── */
-#faq{padding:100px 0;border-top:1px solid var(--border)}
-.faq-inner{max-width:680px;margin:52px auto 0}
-.faq-item{border-bottom:1px solid var(--border)}
-.faq-btn{
-  width:100%;background:none;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:22px 0;text-align:left;
-  font-size:.9rem;font-weight:600;color:var(--text);
-  font-family:'Inter',sans-serif;transition:color .2s;
-}
-.faq-btn:hover{color:var(--orange)}
-.faq-chevron{width:16px;height:16px;flex-shrink:0;transition:transform .3s;color:var(--muted)}
-.faq-item.open .faq-chevron{transform:rotate(180deg);color:var(--orange)}
-.faq-body{overflow:hidden;max-height:0;transition:max-height .35s ease}
-.faq-item.open .faq-body{max-height:280px}
-.faq-body p{font-size:.84rem;color:var(--body);line-height:1.75;padding-bottom:20px}
-
-/* ─── CTA ─── */
-#cta{
-  padding:120px 0;text-align:center;
-  position:relative;overflow:hidden;border-top:1px solid var(--border);
-}
-.cta-orb{
-  width:600px;height:600px;
-  background:radial-gradient(circle,rgba(249,115,22,.12) 0%,transparent 65%);
-  top:50%;left:50%;transform:translate(-50%,-50%);
-}
-#cta .section-sub{margin:0 auto 40px;text-align:center}
-#cta .btn-row{justify-content:center}
-#cta h2{font-size:clamp(2.4rem,4.5vw,3.5rem)}
-
-/* ─── FOOTER ─── */
-footer{
-  background:var(--bg2);border-top:1px solid var(--border);
-  padding:60px 0 32px;
-}
-.footer-top{
-  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;
-  padding-bottom:48px;border-bottom:1px solid var(--border);
-}
-@media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr;gap:28px}}
-@media(max-width:420px){.footer-top{grid-template-columns:1fr}}
-.footer-brand .f-logo{
-  font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:700;
-  color:var(--text);text-decoration:none;letter-spacing:-.04em;display:inline-block;margin-bottom:12px;
-}
-.footer-brand .f-logo span{color:var(--orange)}
-.footer-brand p{font-size:.8rem;color:var(--muted);line-height:1.7;max-width:220px}
-.footer-col h4{
-  font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.12em;
-  color:var(--muted);margin-bottom:16px;
-}
-.footer-col a{display:block;font-size:.82rem;color:var(--body);text-decoration:none;margin-bottom:10px;transition:color .2s}
-.footer-col a:hover{color:var(--text)}
-.footer-bottom{
-  display:flex;align-items:center;justify-content:space-between;
-  padding-top:24px;flex-wrap:wrap;gap:12px;
-}
-.footer-bottom p,.footer-bottom a{font-size:.75rem;color:var(--muted);text-decoration:none}
-.footer-bottom a:hover{color:var(--body)}
-
-/* ─── Scroll progress bar ─── */
-#progress-bar{
-  position:fixed;top:0;left:0;z-index:9999;
-  height:2px;width:0%;
-  background:linear-gradient(90deg,var(--orange),var(--violet));
-  pointer-events:none;border-radius:0 2px 2px 0;
-  transition:width .08s linear;
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
 }
 
-/* ─── Particle canvas ─── */
-#particles{position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.7}
-
-/* ─── Step scroll narrative ─── */
-.step{transition:padding-left .4s ease,border-left .4s ease}
-.step.active{padding-left:14px;border-left:2px solid var(--orange);margin-left:-2px}
-.step.active .step-num{
-  background:linear-gradient(135deg,var(--orange),var(--violet));
-  color:#fff;border-color:transparent;
-  box-shadow:0 0 20px rgba(249,115,22,.4);
-  transition:background .4s,box-shadow .4s;
+.nav-links a {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--stone);
+  transition: color 0.2s;
 }
-.step.active h3{color:var(--orange);transition:color .4s}
-.hv-card.active{
-  border-color:rgba(249,115,22,.4);
-  background:rgba(249,115,22,.04);
-  transform:translateX(8px);
-  box-shadow:0 0 40px rgba(249,115,22,.1);
+.nav-links a:hover { color: var(--charcoal); }
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  background: var(--charcoal);
+  color: var(--cream);
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+  min-height: 44px;
 }
-.hv-card.active .hv-num{
-  background:linear-gradient(135deg,var(--orange),var(--violet));
-  color:#fff;border-color:transparent;
+.nav-cta:hover { background: var(--terra); transform: translateY(-1px); }
+
+.nav-mobile-toggle { display: none; }
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--border-d);
+    color: var(--charcoal);
+    cursor: pointer;
+  }
 }
 
-/* ─── 3D tilt cards: will-change hint ─── */
-.bc,.proof-card,.pc,.sec-card{will-change:transform}
+/* ─── Hero ───────────────────────────────────────── */
+#hero {
+  padding: 100px 0 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  min-height: 88vh;
+}
 
-/* ─── CTA glow pulse ─── */
-@keyframes ctaPulse{0%,100%{opacity:.7}50%{opacity:1}}
-.cta-orb{animation:ctaPulse 4s ease-in-out infinite}
+.hero-text { max-width: 520px; }
 
-/* ─── Section entrance via GSAP (override default fade-in until JS runs) ─── */
-@media(prefers-reduced-motion:reduce){
-  .fade-in{opacity:1;transform:none}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: var(--terra-g);
+  border: 1px solid rgba(199,91,58,0.18);
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--terra);
+  margin-bottom: 28px;
+}
+.hero-eyebrow-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--terra);
+}
+
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 5vw, 4.2rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--charcoal);
+  margin-bottom: 24px;
+}
+h1 em {
+  font-style: italic;
+  color: var(--terra);
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  color: var(--stone);
+  line-height: 1.7;
+  margin-bottom: 40px;
+  max-width: 440px;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: var(--terra);
+  color: var(--cream);
+  border-radius: 100px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  min-height: 50px;
+}
+.btn-primary:hover { background: var(--terra-d); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 24px;
+  background: transparent;
+  color: var(--charcoal);
+  border: 1px solid var(--border-d);
+  border-radius: 100px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
+  min-height: 50px;
+}
+.btn-secondary:hover { border-color: var(--charcoal); background: rgba(44,44,44,0.04); transform: translateY(-1px); }
+
+.hero-proof {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 0.8rem;
+  color: var(--stone);
+}
+.hero-proof-dot {
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--stone-l);
+}
+
+/* ─── Hero app card ──────────────────────────────── */
+.hero-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+  max-width: 380px;
+  margin-left: auto;
+}
+
+.hc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.hc-title {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+.hc-date {
+  font-size: 0.72rem;
+  color: var(--stone);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.hc-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.hc-stat {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 8px;
+  text-align: center;
+}
+.hc-stat-val {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  line-height: 1;
+}
+.hc-stat-val.accent { color: var(--terra); }
+.hc-stat-label {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-top: 6px;
+}
+
+.hc-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stone);
+  margin-bottom: 12px;
+}
+
+.hc-doses { display: flex; flex-direction: column; gap: 8px; }
+
+.hc-dose {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  border-left: 3px solid var(--terra);
+}
+.hc-dose.done { border-left-color: #8a8a8a; opacity: 0.6; }
+
+.hc-dose-info { flex: 1; min-width: 0; }
+.hc-dose-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hc-dose-time { font-size: 0.72rem; color: var(--stone); margin-top: 2px; }
+
+.hc-chip {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+.hc-chip.soon { background: var(--terra-g); color: var(--terra); border: 1px solid rgba(199,91,58,0.2); }
+.hc-chip.done { background: rgba(44,44,44,0.07); color: var(--stone); border: 1px solid var(--border); }
+
+@media (max-width: 900px) {
+  #hero { grid-template-columns: 1fr; padding: 60px 0 48px; min-height: unset; }
+  .hero-text { max-width: 100%; }
+  .hero-card { margin: 0 auto; max-width: 420px; }
+  .hero-sub { max-width: 100%; }
+}
+
+/* ─── Trust strip ────────────────────────────────── */
+#trust {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+  padding: 0;
+}
+
+.trust-inner {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 40px;
+  flex: 1;
+  max-width: 280px;
+  border-right: 1px solid var(--border);
+}
+.trust-item:last-child { border-right: none; }
+
+.trust-icon {
+  width: 36px; height: 36px;
+  background: var(--terra-g);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: var(--terra);
+}
+
+.trust-text { font-size: 0.82rem; font-weight: 600; color: var(--charcoal); }
+.trust-sub { font-size: 0.72rem; color: var(--stone); margin-top: 2px; }
+
+@media (max-width: 900px) {
+  .trust-inner { flex-wrap: wrap; }
+  .trust-item { flex: 1 1 50%; border-right: none; border-bottom: 1px solid var(--border); padding: 20px; }
+  .trust-item:nth-last-child(-n+2) { border-bottom: none; }
+}
+@media (max-width: 480px) {
+  .trust-item { flex: 1 1 100%; border-bottom: 1px solid var(--border); }
+  .trust-item:last-child { border-bottom: none; }
+}
+
+/* ─── Features ───────────────────────────────────── */
+#features { padding: 120px 0; }
+
+.features-header { margin-bottom: 60px; }
+
+.features-header h2 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--charcoal);
+  margin-bottom: 16px;
+  max-width: 560px;
+}
+
+.features-header p {
+  font-size: 1rem;
+  color: var(--stone);
+  max-width: 520px;
+  line-height: 1.7;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.feature-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 28px;
+  transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
+  cursor: default;
+}
+.feature-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--border-d);
+}
+
+.feature-icon {
+  width: 44px; height: 44px;
+  background: var(--terra-g);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--terra);
+  margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.feature-card p {
+  font-size: 0.85rem;
+  color: var(--stone);
+  line-height: 1.7;
+}
+
+@media (max-width: 900px) { .features-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .features-grid { grid-template-columns: 1fr; } }
+
+/* ─── Privacy section ────────────────────────────── */
+#privacy {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 120px 0;
+}
+
+.privacy-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.privacy-text .section-label { color: var(--gold); }
+
+.privacy-text h2 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--cream);
+  margin-bottom: 20px;
+}
+.privacy-text h2 em { font-style: italic; color: var(--gold); }
+
+.privacy-text p {
+  font-size: 1rem;
+  color: rgba(250,249,246,0.6);
+  line-height: 1.75;
+  margin-bottom: 36px;
+}
+
+.privacy-badges { display: flex; flex-direction: column; gap: 14px; }
+
+.privacy-badge {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: rgba(250,249,246,0.05);
+  border: 1px solid rgba(250,249,246,0.08);
+  border-radius: 12px;
+}
+.privacy-badge-icon {
+  width: 36px; height: 36px;
+  background: rgba(201,169,110,0.15);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+.privacy-badge-title { font-size: 0.88rem; font-weight: 600; color: var(--cream); }
+.privacy-badge-sub { font-size: 0.75rem; color: rgba(250,249,246,0.5); margin-top: 2px; }
+
+@media (max-width: 900px) {
+  .privacy-inner { grid-template-columns: 1fr; gap: 48px; }
+}
+
+/* ─── Use cases ──────────────────────────────────── */
+#usecases { padding: 120px 0; }
+
+.usecases-header { margin-bottom: 60px; }
+.usecases-header h2 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--charcoal);
+  margin-bottom: 16px;
+}
+.usecases-header p { font-size: 1rem; color: var(--stone); max-width: 480px; line-height: 1.7; }
+
+.usecases-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.usecase-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 32px;
+  transition: box-shadow 0.25s, transform 0.25s;
+  cursor: default;
+}
+.usecase-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.usecase-num {
+  font-family: var(--serif);
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--terra-g);
+  color: rgba(199,91,58,0.15);
+  line-height: 1;
+  margin-bottom: 20px;
+  /* actual visible: */
+  -webkit-text-stroke: 1px rgba(199,91,58,0.3);
+  color: transparent;
+}
+
+.usecase-card h3 {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+
+.usecase-card > p {
+  font-size: 0.82rem;
+  color: var(--stone);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.usecase-tags { display: flex; flex-direction: column; gap: 6px; padding-top: 20px; border-top: 1px solid var(--border); }
+
+.usecase-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: var(--charcoal);
+  font-weight: 500;
+}
+.usecase-tag-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--terra);
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) { .usecases-grid { grid-template-columns: 1fr; } }
+
+/* ─── How it works ───────────────────────────────── */
+#how {
+  padding: 120px 0;
+  background: var(--cream-d);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.how-header { margin-bottom: 60px; }
+.how-header h2 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--charcoal);
+  margin-bottom: 16px;
+}
+.how-header p { font-size: 1rem; color: var(--stone); max-width: 480px; line-height: 1.7; }
+
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+.how-steps::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: calc(16.67% + 24px);
+  right: calc(16.67% + 24px);
+  height: 1px;
+  background: var(--border-d);
+}
+
+.how-step { padding: 0 32px 0 0; }
+.how-step:last-child { padding-right: 0; }
+
+.how-step-num {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--border-d);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.how-step h3 {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 10px;
+}
+
+.how-step p { font-size: 0.85rem; color: var(--stone); line-height: 1.7; }
+
+@media (max-width: 768px) {
+  .how-steps { grid-template-columns: 1fr; }
+  .how-steps::before { display: none; }
+  .how-step { padding: 0 0 32px; border-bottom: 1px solid var(--border); }
+  .how-step:last-child { padding-bottom: 0; border-bottom: none; }
+}
+
+/* ─── CTA section ────────────────────────────────── */
+#cta {
+  padding: 140px 0;
+  text-align: center;
+}
+
+.cta-inner { max-width: 640px; margin: 0 auto; }
+
+.cta-inner h2 {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--charcoal);
+  margin-bottom: 20px;
+}
+.cta-inner h2 em { font-style: italic; color: var(--terra); }
+
+.cta-inner p {
+  font-size: 1rem;
+  color: var(--stone);
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+.cta-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.cta-note {
+  font-size: 0.78rem;
+  color: var(--stone-l);
+}
+
+/* ─── Footer ─────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 0;
+  background: var(--white);
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+.footer-logo span { color: var(--terra); }
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  font-size: 0.8rem;
+  color: var(--stone);
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--charcoal); }
+
+.footer-copy {
+  font-size: 0.78rem;
+  color: var(--stone-l);
+}
+
+@media (max-width: 768px) {
+  .footer-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
 }
 </style>
 </head>
 <body>
-<div id="progress-bar" aria-hidden="true"></div>
 
-<!-- NAV -->
-<nav id="nav">
-  <div class="nav-inner">
-    <a class="nav-logo" href="#">Axis<span>.</span></a>
-    <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-      <a href="#faq">FAQ</a>
+<!-- ─── Navigation ─────────────────────────────────────────────── -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a class="nav-logo" href="#">Axis<span>.</span></a>
+
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#privacy">Privacy</a>
+        <a href="#how">How it works</a>
+        <a href="support.html">Support</a>
+      </div>
+
+      <a class="nav-cta" href="#cta">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v13M5 9l7 7 7-7"/><path d="M3 20h18"/></svg>
+        Download Free
+      </a>
+
+      <button class="nav-mobile-toggle" aria-label="Open menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
     </div>
-    <a class="nav-cta" href="#cta">Download Free</a>
   </div>
 </nav>
 
-<!-- HERO -->
+<main>
+
+<!-- ─── Hero ───────────────────────────────────────────────────── -->
 <section id="hero">
-  <div class="orb hero-orb-1" style="position:absolute"></div>
-  <div class="orb hero-orb-2" style="position:absolute"></div>
-  <canvas id="particles" aria-hidden="true"></canvas>
-  <div class="container">
-    <div class="hero-grid">
-      <div>
-        <div class="badge"><div class="badge-dot"></div>Now on iOS &amp; Android</div>
-        <h1>Medication<br /><span class="g-text">managed.</span></h1>
-        <p class="hero-sub">AI-powered reminders, biometric security, and built-in travel planning — so you never miss a dose, wherever life takes you.</p>
-        <div class="btn-row">
-          <a class="btn-primary" href="#">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+  <div class="container" style="display:contents">
+    <div style="max-width:1100px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;min-height:88vh;padding-top:100px;padding-bottom:80px;">
+
+      <div class="hero-text">
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-dot"></span>
+          Free on iOS &amp; Android
+        </div>
+
+        <h1>Medication,<br /><em>managed.</em></h1>
+
+        <p class="hero-sub">
+          Encrypted tracking, smart reminders, drug interaction checks, and a built-in travel planner — so you never miss a dose, wherever life takes you.
+        </p>
+
+        <div class="hero-actions">
+          <a href="#cta" class="btn-primary" aria-label="Download for iOS">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
             App Store
           </a>
-          <a class="btn-ghost" href="#">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
+          <a href="#cta" class="btn-secondary" aria-label="Download for Android">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.36.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.39-1.32 2.76-2.53 3.99zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
             Google Play
           </a>
         </div>
-      </div>
-      <div class="hero-ui fade-in">
-        <div class="hui-header">
-          <span class="hui-logo">Axis<span>.</span></span>
-          <span class="hui-date">Sun, 18 May</span>
-        </div>
-        <div class="hui-stats">
-          <div class="hui-stat g"><span>3</span><small>Taken</small></div>
-          <div class="hui-stat o"><span>2</span><small>Pending</small></div>
-          <div class="hui-stat v"><span>12d</span><small>Streak</small></div>
-        </div>
-        <div class="hui-section">Today's schedule</div>
-        <div class="hui-doses">
-          <div class="hui-dose"><div class="hui-dose-bar" style="background:#22c55e"></div><div class="hui-dose-info"><div class="hui-dose-name">Metformin 500mg</div><div class="hui-dose-time">8:00 AM</div></div><div class="hui-dose-chip done">Done</div></div>
-          <div class="hui-dose"><div class="hui-dose-bar" style="background:#22c55e"></div><div class="hui-dose-info"><div class="hui-dose-name">Lisinopril 10mg</div><div class="hui-dose-time">8:00 AM</div></div><div class="hui-dose-chip done">Done</div></div>
-          <div class="hui-dose"><div class="hui-dose-bar" style="background:#22c55e"></div><div class="hui-dose-info"><div class="hui-dose-name">Atorvastatin 20mg</div><div class="hui-dose-time">12:00 PM</div></div><div class="hui-dose-chip done">Done</div></div>
-          <div class="hui-dose"><div class="hui-dose-bar" style="background:#f97316"></div><div class="hui-dose-info"><div class="hui-dose-name">Vitamin D3</div><div class="hui-dose-time">6:00 PM</div></div><div class="hui-dose-chip soon">Soon</div></div>
-          <div class="hui-dose"><div class="hui-dose-bar" style="background:#8b5cf6"></div><div class="hui-dose-info"><div class="hui-dose-name">Omeprazole 20mg</div><div class="hui-dose-time">9:00 PM</div></div><div class="hui-dose-chip later">Later</div></div>
-        </div>
-        <div class="hui-footer">
-          <span class="hui-footer-label">Weekly adherence</span>
-          <div class="hui-bar-track"><div class="hui-bar-fill"></div></div>
-          <span class="hui-footer-pct">94%</span>
+
+        <div class="hero-proof">
+          <span>Free forever</span>
+          <span class="hero-proof-dot"></span>
+          <span>No subscription</span>
+          <span class="hero-proof-dot"></span>
+          <span>AES-256 encrypted</span>
         </div>
       </div>
+
+      <!-- App preview card -->
+      <div>
+        <div class="hero-card fade-up">
+          <div class="hc-header">
+            <div class="hc-title">Today</div>
+            <div class="hc-date">Saturday, 31 May</div>
+          </div>
+
+          <div class="hc-stats">
+            <div class="hc-stat">
+              <div class="hc-stat-val">3</div>
+              <div class="hc-stat-label">Taken</div>
+            </div>
+            <div class="hc-stat">
+              <div class="hc-stat-val">2</div>
+              <div class="hc-stat-label">Pending</div>
+            </div>
+            <div class="hc-stat">
+              <div class="hc-stat-val accent">14d</div>
+              <div class="hc-stat-label">Streak</div>
+            </div>
+          </div>
+
+          <div class="hc-label">Today's Schedule</div>
+
+          <div class="hc-doses">
+            <div class="hc-dose done">
+              <div class="hc-dose-info">
+                <div class="hc-dose-name">Metformin 500mg</div>
+                <div class="hc-dose-time">8:00 AM · with food</div>
+              </div>
+              <span class="hc-chip done">Done</span>
+            </div>
+            <div class="hc-dose done">
+              <div class="hc-dose-info">
+                <div class="hc-dose-name">Lisinopril 10mg</div>
+                <div class="hc-dose-time">8:00 AM</div>
+              </div>
+              <span class="hc-chip done">Done</span>
+            </div>
+            <div class="hc-dose">
+              <div class="hc-dose-info">
+                <div class="hc-dose-name">Atorvastatin 20mg</div>
+                <div class="hc-dose-time">9:00 PM · with meal</div>
+              </div>
+              <span class="hc-chip soon">Soon</span>
+            </div>
+            <div class="hc-dose">
+              <div class="hc-dose-info">
+                <div class="hc-dose-name">Vitamin D3 2000IU</div>
+                <div class="hc-dose-time">9:00 PM</div>
+              </div>
+              <span class="hc-chip soon">Soon</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- MARQUEE -->
-<div class="marquee-wrap" aria-hidden="true">
-  <div class="marquee-track">
-    <span class="marquee-item"><div class="m-dot"></div><strong>Smart Reminders</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>AI Health Coach</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Travel Planning</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Biometric Lock</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Offline First</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>AES-256 Encryption</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Refill Tracker</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Adherence Analytics</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Smart Reminders</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>AI Health Coach</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Travel Planning</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Biometric Lock</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Offline First</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>AES-256 Encryption</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Refill Tracker</strong></span>
-    <span class="marquee-item"><div class="m-dot"></div><strong>Adherence Analytics</strong></span>
-  </div>
-</div>
+<!-- ─── Trust strip ────────────────────────────────────────────── -->
+<section id="trust">
+  <div class="container" style="display:contents">
+    <div class="trust-inner" style="max-width:1100px;margin:0 auto;">
 
+      <div class="trust-item">
+        <div class="trust-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <div class="trust-text">AES-256 Encrypted</div>
+          <div class="trust-sub">Your data never leaves your device in plaintext</div>
+        </div>
+      </div>
 
-<!-- COMMITMENTS -->
-<section id="commitments">
-  <div class="container">
-    <div class="commit-grid">
-      <div class="commit-cell fade-in">
-        <div class="commit-icon">🔐</div>
-        <h3>Private by design</h3>
-        <p>Your health data is encrypted on your device before it moves anywhere. We can't read it. Nobody can — except you. The key never leaves your phone.</p>
+      <div class="trust-item">
+        <div class="trust-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="trust-text">Zero Knowledge</div>
+          <div class="trust-sub">We can never read your medication data</div>
+        </div>
       </div>
-      <div class="commit-cell fade-in">
-        <div class="commit-icon">📴</div>
-        <h3>Offline-first, always</h3>
-        <p>Reminders, logging, history, and analytics all work without a signal. Built for the real world — hospital basements, international flights, rural areas.</p>
+
+      <div class="trust-item">
+        <div class="trust-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+        </div>
+        <div>
+          <div class="trust-text">Fully Offline</div>
+          <div class="trust-sub">All features work without an internet connection</div>
+        </div>
       </div>
-      <div class="commit-cell fade-in">
-        <div class="commit-icon">💊</div>
-        <h3>One job, done right</h3>
-        <p>Axis isn't a wellness super-app. It's purpose-built for medication management — with the depth and reliability that a daily routine demands.</p>
+
+      <div class="trust-item">
+        <div class="trust-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="trust-text">Free Forever</div>
+          <div class="trust-sub">No subscription, no trial — free to download and use</div>
+        </div>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- FEATURES BENTO -->
+<!-- ─── Features ──────────────────────────────────────────────── -->
 <section id="features">
   <div class="container">
-    <div class="section-label">Features</div>
-    <h2 class="fade-in">Built around how<br /><span class="g-text-subtle">you actually live</span></h2>
-    <p class="section-sub fade-in">Not a generic pill reminder. Axis is purpose-built for real medication routines.</p>
-    <div class="bento">
+    <div class="features-header">
+      <div class="section-label">Features</div>
+      <h2 class="fade-up">Built around how<br />you actually live</h2>
+      <p class="fade-up">Not a generic pill reminder. Axis is purpose-built for real medication routines — whether you manage two tablets or fourteen.</p>
+    </div>
 
-      <div class="bc b1 fade-in">
-        <span class="bc-icon">🔔</span>
+    <div class="features-grid">
+
+      <div class="feature-card fade-up">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </div>
         <h3>Smart Reminders</h3>
-        <p>Adaptive notifications that arrive at exactly the right moment — log a dose without opening the app.</p>
-        <div class="reminder-pill">
-          <div class="r-pulse"></div>
-          <div class="r-text">
-            <strong>Metformin 500mg</strong>
-            Tap to mark taken · Snooze 15 min
-          </div>
-          <div class="r-time">8:00 AM</div>
+        <p>Intelligent alerts that adapt to your schedule. Critical medications get escalating notifications — with snooze support and missed-dose tracking.</p>
+      </div>
+
+      <div class="feature-card fade-up">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.64 13.5a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.55 2.67h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.16 6.16l1.4-1.4a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         </div>
+        <h3>Drug Interaction Checker</h3>
+        <p>Scan your entire medication list for known interactions. Get clear severity ratings and plain-language explanations — no medical jargon.</p>
       </div>
 
-      <div class="bc b2 fade-in">
-        <span class="bc-icon">🤖</span>
-        <h3>AI Health Coach</h3>
-        <p>Ask about your adherence, interactions, or symptoms in plain language.</p>
-        <div class="ai-thread">
-          <div class="ai-msg u">Why do I feel tired after Lisinopril?</div>
-          <div class="ai-msg a">Common in the first 2 weeks as your blood pressure adjusts. If it persists past week 3, mention it to your doctor.</div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2 15 22 11 13 2 9l20-7z"/></svg>
         </div>
+        <h3>Travel Packing Calculator</h3>
+        <p>Planning a trip? Axis calculates exactly how many doses to pack, accounting for time zones, trip length, and carry-on requirements.</p>
       </div>
 
-      <div class="bc b3 fade-in">
-        <span class="bc-icon">✈️</span>
-        <h3>Travel Mode</h3>
-        <p>Auto-packs quantities, adjusts for time zones, and sets trip reminders.</p>
-      </div>
-
-      <div class="bc b4 fade-in">
-        <span class="bc-icon">📊</span>
+      <div class="feature-card fade-up">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
         <h3>Adherence Calendar</h3>
-        <p>30-day heatmap, streaks, and history to share with your GP.</p>
-        <div class="streak-row">
-          <div class="sd on"></div><div class="sd on"></div><div class="sd on"></div>
-          <div class="sd on"></div><div class="sd off"></div><div class="sd on"></div>
-          <div class="sd on"></div><div class="sd today"></div>
+        <p>A 30-day visual heatmap of your medication history. Spot patterns, track streaks, and share clean reports with your GP at your next appointment.</p>
+      </div>
+
+      <div class="feature-card fade-up">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         </div>
-      </div>
-
-      <div class="bc b5 fade-in">
-        <span class="bc-icon">💊</span>
         <h3>Refill Tracker</h3>
-        <p>Monitors your supply and alerts you before you run out.</p>
+        <p>Never run out unexpectedly. Axis monitors your pill counts and sends refill alerts before you hit empty — with smart lead-time calculations.</p>
       </div>
 
-      <div class="bc b6 fade-in">
-        <span class="bc-icon">📴</span>
-        <h3>Fully Offline</h3>
-        <p>Every feature — reminders, logging, analytics — works without internet. Your data is encrypted locally and syncs when you reconnect. Perfect for travel, underground commutes, or areas with poor signal.</p>
+      <div class="feature-card fade-up">
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        </div>
+        <h3>Streaks &amp; Achievements</h3>
+        <p>Stay motivated with a streak system, milestone badges, and personalised weekly challenges — built to make consistency feel rewarding.</p>
       </div>
 
     </div>
   </div>
 </section>
 
+<!-- ─── Privacy section ───────────────────────────────────────── -->
+<section id="privacy">
+  <div class="container">
+    <div class="privacy-inner">
 
-<!-- WHO IT'S FOR -->
+      <div class="privacy-text">
+        <div class="section-label">Privacy &amp; Security</div>
+        <h2>Your data is yours,<br /><em>always.</em></h2>
+        <p>We built Axis with one principle: your medication data is the most personal information on your phone. It should never be on our servers, readable by us, or sold to anyone. Ever.</p>
+        <a href="#cta" class="btn-primary" style="display:inline-flex;">Download Axis Free</a>
+      </div>
+
+      <div class="privacy-badges">
+
+        <div class="privacy-badge">
+          <div class="privacy-badge-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <div class="privacy-badge-title">AES-256-GCM field encryption</div>
+            <div class="privacy-badge-sub">Every record encrypted before it leaves RAM</div>
+          </div>
+        </div>
+
+        <div class="privacy-badge">
+          <div class="privacy-badge-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="privacy-badge-title">Biometric unlock</div>
+            <div class="privacy-badge-sub">Face ID, fingerprint, or PIN — your choice</div>
+          </div>
+        </div>
+
+        <div class="privacy-badge">
+          <div class="privacy-badge-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div class="privacy-badge-title">No account required</div>
+            <div class="privacy-badge-sub">Use fully offline — no email, no sign-up needed</div>
+          </div>
+        </div>
+
+        <div class="privacy-badge">
+          <div class="privacy-badge-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div>
+            <div class="privacy-badge-title">Screenshot protection</div>
+            <div class="privacy-badge-sub">Screen recording and screenshots are blocked in-app</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── Use cases ─────────────────────────────────────────────── -->
 <section id="usecases">
   <div class="container">
-    <div class="section-label">Who it's for</div>
-    <h2 class="fade-in">Built for real<br /><span class="g-text-subtle">medication routines</span></h2>
-    <p class="section-sub fade-in">Whether you manage two tablets or fourteen, Axis adapts to your life.</p>
-    <div class="usecase-grid">
+    <div class="usecases-header">
+      <div class="section-label">Who it's for</div>
+      <h2 class="fade-up">Built for real<br />medication routines</h2>
+      <p class="fade-up">Whether you manage two tablets or fourteen, Axis adapts to your life.</p>
+    </div>
 
-      <div class="uc-card fade-in">
-        <div class="uc-tag">✈️ Frequent travellers</div>
-        <h3>Never stress about packing again</h3>
-        <p>Travel mode calculates exact quantities, adjusts reminder times for your destination timezone, and keeps you on schedule across any border crossing.</p>
-        <div class="uc-features">
-          <div class="uc-feature">Trip packing calculator</div>
-          <div class="uc-feature">Timezone-aware reminders</div>
-          <div class="uc-feature">Works fully offline in flight</div>
+    <div class="usecases-grid">
+
+      <div class="usecase-card fade-up">
+        <div class="usecase-num" aria-hidden="true">01</div>
+        <h3>Frequent travellers</h3>
+        <p>Never stress about packing the right amount again. Axis calculates doses for any trip length, handles time zones, and works offline at 35,000 feet.</p>
+        <div class="usecase-tags">
+          <div class="usecase-tag"><span class="usecase-tag-dot"></span>Trip packing calculator</div>
+          <div class="usecase-tag"><span class="usecase-tag-dot"></span>Timezone-aware reminders</div>
+          <div class="usecase-tag"><span class="usecase-tag-dot"></span>Fully offline in-flight</div>
         </div>
       </div>
 
-      <div class="uc-card fade-in">
-        <div class="uc-tag">💊 Complex regimens</div>
-        <h3>Six medications, zero confusion</h3>
-        <p>Manage multiple medications at different times, frequencies, and doses. Every day's schedule is clear — and every dose is logged with a full timestamp history.</p>
-        <div class="uc-features">
-          <div class="uc-feature">Unlimited medications</div>
-          <div class="uc-feature">Per-dose logging with timestamps</div>
-          <div class="uc-feature">GP-ready adherence reports</div>
+      <div class="usecase-card fade-up">
+        <div class="usecase-num" aria-hidden="true">02</div>
+        <h3>Complex regimens</h3>
+        <p>Six medications, zero confusion. Log each dose precisely, check for interactions, and generate GP-ready adherence reports in seconds.</p>
+        <div class="usecase-tags">
+          <div class="usecase-tag"><span class="usecase-tag-dot"></span>Unlimited medications</div>
+          <div class="usecase-tag"><span class="usecase-tag-dot"></span>Drug interaction checker</div>
+          <div class="usecase-tag"><span class="usecase-tag-dot"></span>GP-ready adherence reports</div>
         </div>
       </div>
 
-      <div class="uc-card fade-in">
-        <div class="uc-tag">👨‍👩‍👧 Caregivers</div>
-        <h3>Stay on top of someone else's schedule</h3>
-        <p>Managing medication for a family member or patient? Axis keeps everything organised in one place, with clear status at a glance and reliable alerts before supplies run out.</p>
-        <div class="uc-features">
-          <div class="uc-feature">Multiple profiles</div>
-          <div class="uc-feature">Refill alerts before you run out</div>
-          <div class="uc-feature">Offline access, always available</div>
+      <div class="usecase-card fade-up">
+        <div class="usecase-num" aria-hidden="true">03</div>
+        <h3>Carers &amp; families</h3>
+        <p>Stay on top of someone else's schedule. Refill alerts arrive before you run out, and the app is always accessible — even without Wi-Fi.</p>
+        <div class="usecase-tags">
+          <div class="usecase-tag"><span class="usecase-tag-dot"></span>Refill alerts before empty</div>
+          <div class="usecase-tag"><span class="usecase-tag-dot"></span>Offline access, always</div>
+          <div class="usecase-tag"><span class="usecase-tag-dot"></span>Emergency Medical ID</div>
         </div>
       </div>
 
@@ -841,377 +1151,121 @@ footer{
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- ─── How it works ──────────────────────────────────────────── -->
 <section id="how">
   <div class="container">
-    <div class="how-grid">
-      <div>
-        <div class="section-label">How it works</div>
-        <h2 class="fade-in">Up and running<br />in 2 minutes</h2>
-        <div class="steps">
-          <div class="step fade-in">
-            <div class="step-num">1</div>
-            <div>
-              <h3>Add your medications</h3>
-              <p>Scan a barcode or search our database. Set dosage, frequency, and times in a few taps.</p>
-            </div>
-          </div>
-          <div class="step fade-in">
-            <div class="step-num">2</div>
-            <div>
-              <h3>Get smart reminders</h3>
-              <p>Notifications fire at exactly the right time. Mark taken or snooze without opening the app.</p>
-            </div>
-          </div>
-          <div class="step fade-in">
-            <div class="step-num">3</div>
-            <div>
-              <h3>Watch your health improve</h3>
-              <p>Your adherence score and history build automatically. Export a report for your next GP visit.</p>
-            </div>
-          </div>
-        </div>
+    <div class="how-header">
+      <div class="section-label">How it works</div>
+      <h2 class="fade-up">Up and running<br />in minutes</h2>
+      <p class="fade-up">No configuration, no account required. Just download and start.</p>
+    </div>
+
+    <div class="how-steps">
+
+      <div class="how-step fade-up">
+        <div class="how-step-num">1</div>
+        <h3>Add your medications</h3>
+        <p>Enter each medication with its dose and scheduled times. Axis encrypts everything on your device immediately — nothing touches our servers.</p>
       </div>
-      <div class="how-visual fade-in">
-        <div class="hv-card">
-          <div class="hv-num">1</div>
-          <div><div class="hv-card-title">Add your medications</div><div class="hv-card-body">Scan a barcode or search our database. Set dosage, frequency, and notification times in a few taps.</div></div>
-        </div>
-        <div class="hv-connector"></div>
-        <div class="hv-card">
-          <div class="hv-num">2</div>
-          <div><div class="hv-card-title">Get smart reminders</div><div class="hv-card-body">Notifications fire at exactly the right time. Mark taken or snooze without even opening the app.</div></div>
-        </div>
-        <div class="hv-connector"></div>
-        <div class="hv-card">
-          <div class="hv-num">3</div>
-          <div><div class="hv-card-title">Watch your health improve</div><div class="hv-card-body">Adherence scores and history build automatically. Export a PDF report for your next GP visit.</div></div>
-        </div>
+
+      <div class="how-step fade-up">
+        <div class="how-step-num">2</div>
+        <h3>Log doses as you take them</h3>
+        <p>One tap to mark a dose taken. Swipe to snooze or mark missed. Your adherence history builds automatically, with no manual tracking required.</p>
       </div>
+
+      <div class="how-step fade-up">
+        <div class="how-step-num">3</div>
+        <h3>Stay ahead with insights</h3>
+        <p>See your streak, check interactions, and get refill alerts before you run out. Axis handles the complexity so you can focus on your health.</p>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- SECURITY -->
-<section id="security">
-  <div class="container">
-    <div class="sec-header">
-      <div>
-        <div class="section-label">Security &amp; Privacy</div>
-        <h2 class="fade-in" style="margin-bottom:0">Your data.<br /><span class="g-text">Your device. Full stop.</span></h2>
-      </div>
-      <p class="section-sub fade-in" style="margin-bottom:0">Health data is the most sensitive data that exists. We built Axis on the assumption that only you should ever see it.</p>
-    </div>
-    <div class="sec-grid">
-      <div class="sec-card fade-in"><div class="sec-icon">🔐</div><h3>AES-256-GCM Encryption</h3><p>Every field encrypted on-device before it touches our servers. The key never leaves your phone.</p></div>
-      <div class="sec-card fade-in"><div class="sec-icon">👆</div><h3>Biometric Unlock</h3><p>Face ID, fingerprint, or PIN required before any data is decrypted or displayed.</p></div>
-      <div class="sec-card fade-in"><div class="sec-icon">🔒</div><h3>Auto-Lock</h3><p>Locks instantly when you switch apps and after 60 seconds of inactivity.</p></div>
-      <div class="sec-card fade-in"><div class="sec-icon">🛡️</div><h3>Screen Guard</h3><p>Blocks screenshots and prevents your medication list from appearing in app switcher previews.</p></div>
-      <div class="sec-card fade-in"><div class="sec-icon">📱</div><h3>Hardware-Backed Keys</h3><p>iOS Secure Enclave and Android Keystore. Root and jailbreak detection active.</p></div>
-      <div class="sec-card fade-in"><div class="sec-icon">🚫</div><h3>Zero Data Selling</h3><p>We do not sell, rent, or share your health data with anyone. No exceptions.</p></div>
-    </div>
-  </div>
-</section>
-
-
-<!-- FAQ -->
-<section id="faq">
-  <div class="container" style="text-align:center">
-    <div class="section-label">FAQ</div>
-    <h2 class="fade-in">Common questions</h2>
-    <p class="section-sub fade-in" style="margin:0 auto">
-      Can't find what you need? <a href="support.html" style="color:var(--orange);text-decoration:none;font-weight:600">Visit support →</a>
-    </p>
-    <div class="faq-inner">
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">Is my health data really private?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="faq-body"><p>Yes. All sensitive data is AES-256-GCM encrypted on your device before it ever leaves your phone. The key lives in your device's secure hardware (Secure Enclave on iOS, Keystore on Android) and is protected by your biometrics or PIN. We cannot read your data and we never sell it.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">Does it work without internet?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="faq-body"><p>Fully. Reminders fire, dose logging works, your history is accessible, and analytics run — all offline. Data syncs automatically when you reconnect. Essential for travel or poor signal areas.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">What if I lose my phone?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="faq-body"><p>Your encrypted data is backed up securely. Install Axis on a new device, sign in, and everything restores. Your old device's decryption key is invalidated automatically.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-btn" aria-expanded="false">Is Axis a medical device?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
-        <div class="faq-body"><p>No. Axis is a personal medication management tool, not a regulated medical device. It doesn't provide medical advice or replace professional healthcare. Always follow your doctor's guidance.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
+<!-- ─── CTA ───────────────────────────────────────────────────── -->
 <section id="cta">
-  <div class="orb cta-orb" style="position:absolute"></div>
   <div class="container">
-    <div class="section-label">Get started</div>
-    <h2 class="fade-in">Take control of<br /><span class="g-text">your health today</span></h2>
-    <p class="section-sub fade-in">Free to download. Free to use. Always.</p>
-    <div class="btn-row">
-      <a class="btn-primary" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-        Download on App Store
-      </a>
-      <a class="btn-ghost" href="#">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76c.3.17.64.22.99.14l12.12-6.98-2.54-2.54-10.57 9.38zm-1.7-20.3C1.18 3.83 1 4.27 1 4.8v14.4c0 .53.18.97.48 1.34l.07.07 8.07-8.07v-.19L1.55 4.28l-.07.18zM20.37 10.4l-2.3-1.32-2.86 2.86 2.86 2.86 2.32-1.34c.66-.38.66-1.68-.02-2.06zM4.17.14L16.29 7.12 13.75 9.66 3.18.28c.29-.18.65-.22.99-.14z"/></svg>
-        Get it on Google Play
-      </a>
+    <div class="cta-inner">
+      <div class="section-label" style="text-align:center">Download</div>
+      <h2 class="fade-up">Your medications,<br /><em>under control.</em></h2>
+      <p class="fade-up">Free to download. Free to use. Always encrypted. No subscription, no catch.</p>
+
+      <div class="cta-actions">
+        <a href="#" class="btn-primary" aria-label="Download for iOS — App Store">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          Download for iOS
+        </a>
+        <a href="#" class="btn-secondary" aria-label="Download for Android — Google Play">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.36.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.39-1.32 2.76-2.53 3.99zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          Download for Android
+        </a>
+      </div>
+
+      <p class="cta-note">Works on iOS 15+ and Android 8+</p>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
+</main>
+
+<!-- ─── Footer ────────────────────────────────────────────────── -->
 <footer>
   <div class="container">
-    <div class="footer-top">
-      <div class="footer-brand">
-        <a class="f-logo" href="#">Axis<span>.</span></a>
-        <p>AI-powered medication tracking with biometric security, smart reminders, and travel planning.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Product</h4>
+    <div class="footer-inner">
+      <div class="footer-logo">Axis<span>.</span></div>
+      <div class="footer-links">
         <a href="#features">Features</a>
-        <a href="#how">How it works</a>
-        <a href="#faq">FAQ</a>
-      </div>
-      <div class="footer-col">
-        <h4>Legal</h4>
+        <a href="#privacy">Privacy</a>
         <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Service</a>
-        <a href="privacy.html#cookies">Cookie Policy</a>
+        <a href="terms.html">Terms</a>
+        <a href="support.html">Support</a>
       </div>
-      <div class="footer-col">
-        <h4>Support</h4>
-        <a href="support.html">Help Centre</a>
-        <a href="support.html#contact-form">Contact Us</a>
-        <a href="#">NHS Guidelines</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2026 Axis Health Ltd. Not a medical device.</p>
-      <a href="privacy.html">Privacy</a>
+      <div class="footer-copy">&copy; 2026 Axis. All rights reserved.</div>
     </div>
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
 <script>
-gsap.registerPlugin(ScrollTrigger);
-
-/* ══ 1. Scroll progress bar ══ */
-const progressBar = document.getElementById('progress-bar');
-window.addEventListener('scroll', () => {
-  const pct = scrollY / (document.documentElement.scrollHeight - innerHeight);
-  progressBar.style.width = (pct * 100) + '%';
-}, {passive:true});
-
-/* ══ 2. Particle canvas ══ */
-(function(){
-  const canvas = document.getElementById('particles');
-  if(!canvas) return;
-  const ctx = canvas.getContext('2d');
-  let W, H, pts = [];
-
-  const resize = () => {
-    W = canvas.width  = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
-  };
-  resize();
-  new ResizeObserver(resize).observe(canvas.parentElement);
-
-  const COLS = ['249,115,22','139,92,246','251,146,60','167,139,250'];
-  for(let i = 0; i < 65; i++){
-    pts.push({
-      x: Math.random() * 1400,
-      y: Math.random() * 800,
-      r: Math.random() * 1.5 + 0.4,
-      vx:(Math.random()-.5) * .28,
-      vy:(Math.random()-.5) * .28,
-      c: COLS[i % COLS.length],
-      a: Math.random() * .22 + .06,
-    });
-  }
-
-  (function draw(){
-    ctx.clearRect(0,0,W,H);
-    pts.forEach(p => {
-      p.x = (p.x + p.vx + W) % W;
-      p.y = (p.y + p.vy + H) % H;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-      ctx.fillStyle = `rgba(${p.c},${p.a})`;
-      ctx.fill();
-    });
-    requestAnimationFrame(draw);
-  })();
-})();
-
-/* ══ 3. Hero card: float + mouse tilt (JS-driven) ══ */
-(function(){
-  const card = document.querySelector('.hero-ui');
-  const hero = document.getElementById('hero');
-  if(!card || !hero) return;
-
-  // current and target angles
-  let rx = 2, ry = -4, tx = 2, ty = -4;
-  let ft = 0; // float time
-
-  hero.addEventListener('mousemove', e => {
-    const r = card.getBoundingClientRect();
-    tx = -((e.clientY - r.top  - r.height/2) / r.height) * 14;
-    ty =  ((e.clientX - r.left - r.width /2) / r.width ) * 10 - 2;
-  }, {passive:true});
-
-  hero.addEventListener('mouseleave', () => { tx = 2; ty = -4; });
-
-  (function loop(){
-    ft += .0075;
-    rx += (tx - rx) * .065;
-    ry += (ty - ry) * .065;
-    const floatY = Math.sin(ft) * 11;
-    card.style.transform =
-      `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(${floatY}px)`;
-    requestAnimationFrame(loop);
-  })();
-})();
-
-/* ══ 4. Orb mouse parallax ══ */
-(function(){
-  const o1 = document.querySelector('.hero-orb-1');
-  const o2 = document.querySelector('.hero-orb-2');
-  if(!o1 || !o2) return;
-  let mx=0,my=0,x1=0,y1=0,x2=0,y2=0;
-  window.addEventListener('mousemove', e => {
-    mx = (e.clientX/innerWidth  - .5)*2;
-    my = (e.clientY/innerHeight - .5)*2;
-  }, {passive:true});
-  (function loop(){
-    x1 += (mx*24 - x1)*.05; y1 += (my*15 - y1)*.05;
-    x2 += (-mx*18- x2)*.04; y2 += (-my*11- y2)*.04;
-    o1.style.transform = `translate(${x1}px,${y1}px)`;
-    o2.style.transform = `translate(${x2}px,${y2}px)`;
-    requestAnimationFrame(loop);
-  })();
-})();
-
-/* ══ 5. Hero scroll parallax (content drifts up as you leave) ══ */
-gsap.to('#hero .hero-grid', {
-  scrollTrigger:{trigger:'#hero', start:'top top', end:'bottom top', scrub:1.2},
-  y: 70, opacity: .5,
-});
-
-/* ══ 6. Hero entrance stagger ══ */
-gsap.timeline({defaults:{ease:'power3.out', duration:.9}})
-  .from('#hero .badge',      {y:22, opacity:0},         .15)
-  .from('#hero h1',          {y:44, opacity:0, duration:1.1}, .28)
-  .from('#hero .hero-sub',   {y:28, opacity:0},         .44)
-  .from('#hero .btn-row',    {y:22, opacity:0},         .58)
-  .from('#hero .hero-proof', {y:18, opacity:0},         .70)
-  .from('.hero-ui',          {x:80, opacity:0, duration:1.2}, .32);
-
-
-/* ══ 8a. Commitments stagger ══ */
-gsap.from('.commit-cell', {
-  scrollTrigger:{trigger:'#commitments .commit-grid', start:'top 82%'},
-  y:36, opacity:0, stagger:.12, duration:.8, ease:'power2.out'
-});
-
-/* ══ 8b. Use cases stagger ══ */
-gsap.from('.uc-card', {
-  scrollTrigger:{trigger:'.usecase-grid', start:'top 82%'},
-  y:40, opacity:0, stagger:.11, duration:.8, ease:'power2.out'
-});
-
-/* ══ 8. Features bento stagger ══ */
-gsap.from('.bc', {
-  scrollTrigger:{trigger:'#features .bento', start:'top 82%'},
-  y:42, opacity:0, stagger:.08, duration:.8, ease:'power2.out'
-});
-
-
-/* ══ 10. How it works — scroll narrative ══ */
-(function(){
-  const steps   = [...document.querySelectorAll('.step')];
-  const hvCards = [...document.querySelectorAll('.hv-card')];
-  if(!steps.length) return;
-
-  const activate = i => {
-    steps.forEach((s,j)   => s.classList.toggle('active',   j===i));
-    hvCards.forEach((c,j) => c.classList.toggle('active',   j===i));
-  };
-  activate(0);
-
-  steps.forEach((step, i) => {
-    ScrollTrigger.create({
-      trigger:step, start:'top 54%',
-      onEnter:     () => activate(i),
-      onEnterBack: () => activate(i),
-    });
-  });
-})();
-
-/* ══ 11. Security cards stagger ══ */
-gsap.from('.sec-card', {
-  scrollTrigger:{trigger:'.sec-grid', start:'top 82%'},
-  y:30, opacity:0, scale:.96, stagger:.07, duration:.65, ease:'power2.out'
-});
-
-/* ══ 12. FAQ stagger ══ */
-gsap.from('.faq-item', {
-  scrollTrigger:{trigger:'.faq-inner', start:'top 82%'},
-  y:22, opacity:0, stagger:.07, duration:.6, ease:'power2.out'
-});
-
-/* ══ 14. CTA section ══ */
-gsap.from('#cta h2, #cta .section-sub, #cta .btn-row', {
-  scrollTrigger:{trigger:'#cta', start:'top 80%'},
-  y:36, opacity:0, stagger:.12, duration:.9, ease:'power3.out'
-});
-
-/* ══ 15. 3D card tilt on mouse ══ */
-document.querySelectorAll('.bc, .proof-card, .pc, .sec-card, .uc-card, .commit-cell').forEach(card => {
-  card.addEventListener('mousemove', e => {
-    const r  = card.getBoundingClientRect();
-    const ry = ((e.clientX - r.left)/r.width  - .5) *  10;
-    const rx = ((e.clientY - r.top) /r.height - .5) * -8;
-    card.style.transform =
-      `perspective(520px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-5px) scale(1.015)`;
-  }, {passive:true});
-  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
-});
-
-/* ══ 16. Scroll fade (preserved) ══ */
-const obs = new IntersectionObserver(entries => {
-  entries.forEach((e,i) => {
-    if(e.isIntersecting){
-      setTimeout(() => e.target.classList.add('visible'), i*55);
-      obs.unobserve(e.target);
+// Fade-up on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
     }
   });
-}, {threshold:.08});
-document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-/* ══ 17. Nav scroll state ══ */
-addEventListener('scroll', () =>
-  document.getElementById('nav').classList.toggle('scrolled', scrollY > 30),
-{passive:true});
-
-/* ══ 18. FAQ accordion ══ */
-document.querySelectorAll('.faq-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const item = btn.closest('.faq-item');
-    const open = item.classList.contains('open');
-    document.querySelectorAll('.faq-item.open').forEach(el => {
-      el.classList.remove('open');
-      el.querySelector('.faq-btn').setAttribute('aria-expanded','false');
-    });
-    if(!open){ item.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
-  });
+document.querySelectorAll('.fade-up').forEach((el, i) => {
+  // Stagger siblings in the same parent
+  el.style.transitionDelay = (i % 6) * 80 + 'ms';
+  observer.observe(el);
 });
+
+// Hero card visible immediately
+document.querySelectorAll('.hero-card').forEach(el => el.classList.add('visible'));
+
+// Responsive hero grid — mirror CSS grid to inline for older mobile
+function applyHeroLayout() {
+  const hero = document.querySelector('#hero > div');
+  if (!hero) return;
+  if (window.innerWidth <= 900) {
+    hero.style.gridTemplateColumns = '1fr';
+    hero.style.paddingTop = '60px';
+    hero.style.paddingBottom = '48px';
+    hero.style.minHeight = 'unset';
+  } else {
+    hero.style.gridTemplateColumns = '1fr 1fr';
+    hero.style.paddingTop = '100px';
+    hero.style.paddingBottom = '80px';
+    hero.style.minHeight = '88vh';
+  }
+}
+applyHeroLayout();
+window.addEventListener('resize', applyHeroLayout);
 </script>
+
 </body>
 </html>

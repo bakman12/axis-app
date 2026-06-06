@@ -5,7 +5,7 @@ module.exports = {
   theme: {
   	extend: {
   		fontFamily: {
-  			heading: ['Space Grotesk', 'sans-serif'],
+  			heading: ['"Playfair Display"', 'Georgia', 'serif'],
   			sans:    ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
   		},
   		borderRadius: {

@@ -1,277 +1,200 @@
 import React from 'react';
 import { entities } from '@/lib/encryptedBase44Client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle, XCircle, Clock, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import SnoozeButton from './SnoozeButton';
 import LogDoseDialog from './LogDoseDialog';
-import { useDrag } from '@use-gesture/react';
-import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import SnoozeButton from './SnoozeButton';
 import { checkAndNotifyLowStock } from '@/lib/NotificationService';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import { useDrag } from '@use-gesture/react';
+
+const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+const mono  = { fontFamily: 'Inter, sans-serif' };
+
+function statusBadge(status, isPast, isCritical) {
+  if (status === 'taken')  return { label: 'Done',   style: { background: 'rgba(44,44,44,0.08)', color: '#2c2c2c', border: '1px solid rgba(44,44,44,0.15)' } };
+  if (status === 'missed') return { label: 'Missed', style: { background: 'rgba(199,91,58,0.1)',  color: '#c75b3a', border: '1px solid rgba(199,91,58,0.25)' } };
+  if (isCritical && isPast) return { label: 'Urgent', style: { background: 'rgba(199,91,58,0.12)', color: '#c75b3a', border: '1px solid rgba(199,91,58,0.3)' } };
+  if (isPast)               return { label: 'Later',  style: { background: 'rgba(138,138,138,0.1)', color: '#8a8a8a', border: '1px solid rgba(138,138,138,0.2)' } };
+  return                           { label: 'Soon',   style: { background: 'rgba(199,91,58,0.08)', color: '#c75b3a', border: '1px solid rgba(199,91,58,0.2)' } };
+}
+
+function accentColor(status, isPast) {
+  if (status === 'taken')  return '#2c2c2c';
+  if (status === 'missed') return '#c75b3a';
+  if (isPast)              return '#8a8a8a';
+  return '#c75b3a';
+}
 
 export default function TodaySchedule({ schedule }) {
-  const [contextNotes, setContextNotes] = React.useState({});
   const [selectedMedication, setSelectedMedication] = React.useState(null);
-  const [selectedTime, setSelectedTime] = React.useState(null);
-  const [swipeStates, setSwipeStates] = React.useState({});
+  const [selectedTime, setSelectedTime]             = React.useState(null);
+  const [swipeStates, setSwipeStates]               = React.useState({});
   const queryClient = useQueryClient();
 
-  const logMedicationMutation = useMutation({
-    mutationFn: async ({ medication, scheduledTime, status, context }) => {
+  const logMutation = useMutation({
+    mutationFn: async ({ medication, scheduledTime, status }) => {
       const takenAt = new Date();
-      const [hours, minutes] = scheduledTime.split(':');
-      const scheduledDate = new Date();
-      scheduledDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-      
-      const delayMinutes = Math.floor((takenAt - scheduledDate) / 60000);
-
+      const [h, m] = scheduledTime.split(':');
+      const scheduled = new Date();
+      scheduled.setHours(+h, +m, 0, 0);
+      const delay = Math.max(0, Math.floor((takenAt - scheduled) / 60000));
       return entities.MedicationLog.create({
-        medication_id: medication.id,
+        medication_id:   medication.id,
         medication_name: medication.name,
-        scheduled_time: scheduledTime,
-        taken_time: takenAt.toISOString(),
+        scheduled_time:  scheduledTime,
+        taken_time:      takenAt.toISOString(),
         status,
-        delay_minutes: delayMinutes > 0 ? delayMinutes : 0,
-        context: context || undefined
+        delay_minutes:   delay,
       });
     },
-    onMutate: async ({ medication, scheduledTime, status, context }) => {
+    onMutate: async ({ medication, scheduledTime, status }) => {
       await queryClient.cancelQueries(['logs', 'today']);
-
-      const previousLogs = queryClient.getQueryData(['logs', 'today']);
-
-      const currentTime = new Date();
-      const [hours, minutes] = scheduledTime.split(':');
-      const scheduledDate = new Date();
-      scheduledDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-
-      const delayMinutes = Math.floor((currentTime - scheduledDate) / 60000);
-
-      const optimisticLog = {
-        id: `temp-${Date.now()}`,
-        medication_id: medication.id,
-        medication_name: medication.name,
-        scheduled_time: scheduledTime,
-        taken_time: currentTime.toISOString(),
-        status,
-        delay_minutes: delayMinutes > 0 ? delayMinutes : 0,
-        context: context || undefined,
-        created_date: currentTime.toISOString()
-      };
-
-      queryClient.setQueryData(['logs', 'today'], (old = []) => [...old, optimisticLog]);
-
-      return { previousLogs };
+      const prev = queryClient.getQueryData(['logs', 'today']);
+      const [h, m] = scheduledTime.split(':');
+      const scheduled = new Date(); scheduled.setHours(+h, +m, 0, 0);
+      const delay = Math.max(0, Math.floor((new Date() - scheduled) / 60000));
+      const optimistic = { id: `tmp-${Date.now()}`, medication_id: medication.id, medication_name: medication.name, scheduled_time: scheduledTime, taken_time: new Date().toISOString(), status, delay_minutes: delay, created_date: new Date().toISOString() };
+      queryClient.setQueryData(['logs', 'today'], (old = []) => [...old, optimistic]);
+      return { prev };
     },
-    onError: (err, variables, context) => {
-      if (context?.previousLogs) {
-        queryClient.setQueryData(['logs', 'today'], context.previousLogs);
-      }
-      toast.error('Failed to log medication');
+    onError: (_, __, ctx) => {
+      if (ctx?.prev) queryClient.setQueryData(['logs', 'today'], ctx.prev);
+      toast.error('Failed to log dose');
     },
-    onSuccess: async (_, /** @type {any} */ vars) => {
+    onSuccess: async (_, vars) => {
       if (vars.status === 'taken') {
         Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
         const med = vars.medication;
         if (med?.quantity_remaining != null) {
           const newQty = Math.max(0, med.quantity_remaining - 1);
-          await /** @type {any} */ (entities).Medication.update(med.id, { quantity_remaining: newQty });
+          await entities.Medication.update(med.id, { quantity_remaining: newQty });
           await checkAndNotifyLowStock({ ...med, quantity_remaining: newQty });
           queryClient.invalidateQueries({ queryKey: ['medications'] });
         }
+        toast.success('Dose logged ✓');
       } else if (vars.status === 'missed') {
         Haptics.notification({ type: NotificationType.Warning }).catch(() => {});
+        toast('Marked as missed');
       }
-      toast.success('Logged successfully');
-      setContextNotes({});
     },
-    onSettled: () => {
-      queryClient.invalidateQueries(['logs', 'today']);
+    onSettled: () => queryClient.invalidateQueries(['logs', 'today']),
+  });
+
+  const handleLog = (item, status) =>
+    logMutation.mutate({ medication: item.medication, scheduledTime: item.scheduledTime, status });
+
+  const bind = useDrag(({ args: [item], down, movement: [mx], direction: [xDir], velocity: [vx] }) => {
+    const key = `${item.medication.id}-${item.scheduledTime}`;
+    if (!down) {
+      if (Math.abs(mx) > 90 && Math.abs(vx) > 0.4 && !item.log) {
+        Haptics.impact({ style: 'medium' }).catch(() => {});
+        handleLog(item, xDir > 0 ? 'taken' : 'missed');
+      }
+      setSwipeStates(p => ({ ...p, [key]: 0 }));
+    } else {
+      setSwipeStates(p => ({ ...p, [key]: mx }));
     }
   });
 
-  const handleLog = (item, status) => {
-    const context = contextNotes[`${item.medication.id}-${item.scheduledTime}`];
-    logMedicationMutation.mutate({
-      medication: item.medication,
-      scheduledTime: item.scheduledTime,
-      status,
-      context
-    });
-  };
+  const currentTime = format(new Date(), 'HH:mm');
 
-  const bind = useDrag(
-    ({ args: [item], down, movement: [mx], direction: [xDir], velocity: [vx] }) => {
-      const trigger = Math.abs(mx) > 100 && Math.abs(vx) > 0.5;
-      const dir = xDir < 0 ? 'left' : 'right';
-      const key = `${item.medication.id}-${item.scheduledTime}`;
-
-      if (!down) {
-        if (trigger) {
-          Haptics.impact({ style: 'medium' }).catch(() => {});
-          if (dir === 'right' && !item.log) {
-            handleLog(item, 'taken');
-          } else if (dir === 'left' && !item.log) {
-            handleLog(item, 'missed');
-          }
-        }
-        setSwipeStates(prev => ({ ...prev, [key]: 0 }));
-      } else {
-        setSwipeStates(prev => ({ ...prev, [key]: mx }));
-      }
-    }
-  );
-
-  const now = new Date();
-  const currentTime = format(now, 'HH:mm');
+  if (schedule.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '48px 0' }}>
+        <p style={{ ...mono, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: 12 }}>Today's Schedule</p>
+        <p style={{ ...serif, fontSize: '1.4rem', color: 'hsl(var(--foreground))', opacity: 0.4 }}>No doses scheduled today</p>
+      </div>
+    );
+  }
 
   return (
-    <Card className="shadow-md">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Clock className="w-5 h-5" />
-          Today's Schedule
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {schedule.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">No medications scheduled for today</p>
-        ) : (
-          <div className="space-y-4">
-            {schedule.map((item, index) => {
-              const isPast = item.scheduledTime < currentTime;
-              const isCritical = item.medication.critical;
-              
-              return (
-                <div
-                  key={`${item.medication.id}-${item.scheduledTime}`}
-                  className={`p-4 rounded-lg border-2 transition-all ${
-                    item.log?.status === 'taken'
-                      ? 'bg-green-50 border-green-200'
-                      : item.log?.status === 'missed'
-                      ? 'bg-red-50 border-red-200'
-                      : isPast && isCritical
-                      ? 'bg-orange-50 border-orange-400'
-                      : 'bg-white border-gray-200'
-                  }`}
-                  style={{
-                    transform: `translateX(${swipeStates[`${item.medication.id}-${item.scheduledTime}`] || 0}px)`,
-                    touchAction: 'pan-y' // allows vertical scroll while intercepting horizontal swipes
-                  }}
-                  {...bind(item)}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-2xl font-bold text-gray-900">
-                          {item.scheduledTime}
-                        </span>
-                        {isCritical && (
-                          <Badge className="bg-red-500 text-white">
-                            <AlertTriangle className="w-3 h-3 mr-1" />
-                            Critical
-                          </Badge>
-                        )}
-                        {item.log && (
-                          <Badge
-                            className={
-                              item.log.status === 'taken'
-                                ? 'bg-green-500 text-white'
-                                : 'bg-red-500 text-white'
-                            }
-                          >
-                            {item.log.status === 'taken' ? 'Taken' : 'Missed'}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-lg font-semibold text-gray-900">
-                        {item.medication.name}
-                      </p>
-                      <p className="text-gray-600">{item.medication.dosage}</p>
-                      {item.medication.notes && (
-                        <p className="text-sm text-gray-500 mt-1">{item.medication.notes}</p>
-                      )}
-                      
-                      {item.log?.delay_minutes > 0 && (
-                        <p className="text-sm text-orange-600 mt-1">
-                          Taken {item.log.delay_minutes} minutes late
-                        </p>
-                      )}
-                      
-                      {item.log?.context && (
-                        <p className="text-sm text-gray-600 mt-1 italic">
-                          Note: {item.log.context}
-                        </p>
-                      )}
-                    </div>
+    <div>
+      {/* Section label */}
+      <p style={{ ...mono, fontSize: '0.65rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: 14, paddingLeft: 2 }}>
+        Today's Schedule
+      </p>
 
-                    {!item.log && (
-                      <div className="flex flex-col gap-2">
-                        <Button
-                          onClick={() => {
-                            setSelectedMedication(item.medication);
-                            setSelectedTime(item.scheduledTime);
-                          }}
-                          className="bg-green-600 hover:bg-green-700 h-11 select-none"
-                          size="sm"
-                        >
-                          <CheckCircle className="w-4 h-4 mr-1" />
-                          Log Dose
-                        </Button>
-                        <SnoozeButton
-                          medication={item.medication}
-                          scheduledTime={item.scheduledTime}
-                        />
-                        <Button
-                          onClick={() => handleLog(item, 'missed')}
-                          variant="outline"
-                          className="border-red-300 text-red-600 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-900/20 h-11 select-none"
-                          size="sm"
-                        >
-                          <XCircle className="w-4 h-4 mr-1" />
-                          Missed
-                        </Button>
-                      </div>
-                    )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {schedule.map((item) => {
+          const isPast = item.scheduledTime < currentTime;
+          const status = item.log?.status;
+          const key    = `${item.medication.id}-${item.scheduledTime}`;
+          const badge  = statusBadge(status, isPast, item.medication.critical);
+          const accent = accentColor(status, isPast);
+          const isDone = status === 'taken';
+
+          return (
+            <div
+              key={key}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 14,
+                background: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 12,
+                overflow: 'hidden',
+                transform: `translateX(${swipeStates[key] || 0}px)`,
+                touchAction: 'pan-y',
+                opacity: isDone ? 0.65 : 1,
+                transition: 'opacity 0.2s',
+              }}
+              {...(status ? {} : bind(item))}
+            >
+              {/* Left accent bar */}
+              <div style={{ width: 3, alignSelf: 'stretch', background: accent, flexShrink: 0 }} />
+
+              {/* Content */}
+              <div style={{ flex: 1, padding: '14px 0 14px 2px', minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ ...serif, fontSize: '1rem', fontWeight: 600, color: 'hsl(var(--foreground))', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {item.medication.name}
+                    </p>
+                    <p style={{ ...mono, fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))', marginTop: 2 }}>
+                      {item.scheduledTime}
+                      {item.medication.dosage ? ` · ${item.medication.dosage}` : ''}
+                    </p>
                   </div>
 
-                  {!item.log && (
-                    <div className="mt-3">
-                      <Textarea
-                        placeholder="Add context note (optional): traveling, busy, forgot, etc."
-                        value={contextNotes[`${item.medication.id}-${item.scheduledTime}`] || ''}
-                        onChange={(e) =>
-                          setContextNotes({
-                            ...contextNotes,
-                            [`${item.medication.id}-${item.scheduledTime}`]: e.target.value
-                          })
-                        }
-                        className="text-sm"
-                        rows={2}
-                      />
-                    </div>
-                  )}
+                  {/* Badge / actions */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, paddingRight: 14 }}>
+                    {status ? (
+                      <span style={{ ...mono, fontSize: '0.62rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '4px 10px', borderRadius: 100, ...badge.style }}>
+                        {badge.label}
+                      </span>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => { setSelectedMedication(item.medication); setSelectedTime(item.scheduledTime); }}
+                          style={{ ...mono, fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', padding: '6px 12px', borderRadius: 100, background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', cursor: 'pointer', minHeight: 36 }}
+                        >
+                          Log
+                        </button>
+                        <button
+                          onClick={() => handleLog(item, 'missed')}
+                          style={{ ...mono, fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', padding: '6px 10px', borderRadius: 100, background: 'transparent', color: 'hsl(var(--muted-foreground))', border: '1px solid hsl(var(--border))', cursor: 'pointer', minHeight: 36 }}
+                        >
+                          Miss
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </CardContent>
+              </div>
+            </div>
+          );
+        })}
+      </div>
 
       <LogDoseDialog
         open={!!selectedMedication}
-        onClose={() => {
-          setSelectedMedication(null);
-          setSelectedTime(null);
-        }}
+        onClose={() => { setSelectedMedication(null); setSelectedTime(null); }}
         medication={selectedMedication}
         scheduledTime={selectedTime}
       />
-    </Card>
+    </div>
   );
 }

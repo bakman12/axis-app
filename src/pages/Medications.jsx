@@ -1,8 +1,6 @@
 import { useState, useMemo } from 'react';
 import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -13,6 +11,9 @@ import RefillReminders from '../components/RefillReminders';
 import RootPageHeader from '../components/RootPageHeader';
 import PullToRefresh from '../components/PullToRefresh';
 import { scanAllInteractions, severityStyles } from '@/lib/drugInteractions';
+
+const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+const sans  = { fontFamily: 'Inter, sans-serif' };
 
 export default function Medications() {
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -25,10 +26,9 @@ export default function Medications() {
     await queryClient.invalidateQueries({ queryKey: ['medications', 'all'] });
   };
 
-  // Fetch ALL medications (active + inactive) so we can toggle inactive visibility
   const { data: allMedications = [], isLoading } = useQuery({
     queryKey: ['medications', 'all'],
-    queryFn:  () => /** @type {any} */ (entities).Medication.list(),
+    queryFn:  () => entities.Medication.list(),
   });
 
   const activeMedications = allMedications.filter(m => m.active !== false);
@@ -46,49 +46,53 @@ export default function Medications() {
   });
 
   return (
-    <div style={{ overscrollBehavior: 'none' }}>
-      <RootPageHeader
-        title="My Medications"
-        subtitle="Manage your medication list and refill reminders"
-      />
-      <PullToRefresh onRefresh={handleRefresh}>
-        <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8 pb-24" style={{ overscrollBehavior: 'none' }}>
+    <div style={{ overscrollBehavior: 'none', background: 'hsl(var(--background))', minHeight: '100vh' }}>
+      <RootPageHeader title="Medications" subtitle="Your active regimen" />
 
-          {/* Refill Reminders — only uses active meds */}
-          <div className="mb-6">
+      <PullToRefresh onRefresh={handleRefresh}>
+        <div style={{ maxWidth: 640, margin: '0 auto', padding: '20px 16px 96px', overscrollBehavior: 'none' }}>
+
+          {/* Refill reminders */}
+          <div style={{ marginBottom: 24 }}>
             <RefillReminders medications={activeMedications} />
           </div>
 
-          {/* Interaction scan */}
+          {/* Drug interaction scanner */}
           {activeMedications.length >= 2 && (
-            <div className="mb-6">
+            <div style={{ marginBottom: 20 }}>
               <button
                 onClick={() => setScanOpen(v => !v)}
-                className="w-full flex items-center justify-between p-3 bg-white/80 dark:bg-gray-900/50 backdrop-blur border border-gray-200/50 dark:border-gray-800/50 rounded-xl shadow-sm text-sm font-medium dark:text-white select-none"
+                style={{
+                  ...sans, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '14px 16px', background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))',
+                  borderRadius: 12, fontSize: '0.82rem', fontWeight: 500, color: 'hsl(var(--foreground))', cursor: 'pointer',
+                }}
               >
-                <span className="flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-orange-500" />
-                  Check Drug Interactions ({activeMedications.length} active meds)
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Zap style={{ width: 15, height: 15, color: 'hsl(var(--primary))' }} />
+                  Check Drug Interactions ({activeMedications.length} meds)
                 </span>
-                {scanOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                {scanOpen
+                  ? <ChevronUp style={{ width: 15, height: 15, color: 'hsl(var(--muted-foreground))' }} />
+                  : <ChevronDown style={{ width: 15, height: 15, color: 'hsl(var(--muted-foreground))' }} />}
               </button>
 
               {scanOpen && (
-                <div className="mt-2 space-y-2">
+                <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {interactions.length === 0 ? (
-                    <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl text-sm text-green-800 dark:text-green-200">
+                    <div style={{ padding: '14px 16px', background: 'rgba(44,44,44,0.04)', border: '1px solid hsl(var(--border))', borderRadius: 12, ...sans, fontSize: '0.82rem', color: 'hsl(var(--foreground))' }}>
                       No known interactions found between your current medications.
                     </div>
                   ) : (
                     interactions.map((w, i) => {
                       const s = severityStyles(w.severity);
                       return (
-                        <div key={i} className={`p-3 rounded-xl border ${s.bg} ${s.border}`}>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className={`text-xs font-bold uppercase px-2 py-0.5 rounded ${s.badge}`}>{w.severity}</span>
-                            <span className={`text-xs font-semibold ${s.text}`}>{w.drug1} + {w.drug2}</span>
+                        <div key={i} style={{ padding: '12px 16px', borderRadius: 12, border: '1px solid rgba(199,91,58,0.25)', background: 'rgba(199,91,58,0.06)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                            <span style={{ ...sans, fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: 100, background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }}>{w.severity}</span>
+                            <span style={{ ...sans, fontSize: '0.78rem', fontWeight: 600, color: 'hsl(var(--foreground))' }}>{w.drug1} + {w.drug2}</span>
                           </div>
-                          <p className={`text-xs ${s.text}`}>{w.message}</p>
+                          <p style={{ ...sans, fontSize: '0.78rem', color: 'hsl(var(--muted-foreground))' }}>{w.message}</p>
                         </div>
                       );
                     })
@@ -98,51 +102,53 @@ export default function Medications() {
             </div>
           )}
 
-          <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm">
-            <CardHeader>
-              <div className="flex items-center justify-between mb-3">
-                <CardTitle className="dark:text-white">All Medications</CardTitle>
-                <Button onClick={() => setShowAddDialog(true)} className="bg-blue-600 hover:bg-blue-700 h-11 select-none">
-                  <Plus className="w-4 h-4 mr-2" />
+          {/* Medications card */}
+          <div style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 16, overflow: 'hidden' }}>
+            {/* Card header */}
+            <div style={{ padding: '18px 16px 14px', borderBottom: '1px solid hsl(var(--border))' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                <h2 style={{ ...serif, fontSize: '1.25rem', fontWeight: 600, color: 'hsl(var(--foreground))' }}>All Medications</h2>
+                <button
+                  onClick={() => setShowAddDialog(true)}
+                  style={{ ...sans, display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))', border: 'none', borderRadius: 100, fontSize: '0.78rem', fontWeight: 600, cursor: 'pointer', minHeight: 38 }}
+                >
+                  <Plus style={{ width: 14, height: 14 }} />
                   Add
-                </Button>
+                </button>
               </div>
 
               {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
+              <div style={{ position: 'relative' }}>
+                <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 14, height: 14, color: 'hsl(var(--muted-foreground))' }} />
+                <input
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Search medications…"
-                  className="pl-9 h-11 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  style={{ ...sans, width: '100%', padding: '10px 12px 10px 34px', background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))', borderRadius: 10, fontSize: '0.85rem', color: 'hsl(var(--foreground))', outline: 'none' }}
                 />
               </div>
 
-              {/* Show inactive toggle */}
-              <div className="flex items-center gap-2 mt-2">
-                <Switch
-                  id="show-inactive"
-                  checked={showInactive}
-                  onCheckedChange={setShowInactive}
-                  className="select-none"
-                />
-                <Label htmlFor="show-inactive" className="text-sm text-gray-500 dark:text-gray-400 select-none">
+              {/* Inactive toggle */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+                <Switch id="show-inactive" checked={showInactive} onCheckedChange={setShowInactive} />
+                <Label htmlFor="show-inactive" style={{ ...sans, fontSize: '0.78rem', color: 'hsl(var(--muted-foreground))', cursor: 'pointer' }}>
                   Show paused medications
                 </Label>
               </div>
-            </CardHeader>
+            </div>
 
-            <CardContent>
+            {/* List */}
+            <div style={{ padding: '8px 0' }}>
               <MedicationList medications={filtered} isLoading={isLoading} />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {showAddDialog && (
-            <AddMedicationDialog open={showAddDialog} onClose={() => setShowAddDialog(false)} />
-          )}
         </div>
       </PullToRefresh>
+
+      {showAddDialog && (
+        <AddMedicationDialog open={showAddDialog} onClose={() => setShowAddDialog(false)} />
+      )}
     </div>
   );
 }
