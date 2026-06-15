@@ -1,15 +1,15 @@
-import React from 'react';
 import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMissedDoseChecker } from '@/lib/useMissedDoseChecker';
-import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle, Clock, TrendingUp } from 'lucide-react';
+import { useClinicSync } from '@/hooks/useClinicSync';
 import { format, startOfDay, endOfDay } from 'date-fns';
 import TodaySchedule from '../components/TodaySchedule';
 import PullToRefresh from '../components/PullToRefresh';
 import SmartRefillTracker from '../components/SmartRefillTracker';
-import RootPageHeader from '../components/RootPageHeader';
 import DoseHistoryCalendar from '../components/DoseHistoryCalendar';
+
+const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+const sans  = { fontFamily: 'Inter, sans-serif' };
 
 export default function Home() {
   const queryClient = useQueryClient();
@@ -21,96 +21,111 @@ export default function Home() {
 
   const { data: medications = [] } = useQuery({
     queryKey: ['medications'],
-    queryFn: () => entities.Medication.filter({ active: true })
+    queryFn: () => entities.Medication.filter({ active: true }),
   });
 
   const { data: todayLogs = [] } = useQuery({
     queryKey: ['logs', 'today'],
     queryFn: async () => {
-      const start = startOfDay(new Date()).toISOString();
-      const end   = endOfDay(new Date()).toISOString();
-      const logs  = await entities.MedicationLog.list();
+      const start = startOfDay(new Date());
+      const end   = endOfDay(new Date());
+      const logs  = await entities.MedicationLog.list('-created_date', 500);
       return logs.filter(log => {
         const t = new Date(log.taken_time || log.created_date);
-        return t >= new Date(start) && t <= new Date(end);
+        return t >= start && t <= end;
       });
-    }
+    },
   });
 
-  // Build today's schedule sorted by scheduled time
-  const todaySchedule = medications.flatMap(med =>
-    (med.times || []).map(time => ({
-      medication: med,
-      scheduledTime: time,
-      log: todayLogs.find(log =>
-        log.medication_id === med.id && log.scheduled_time === time
-      )
-    }))
-  ).sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime));
+  const todaySchedule = medications
+    .flatMap(med =>
+      (med.times || []).map(time => ({
+        medication: med,
+        scheduledTime: time,
+        log: todayLogs.find(l => l.medication_id === med.id && l.scheduled_time === time),
+      }))
+    )
+    .sort((a, b) => a.scheduledTime.localeCompare(b.scheduledTime));
 
-  const takenCount   = todaySchedule.filter(item => item.log?.status === 'taken').length;
-  const pendingCount = todaySchedule.filter(item => !item.log).length;
-  const totalCount   = todaySchedule.length;
+  const takenCount   = todaySchedule.filter(i => i.log?.status === 'taken').length;
+  const pendingCount = todaySchedule.filter(i => !i.log).length;
 
-  // Auto-mark overdue unlogged doses as missed (runs on mount + app resume)
+  // streak — consecutive days with 100% adherence (simplified: days where all logs are taken)
+  const streak = 0; // placeholder — real streak would need history query
+
   useMissedDoseChecker(medications, todayLogs, queryClient);
+  // Fire-and-forget daily sync to clinician dashboard (only runs when consent is active)
+  useClinicSync(medications, todayLogs);
 
   return (
-    <div style={{ overscrollBehavior: 'none' }}>
-      <RootPageHeader
-        title="Axis"
-        subtitle={format(new Date(), 'EEEE, d MMMM')}
-      />
+    <div style={{ overscrollBehavior: 'none', minHeight: '100vh', background: 'hsl(var(--background))' }}>
+
+      {/* ── Header ── */}
+      <div
+        style={{
+          position: 'sticky', top: 0, zIndex: 40,
+          background: 'hsl(var(--background) / 0.92)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid hsl(var(--border))',
+          paddingTop: 'env(safe-area-inset-top)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px' }}>
+          <h1 style={{ ...serif, fontSize: '1.6rem', fontWeight: 600, letterSpacing: '-0.02em', color: 'hsl(var(--foreground))' }}>
+            Axis
+          </h1>
+          <p style={{ ...sans, fontSize: '0.72rem', color: 'hsl(var(--muted-foreground))', letterSpacing: '0.04em' }}>
+            {format(new Date(), 'EEE, d MMM')}
+          </p>
+        </div>
+      </div>
+
       <PullToRefresh onRefresh={handleRefresh}>
-        <div className="max-w-2xl mx-auto p-4 pb-24 space-y-5" style={{ overscrollBehavior: 'none' }}>
+        <div style={{ maxWidth: 640, margin: '0 auto', padding: '20px 16px 96px', overscrollBehavior: 'none' }}>
 
-          {/* Today's progress summary */}
-          <div className="grid grid-cols-3 gap-3">
-            <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Taken</p>
-                    <p className="text-2xl font-bold text-green-600 dark:text-green-400">{takenCount}</p>
-                  </div>
-                  <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Pending</p>
-                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{pendingCount}</p>
-                  </div>
-                  <Clock className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/80 dark:bg-gray-900/50 backdrop-blur border-gray-200/50 dark:border-gray-800/50 shadow-sm">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Total</p>
-                    <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalCount}</p>
-                  </div>
-                  <TrendingUp className="w-6 h-6 text-gray-600 dark:text-gray-400" />
-                </div>
-              </CardContent>
-            </Card>
+          {/* ── Stat cards — exactly like website mockup ── */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 32 }}>
+            {[
+              { value: takenCount,   label: 'Taken',   highlight: false },
+              { value: pendingCount, label: 'Pending', highlight: false },
+              { value: `${streak}d`, label: 'Streak',  highlight: true  },
+            ].map(({ value, label, highlight }) => (
+              <div
+                key={label}
+                style={{
+                  background: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 14,
+                  padding: '16px 8px',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  textAlign: 'center',
+                }}
+              >
+                <p style={{ ...serif, fontSize: '2rem', fontWeight: 600, lineHeight: 1, color: highlight ? 'hsl(var(--primary))' : 'hsl(var(--foreground))' }}>
+                  {value}
+                </p>
+                <p style={{ ...sans, fontSize: '0.6rem', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginTop: 6 }}>
+                  {label}
+                </p>
+              </div>
+            ))}
           </div>
 
-          {/* Today's medication schedule */}
+          {/* ── Today's schedule ── */}
           <TodaySchedule schedule={todaySchedule} />
 
-          {/* 30-day adherence heatmap */}
-          <DoseHistoryCalendar />
+          {/* ── 30-day adherence heatmap ── */}
+          <div style={{ marginTop: 36 }}>
+            <p style={{ ...sans, fontSize: '0.65rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: 14 }}>
+              Monthly Adherence
+            </p>
+            <DoseHistoryCalendar />
+          </div>
 
-          {/* Refill warnings */}
-          <SmartRefillTracker />
+          {/* ── Refill warnings ── */}
+          <div style={{ marginTop: 28 }}>
+            <SmartRefillTracker />
+          </div>
 
         </div>
       </PullToRefresh>

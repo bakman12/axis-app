@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Plane, Calendar } from 'lucide-react';
+import { Plane, Calendar, Info } from 'lucide-react';
 import RootPageHeader from '../components/RootPageHeader';
 import AddTripDialog from '../components/AddTripDialog';
 import AddEventDialog from '../components/AddEventDialog';
@@ -11,153 +9,140 @@ import TripCard from '../components/TripCard';
 import EventCard from '../components/EventCard';
 import PackingCalculator from '../components/PackingCalculator';
 import ActiveTripSchedule from '../components/ActiveTripSchedule';
-import { AlertTriangle } from 'lucide-react';
+
+const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+const sans  = { fontFamily: 'Inter, sans-serif' };
+
+function SectionLabel({ children }) {
+  return (
+    <p style={{ ...sans, fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'hsl(var(--muted-foreground))', marginBottom: 14 }}>
+      {children}
+    </p>
+  );
+}
+
+function ActionBtn({ icon: Icon, label, onClick, accent }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        ...sans, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        gap: 8, padding: '20px 12px', background: accent ? 'hsl(var(--primary))' : 'hsl(var(--card))',
+        color: accent ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))',
+        border: accent ? 'none' : '1px solid hsl(var(--border))',
+        borderRadius: 14, cursor: 'pointer', minHeight: 80,
+      }}
+    >
+      <Icon style={{ width: 20, height: 20 }} />
+      <span style={{ fontSize: '0.72rem', fontWeight: 600, letterSpacing: '0.04em' }}>{label}</span>
+    </button>
+  );
+}
 
 export default function Travel() {
-  const [showAddTrip, setShowAddTrip] = useState(false);
+  const [showAddTrip, setShowAddTrip]   = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
-  const queryClient = useQueryClient();
 
-  const { data: trips = [], isLoading: tripsLoading } = useQuery({
-    queryKey: ['trips'],
-    queryFn: () => entities.Trip.filter({ active: true }, '-start_date')
-  });
+  const { data: trips = [],       isLoading: tripsLoading }  = useQuery({ queryKey: ['trips'],       queryFn: () => entities.Trip.filter({ active: true }, '-start_date') });
+  const { data: events = [],      isLoading: eventsLoading } = useQuery({ queryKey: ['events'],      queryFn: () => entities.ImportantEvent.list('-date') });
+  const { data: medications = [] }                           = useQuery({ queryKey: ['medications'], queryFn: () => entities.Medication.filter({ active: true }) });
 
-  const { data: events = [], isLoading: eventsLoading } = useQuery({
-    queryKey: ['events'],
-    queryFn: () => entities.ImportantEvent.list('-date')
-  });
-
-  const { data: medications = [] } = useQuery({
-    queryKey: ['medications'],
-    queryFn: () => entities.Medication.filter({ active: true })
-  });
-
-  // Get upcoming trips and events
-  const today = new Date().toISOString().split('T')[0];
-  const upcomingTrips = trips.filter(t => t.end_date >= today);
+  const today         = new Date().toISOString().split('T')[0];
+  const upcomingTrips  = trips.filter(t => t.end_date >= today);
   const upcomingEvents = events.filter(e => e.date >= today);
-
-  // Trip that is currently in progress (started but not yet ended)
-  const activeTrip = trips.find(t => t.start_date <= today && t.end_date >= today) ?? null;
+  const activeTrip     = trips.find(t => t.start_date <= today && t.end_date >= today) ?? null;
 
   return (
-    <div style={{ overscrollBehavior: 'none' }}>
-      <RootPageHeader 
-        title="Travel & Events" 
-        subtitle="Smart planning for your medications"
-      />
-      
-      <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
-        
-        {/* Travel Safety Notice */}
-        <Card className="bg-amber-50 dark:bg-amber-900/20 border-amber-300 dark:border-amber-700">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-semibold text-amber-900 dark:text-amber-100 mb-1">
-                  Travel Medication Safety
-                </p>
-                <ul className="space-y-1 text-amber-800 dark:text-amber-200 ml-4 list-disc text-xs">
-                  <li>Keep medications in original labeled containers</li>
-                  <li>Carry prescriptions or a letter from your doctor when traveling internationally</li>
-                  <li>Pack medications in carry-on luggage, not checked bags</li>
-                  <li>For timezone changes affecting medication timing, consult your pharmacist BEFORE traveling</li>
-                  <li>Pack extra doses in case of delays - our recommendations include a safety buffer</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+    <div style={{ overscrollBehavior: 'none', background: 'hsl(var(--background))', minHeight: '100vh' }}>
+      <RootPageHeader title="Travel" subtitle="Smart packing & timezone planning" />
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-3">
-          <Button
-            onClick={() => setShowAddTrip(true)}
-            className="h-16 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500"
-          >
-            <Plane className="w-5 h-5 mr-2" />
-            Add Trip
-          </Button>
-          <Button
-            onClick={() => setShowAddEvent(true)}
-            className="h-16 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500"
-          >
-            <Calendar className="w-5 h-5 mr-2" />
-            Add Event
-          </Button>
+      <div style={{ maxWidth: 640, margin: '0 auto', padding: '20px 16px 96px' }}>
+
+        {/* Travel safety notice */}
+        <div style={{ display: 'flex', gap: 12, padding: '14px 16px', background: 'rgba(199,91,58,0.06)', border: '1px solid rgba(199,91,58,0.2)', borderRadius: 14, marginBottom: 24 }}>
+          <Info style={{ width: 16, height: 16, color: 'hsl(var(--primary))', flexShrink: 0, marginTop: 2 }} />
+          <div style={{ ...sans, fontSize: '0.78rem', color: 'hsl(var(--muted-foreground))', lineHeight: 1.6 }}>
+            <p style={{ fontWeight: 600, color: 'hsl(var(--foreground))', marginBottom: 6 }}>Before you travel</p>
+            <ul style={{ paddingLeft: 14, display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <li>Keep medications in original labeled containers</li>
+              <li>Carry prescriptions or a GP letter for international travel</li>
+              <li>Pack medications in carry-on luggage, not checked bags</li>
+              <li>Consult your pharmacist about timezone dose adjustments</li>
+            </ul>
+          </div>
         </div>
 
-        {/* Active trip adjusted schedule — only shown while a trip is in progress */}
+        {/* Quick actions */}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 28 }}>
+          <ActionBtn icon={Plane}    label="Add Trip"  onClick={() => setShowAddTrip(true)}  accent />
+          <ActionBtn icon={Calendar} label="Add Event" onClick={() => setShowAddEvent(true)} />
+        </div>
+
+        {/* Active trip */}
         {activeTrip && (
-          <ActiveTripSchedule trip={activeTrip} medications={medications} />
+          <div style={{ marginBottom: 28 }}>
+            <SectionLabel>Active Trip</SectionLabel>
+            <ActiveTripSchedule trip={activeTrip} medications={medications} />
+          </div>
         )}
 
-        {/* Packing Calculator */}
+        {/* Packing calculator */}
         {medications.length > 0 && (
-          <PackingCalculator medications={medications} />
+          <div style={{ marginBottom: 28 }}>
+            <SectionLabel>Packing Calculator</SectionLabel>
+            <div style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 16, overflow: 'hidden' }}>
+              <PackingCalculator medications={medications} />
+            </div>
+          </div>
         )}
 
-        {/* Upcoming Trips */}
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 dark:text-white">
-              <Plane className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              Upcoming Trips
-            </CardTitle>
-            <CardDescription className="dark:text-gray-400">
-              Your travel plans with medication packing guidance
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
+        {/* Upcoming trips */}
+        <div style={{ marginBottom: 28 }}>
+          <SectionLabel>Upcoming Trips</SectionLabel>
+          <div style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 16, overflow: 'hidden' }}>
             {tripsLoading ? (
-              <div className="h-32 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse" />
+              <div style={{ height: 80, background: 'hsl(var(--muted))', margin: 12, borderRadius: 10 }} />
             ) : upcomingTrips.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                <Plane className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>No upcoming trips</p>
-                <p className="text-sm">Add a trip to get packing recommendations</p>
+              <div style={{ textAlign: 'center', padding: '36px 16px' }}>
+                <Plane style={{ width: 28, height: 28, margin: '0 auto 10px', color: 'hsl(var(--muted-foreground))', opacity: 0.4 }} />
+                <p style={{ ...serif, fontSize: '1rem', color: 'hsl(var(--foreground))', opacity: 0.4 }}>No upcoming trips</p>
+                <p style={{ ...sans, fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))', marginTop: 4 }}>Add a trip to get packing recommendations</p>
               </div>
             ) : (
-              upcomingTrips.map(trip => (
-                <TripCard key={trip.id} trip={trip} medications={medications} />
-              ))
+              <div style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {upcomingTrips.map(trip => (
+                  <TripCard key={trip.id} trip={trip} medications={medications} />
+                ))}
+              </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        {/* Important Events */}
-        <Card className="dark:bg-gray-800 dark:border-gray-700">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 dark:text-white">
-              <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              Important Events
-            </CardTitle>
-            <CardDescription className="dark:text-gray-400">
-              High-stakes events with smart medication reminders
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
+        {/* Important events */}
+        <div style={{ marginBottom: 28 }}>
+          <SectionLabel>Important Events</SectionLabel>
+          <div style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 16, overflow: 'hidden' }}>
             {eventsLoading ? (
-              <div className="h-32 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse" />
+              <div style={{ height: 80, background: 'hsl(var(--muted))', margin: 12, borderRadius: 10 }} />
             ) : upcomingEvents.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>No upcoming events</p>
-                <p className="text-sm">Add events to get smart reminders</p>
+              <div style={{ textAlign: 'center', padding: '36px 16px' }}>
+                <Calendar style={{ width: 28, height: 28, margin: '0 auto 10px', color: 'hsl(var(--muted-foreground))', opacity: 0.4 }} />
+                <p style={{ ...serif, fontSize: '1rem', color: 'hsl(var(--foreground))', opacity: 0.4 }}>No upcoming events</p>
+                <p style={{ ...sans, fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))', marginTop: 4 }}>Add events to get smart reminders</p>
               </div>
             ) : (
-              upcomingEvents.map(event => (
-                <EventCard key={event.id} event={event} />
-              ))
+              <div style={{ padding: '8px 0' }}>
+                {upcomingEvents.map(event => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
       </div>
 
-      <AddTripDialog open={showAddTrip} onOpenChange={setShowAddTrip} />
+      <AddTripDialog  open={showAddTrip}  onOpenChange={setShowAddTrip} />
       <AddEventDialog open={showAddEvent} onOpenChange={setShowAddEvent} />
     </div>
   );

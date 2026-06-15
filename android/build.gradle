@@ -22,6 +22,8 @@ allprojects {
         google()
         mavenCentral()
     }
+    // Redirect build dirs outside OneDrive to avoid sync file-lock conflicts
+    buildDir = "C:/Users/bakoo/.axis-builds/${rootProject.name}/${project.name}"
 }
 
 task clean(type: Delete) {

@@ -36,3 +36,14 @@ dist-ssr
 android/app/build/
 android/.gradle/
 android/build/
+
+# Release signing — never commit these
+*.keystore
+*.jks
+.env.signing
+
+# Unrelated project that lives alongside but isn't part of Axis
+/well-centre/
+
+# .env.example files ARE safe to commit (they show what's needed, no secrets)
+!.env.example

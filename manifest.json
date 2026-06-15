@@ -1,11 +1,11 @@
 {
-  "name": "Spiffy Pill Pal Care",
-  "short_name": "PillPal",
-  "description": "Comprehensive medication management and health tracking app",
+  "name": "Axis",
+  "short_name": "Axis",
+  "description": "AI-powered medication tracking with biometric security, smart reminders, and travel planning.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "background_color": "#09090b",
+  "theme_color": "#f97316",
   "orientation": "portrait-primary",
   "icons": [
     {

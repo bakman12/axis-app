@@ -4,9 +4,9 @@ import { entities } from '@/lib/encryptedBase44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Pill, MapPin, Clock, AlertTriangle, CheckCircle2, Package } from 'lucide-react';
+import { Pill, MapPin, Clock, AlertTriangle, CheckCircle2, Package, Bell } from 'lucide-react';
 import { toast } from 'sonner';
-import { format, addDays } from 'date-fns';
+import { format, addDays, isAfter } from 'date-fns';
 import PharmacyFinder from './PharmacyFinder';
 import {
   Dialog,
@@ -16,10 +16,33 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
+const SNOOZE_KEY = 'axis_refill_snooze';
+
+function loadSnooze() {
+  try { return JSON.parse(localStorage.getItem(SNOOZE_KEY) || '{}'); } catch { return {}; }
+}
+
+function saveSnooze(map) {
+  localStorage.setItem(SNOOZE_KEY, JSON.stringify(map));
+}
+
 export default function SmartRefillTracker() {
   const [selectedMed, setSelectedMed] = useState(null);
   const [finderOpen, setFinderOpen] = useState(false);
+  const [snooze, setSnooze] = useState(() => loadSnooze());
   const queryClient = useQueryClient();
+
+  const handleSnooze = (medId) => {
+    const updated = { ...snooze, [medId]: addDays(new Date(), 3).toISOString() };
+    setSnooze(updated);
+    saveSnooze(updated);
+    toast.success('Refill reminder snoozed for 3 days');
+  };
+
+  const isSnoozed = (medId) => {
+    const until = snooze[medId];
+    return until ? isAfter(new Date(until), new Date()) : false;
+  };
 
   const { data: medications = [] } = useQuery({
     queryKey: ['medications'],
@@ -101,7 +124,7 @@ export default function SmartRefillTracker() {
     };
   }).filter(med => med.estimate);
 
-  const urgentRefills = medicationsWithRefills.filter(med => med.needsRefill);
+  const urgentRefills = medicationsWithRefills.filter(med => med.needsRefill && !isSnoozed(med.id));
 
   const createRefillOrderMutation = useMutation({
     mutationFn: async ({ medication, pharmacy }) => {
@@ -234,15 +257,26 @@ export default function SmartRefillTracker() {
                       Order Pending
                     </Badge>
                   ) : (
-                    <Button
-                      size="sm"
-                      onClick={() => handleOrderRefill(med)}
-                      disabled={createRefillOrderMutation.isPending}
-                      className="w-full mt-2 h-8"
-                    >
-                      <Pill className="w-4 h-4 mr-2" />
-                      Order Refill
-                    </Button>
+                    <div className="flex gap-2 mt-2">
+                      <Button
+                        size="sm"
+                        onClick={() => handleOrderRefill(med)}
+                        disabled={createRefillOrderMutation.isPending}
+                        className="flex-1 h-8"
+                      >
+                        <Pill className="w-4 h-4 mr-2" />
+                        Order Refill
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleSnooze(med.id)}
+                        className="h-8 px-3"
+                        title="Snooze for 3 days"
+                      >
+                        <Bell className="w-4 h-4" />
+                      </Button>
+                    </div>
                   )}
                 </div>
               ))}

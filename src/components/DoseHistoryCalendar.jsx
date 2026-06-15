@@ -3,6 +3,8 @@ import { entities } from '@/lib/encryptedBase44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CalendarDays } from 'lucide-react';
 import { format, subDays, parseISO } from 'date-fns';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 // Returns 'perfect' | 'partial' | 'missed' | 'none' for a given day's logs
 function dayStatus(logs) {
@@ -71,10 +73,16 @@ export default function DoseHistoryCalendar() {
           <CalendarDays className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           30-Day Adherence
           {pct !== null && (
-            <span className={`ml-auto text-sm font-bold ${pct >= 80 ? 'text-green-600' : pct >= 50 ? 'text-amber-500' : 'text-red-500'}`}>
+            <span className={`text-sm font-bold ${pct >= 80 ? 'text-green-600' : pct >= 50 ? 'text-amber-500' : 'text-red-500'}`}>
               {pct}%
             </span>
           )}
+          <Link
+            to={createPageUrl('History')}
+            className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline font-normal"
+          >
+            View all
+          </Link>
         </CardTitle>
       </CardHeader>
       <CardContent>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://plausible.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://plausible.io https:;" />
+  <script defer data-domain="axisrx.app" src="https://plausible.io/js/script.outbound-links.js"></script>
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
+  <title>Privacy Policy — Axis</title>
+  <meta name="description" content="Axis Privacy Policy — how we handle your health data." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://axisrx.app/privacy.html" />
+  <meta property="og:title" content="Privacy Policy — Axis" />
+  <meta property="og:description" content="How Axis handles your health data. End-to-end encrypted, never sold, always yours." />
+  <meta property="og:image" content="https://axisrx.app/og-image.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Privacy Policy — Axis" />
+  <meta name="twitter:description" content="How Axis handles your health data. End-to-end encrypted, never sold, always yours." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #09090b;
+      --bg2:     #111113;
+      --bg3:     #18181b;
+      --bg4:     #1c1c1e;
+      --border:  rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.12);
+      --orange:  #f97316;
+      --orange-d:#ea580c;
+      --orange-g:rgba(249,115,22,0.12);
+      --text:    #fafafa;
+      --muted:   #a1a1aa;
+      --muted2:  #71717a;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 56px;
+      background: rgba(9,9,11,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--orange); }
+    .nav-back {
+      display: flex; align-items: center; gap: 6px;
+      color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--text); }
+    .nav-back svg { width: 16px; height: 16px; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 72px 56px 56px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%);
+      top: -200px; right: -100px; pointer-events: none;
+    }
+    .hero-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--orange);
+      margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem); font-weight: 700;
+      letter-spacing: -0.04em; line-height: 1.1;
+      color: var(--text); margin-bottom: 12px;
+    }
+    .hero-meta { font-size: 0.85rem; color: var(--muted2); }
+
+    /* ── Layout ── */
+    .page-wrap { max-width: 760px; margin: 0 auto; padding: 64px 40px 100px; }
+
+    /* ── Callout ── */
+    .callout {
+      background: var(--orange-g); border: 1px solid rgba(249,115,22,0.2);
+      border-radius: 10px; padding: 18px 22px; margin-bottom: 48px;
+      font-size: 0.9rem; color: var(--muted); line-height: 1.65;
+    }
+    .callout strong { color: var(--orange); }
+
+    /* ── TOC ── */
+    .toc {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 24px 28px; margin-bottom: 52px;
+    }
+    .toc-title {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted2); margin-bottom: 14px;
+    }
+    .toc ol { padding-left: 18px; }
+    .toc li { margin-bottom: 7px; }
+    .toc a { color: var(--muted); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    .toc a:hover { color: var(--orange); }
+
+    /* ── Sections ── */
+    .policy-section { margin-bottom: 52px; scroll-margin-top: 90px; }
+    .policy-section h2 {
+      font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em;
+      color: var(--text); margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 6px;
+      background: var(--orange-g); border: 1px solid rgba(249,115,22,0.2);
+      color: var(--orange); font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
+    }
+    .policy-section h3 { font-size: 0.9rem; font-weight: 600; color: var(--text); margin: 18px 0 8px; }
+    .policy-section p { font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; line-height: 1.75; }
+    .policy-section ul { padding-left: 18px; margin-bottom: 12px; }
+    .policy-section li { font-size: 0.9rem; color: var(--muted); margin-bottom: 7px; line-height: 1.65; }
+    .policy-section li strong { color: var(--text); }
+    .policy-section a { color: var(--orange); text-decoration: none; font-weight: 500; }
+    .policy-section a:hover { text-decoration: underline; }
+
+    /* ── Contact cards ── */
+    .contact-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 10px; padding: 22px;
+      display: flex; align-items: flex-start; gap: 14px;
+      margin-top: 12px; transition: border-color 0.2s;
+    }
+    .contact-card:hover { border-color: rgba(249,115,22,0.3); }
+    .contact-icon {
+      width: 40px; height: 40px; border-radius: 8px;
+      background: var(--orange-g); border: 1px solid rgba(249,115,22,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .contact-card h3 { font-size: 0.875rem; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .contact-card p { font-size: 0.83rem; color: var(--muted); margin: 0; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border); background: var(--bg2);
+      padding: 24px 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-logo { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text); text-decoration: none; }
+    .footer-logo span { color: var(--orange); }
+    .footer-links { display: flex; gap: 24px; }
+    .footer-links a { color: var(--muted2); text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--text); }
+    footer p { font-size: 0.82rem; color: var(--muted2); }
+
+    @media (max-width: 700px) {
+      nav { padding: 14px 20px; }
+      .hero { padding: 52px 20px 40px; }
+      .page-wrap { padding: 44px 20px 80px; }
+      footer { flex-direction: column; gap: 16px; padding: 24px 20px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Axis<span>.</span></a>
+  <a class="nav-back" href="index.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+    Back to home
+  </a>
+</nav>
+
+<div class="hero">
+  <div class="hero-label">Legal</div>
+  <h1>Privacy Policy</h1>
+  <p class="hero-meta">Last updated: 18 May 2026 &nbsp;·&nbsp; Effective: 18 May 2026</p>
+</div>
+
+<div class="page-wrap">
+
+  <div class="callout">
+    <strong>The short version:</strong> Axis encrypts your health data on your device before it ever leaves your phone. We do not sell your data, share it with advertisers, or use it for any purpose beyond running the app. You can delete everything at any time.
+  </div>
+
+  <nav class="toc" aria-label="Table of contents">
+    <div class="toc-title">Contents</div>
+    <ol>
+      <li><a href="#s1">Information we collect</a></li>
+      <li><a href="#s2">How we use your information</a></li>
+      <li><a href="#s3">How we protect your data</a></li>
+      <li><a href="#s4">Data sharing and disclosure</a></li>
+      <li><a href="#s5">Data retention and deletion</a></li>
+      <li><a href="#s6">Your rights</a></li>
+      <li><a href="#s7">Children's privacy</a></li>
+      <li><a href="#s8">Health data and NHS guidelines</a></li>
+      <li><a href="#s9">Changes to this policy</a></li>
+      <li><a href="#s10">Contact us</a></li>
+    </ol>
+  </nav>
+
+  <div class="policy-section" id="s1">
+    <h2><span class="num">1</span> Information we collect</h2>
+    <h3>Information you provide</h3>
+    <ul>
+      <li><strong>Medication data:</strong> names, dosages, schedules, and notes you enter</li>
+      <li><strong>Dose logs:</strong> records of doses you mark as taken, missed, or skipped</li>
+      <li><strong>Health profile:</strong> optional details such as health conditions, dietary restrictions, and goals</li>
+      <li><strong>Mood and symptom logs:</strong> voluntary daily check-ins you choose to record</li>
+      <li><strong>Travel information:</strong> trip destinations and dates used for packing calculations</li>
+      <li><strong>Account information:</strong> email address used to create your account</li>
+    </ul>
+    <h3>Information collected automatically</h3>
+    <ul>
+      <li><strong>Device identifiers:</strong> anonymous identifiers used to sync data across your devices</li>
+      <li><strong>App usage data:</strong> anonymised crash reports and performance metrics</li>
+      <li><strong>Notification interactions:</strong> whether reminders are acknowledged (not their content)</li>
+    </ul>
+    <p>We do <strong>not</strong> collect precise location, microphone audio, camera images (unless you scan a barcode), or data from your contacts or other apps.</p>
+  </div>
+
+  <div class="policy-section" id="s2">
+    <h2><span class="num">2</span> How we use your information</h2>
+    <p>We use the information we collect solely to operate and improve Axis:</p>
+    <ul>
+      <li>Scheduling and delivering medication reminders</li>
+      <li>Generating your adherence statistics and progress reports</li>
+      <li>Providing AI health coaching insights based on your own data</li>
+      <li>Calculating medication quantities for travel</li>
+      <li>Enabling data backup and cross-device sync</li>
+      <li>Diagnosing crashes and fixing bugs</li>
+    </ul>
+    <p>We do <strong>not</strong> use your health data to train machine learning models, serve advertisements, or build profiles for third parties.</p>
+  </div>
+
+  <div class="policy-section" id="s3">
+    <h2><span class="num">3</span> How we protect your data</h2>
+    <h3>On-device encryption</h3>
+    <p>All sensitive fields — medication names, dosages, health conditions, notes, and trip details — are encrypted on your device using AES-256-GCM before being transmitted to our servers. The encryption key is derived from your PIN or biometric credential and never leaves your device.</p>
+    <h3>Biometric authentication</h3>
+    <p>Every session requires Face ID, fingerprint, or PIN verification before your data is decrypted. The app locks automatically after inactivity.</p>
+    <h3>Transport security</h3>
+    <p>All data in transit is protected by TLS 1.3. We enforce certificate pinning on mobile builds to prevent man-in-the-middle attacks.</p>
+    <h3>Screen protection</h3>
+    <p>The app prevents your medication list from appearing in the iOS/Android app switcher, system screenshots taken by other apps, and screen recordings.</p>
+    <div class="callout" style="margin-bottom:0">
+      <strong>Important:</strong> Because your encryption key is derived from your PIN/biometric, if you forget your PIN and lose your device it is not possible for us to recover your encrypted data. We strongly recommend enabling the encrypted backup feature.
+    </div>
+  </div>
+
+  <div class="policy-section" id="s4">
+    <h2><span class="num">4</span> Data sharing and disclosure</h2>
+    <p>We do not sell, rent, or trade your personal information. We may share data only in these limited circumstances:</p>
+    <ul>
+      <li><strong>Service providers:</strong> We use Base44 for backend infrastructure under strict data processing agreements.</li>
+      <li><strong>Legal requirements:</strong> We may disclose information if required by law or court order.</li>
+      <li><strong>Safety:</strong> We may share information to prevent imminent physical harm.</li>
+      <li><strong>Business transfer:</strong> In a merger or acquisition, your data would transfer under the same protections.</li>
+    </ul>
+  </div>
+
+  <div class="policy-section" id="s5">
+    <h2><span class="num">5</span> Data retention and deletion</h2>
+    <p>We retain your data while your account is active. To delete your account and all data:</p>
+    <ul>
+      <li>In the app: <strong>Settings → Account → Delete Account</strong></li>
+      <li>By email: <a href="mailto:privacy@axisrx.app">privacy@axisrx.app</a> with subject "Account deletion request"</li>
+    </ul>
+    <p>All data is permanently deleted within 30 days of a verified request.</p>
+  </div>
+
+  <div class="policy-section" id="s6">
+    <h2><span class="num">6</span> Your rights</h2>
+    <p>Depending on where you live, you may have rights to access, correct, delete, or export your data. To exercise any right, contact <a href="mailto:privacy@axisrx.app">privacy@axisrx.app</a>. UK/EU residents may also contact the ICO at <a href="https://ico.org.uk" target="_blank">ico.org.uk</a>.</p>
+    <ul>
+      <li><strong>Access</strong> — request a copy of your data</li>
+      <li><strong>Rectification</strong> — correct inaccurate data (most editable directly in-app)</li>
+      <li><strong>Erasure</strong> — request deletion</li>
+      <li><strong>Portability</strong> — export via Settings → Export</li>
+      <li><strong>Restriction / Objection</strong> — limit or object to certain processing</li>
+    </ul>
+  </div>
+
+  <div class="policy-section" id="s7">
+    <h2><span class="num">7</span> Children's privacy</h2>
+    <p>Axis is not directed at children under 13 (or 16 in the EU). We do not knowingly collect information from children. If you believe a child has provided us information, contact us immediately and we will delete it.</p>
+  </div>
+
+  <div class="policy-section" id="s8">
+    <h2><span class="num">8</span> Health data and NHS guidelines</h2>
+    <p>Axis provides medication tracking and NHS-guideline information. This is <strong>not</strong> a substitute for professional medical advice. Always consult your doctor or pharmacist about your medications.</p>
+    <p>Health data is treated as special category data under UK GDPR and handled with the highest level of protection we apply.</p>
+  </div>
+
+  <div class="policy-section" id="s9">
+    <h2><span class="num">9</span> Changes to this policy</h2>
+    <p>When we make material changes we will update the date above, send an in-app notification, and for significant changes request re-acknowledgement. Continued use after changes constitutes acceptance.</p>
+  </div>
+
+  <div class="policy-section" id="s10">
+    <h2><span class="num">10</span> Contact us</h2>
+    <div class="contact-card">
+      <div class="contact-icon">✉️</div>
+      <div>
+        <h3>Privacy enquiries</h3>
+        <p>Email <a href="mailto:privacy@axisrx.app">privacy@axisrx.app</a> — we aim to respond within 5 business days.</p>
+      </div>
+    </div>
+    <div class="contact-card">
+      <div class="contact-icon">💬</div>
+      <div>
+        <h3>General support</h3>
+        <p>Visit our <a href="support.html">Support page</a> or email <a href="mailto:support@axisrx.app">support@axisrx.app</a>.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <a class="footer-logo" href="index.html">Axis<span>.</span></a>
+  <div class="footer-links">
+    <a href="privacy.html" style="color:var(--muted)">Privacy Policy</a>
+    <a href="support.html">Support</a>
+    <a href="index.html">Home</a>
+  </div>
+  <p>© 2026 Axis. All rights reserved.</p>
+</footer>
+
+</body>
+</html>

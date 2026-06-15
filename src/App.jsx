@@ -30,8 +30,8 @@ const AuthenticatedApp = () => {
   const { isUnlocked, directUnlock } = useCrypto();
   const isNativeShell = window.Capacitor?.isNativePlatform?.() ?? false;
 
-  // On first unlock each session: set up notification channel, request permission,
-  // and re-schedule all medication reminders (handles reinstalls / OS clearing them).
+  // On first unlock each session: set up notification channels, request permission,
+  // and re-schedule all medication reminders (handles reinstalls / OS clearing alarms).
   useEffect(() => {
     if (!isUnlocked) return;
     (async () => {

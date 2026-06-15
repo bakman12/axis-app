@@ -3,49 +3,52 @@
 @tailwind utilities;
 
 @layer base {
+  /* ── Light mode — axis-cream palette ── */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 44 27% 97%;          /* #faf9f6 cream */
+    --foreground: 0 0% 17%;            /* #2c2c2c charcoal */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 17%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --popover-foreground: 0 0% 17%;
+    --primary: 14 56% 50%;             /* #c75b3a terracotta */
+    --primary-foreground: 44 27% 97%;
+    --secondary: 44 20% 92%;
+    --secondary-foreground: 0 0% 17%;
+    --muted: 44 15% 91%;
+    --muted-foreground: 0 0% 54%;      /* #8a8a8a stone */
+    --accent: 39 46% 61%;              /* #c9a96e gold */
+    --accent-foreground: 0 0% 17%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 44 15% 87%;
+    --input: 44 15% 87%;
+    --ring: 14 56% 50%;
+    --radius: 0.75rem;
   }
 
+  /* ── Dark mode — axis-ink-deep palette ── */
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background: 0 0% 5%;            /* #0d0d0d ink-deep */
+    --foreground: 44 27% 97%;          /* #faf9f6 cream */
+    --card: 0 0% 10%;                  /* #1a1a1a ink */
+    --card-foreground: 44 27% 97%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 44 27% 97%;
+    --primary: 14 56% 50%;             /* #c75b3a terracotta */
+    --primary-foreground: 44 27% 97%;
+    --secondary: 0 0% 13%;
+    --secondary-foreground: 44 27% 97%;
+    --muted: 0 0% 13%;
+    --muted-foreground: 0 0% 54%;      /* #8a8a8a stone */
+    --accent: 39 46% 61%;              /* #c9a96e gold */
+    --accent-foreground: 0 0% 5%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 44 27% 97%;
+    --border: 0 0% 16%;
+    --input: 0 0% 13%;
+    --ring: 14 56% 50%;
+    --radius: 0.75rem;
   }
 }
 
@@ -55,8 +58,27 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.02em;
   }
 }
+
+/* ── Subtle grain texture on dark mode ── */
+.dark body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: .25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Terracotta ring color */
+:root { --tw-ring-color: hsl(14 56% 50% / 0.35); }
 
 /* iOS-specific optimizations */
 @supports (-webkit-touch-callout: none) {

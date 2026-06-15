@@ -18,7 +18,7 @@ export default function Layout({ children, currentPageName }) {
   });
   
   useEffect(() => {
-    const theme = localStorage.getItem('axis_theme') || user?.theme || 'light';
+    const theme = localStorage.getItem('axis_theme') || user?.theme || 'dark';
     // Sync to localStorage so it survives API failures
     if (user?.theme && !localStorage.getItem('axis_theme')) {
       localStorage.setItem('axis_theme', user.theme);
@@ -71,7 +71,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/50 dark:from-gray-950 dark:via-gray-900 dark:to-slate-950" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+    <div className="fixed inset-0 bg-background" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
       <OfflineDataManager />
       <OfflineIndicator />
       <NavigationManager />
@@ -89,7 +89,7 @@ export default function Layout({ children, currentPageName }) {
       </div>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-t border-gray-200/50 dark:border-gray-800/50 z-50 select-none shadow-lg dark:shadow-gray-950/50 overflow-x-auto" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)' }}>
+      <nav className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-xl border-t border-border z-50 select-none overflow-x-auto" style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 0.5rem)' }}>
         <div className="flex items-center justify-around h-16 min-w-max px-2">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -100,14 +100,12 @@ export default function Layout({ children, currentPageName }) {
                 to={item.path}
                 onClick={(e) => handleNavClick(e, item.path)}
                 preventScrollReset={true}
-                className={`flex flex-col items-center justify-center flex-1 h-full transition-colors min-h-[44px] ${
-                  active
-                    ? 'text-blue-600 dark:text-blue-400'
-                    : 'text-gray-600 dark:text-gray-400'
+                className={`flex flex-col items-center justify-center flex-1 h-full transition-all min-h-[44px] ${
+                  active ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${active ? 'scale-110' : ''} transition-transform`} />
-                <span className="text-xs mt-1 font-medium">{item.name}</span>
+                <Icon className={`w-[18px] h-[18px] transition-transform ${active ? 'scale-110' : ''}`} />
+                <span className="mt-1 font-medium" style={{ fontSize: '0.62rem', letterSpacing: '0.06em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>{item.name}</span>
               </Link>
             );
           })}

@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.axis.intelligence',
+  appId: 'com.spiffypillpal.care',
   appName: 'Axis',
   webDir: 'dist',
   bundledWebRuntime: false,
