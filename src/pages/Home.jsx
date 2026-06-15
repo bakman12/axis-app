@@ -1,6 +1,7 @@
 import { entities } from '@/lib/encryptedBase44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useMissedDoseChecker } from '@/lib/useMissedDoseChecker';
+import { useClinicSync } from '@/hooks/useClinicSync';
 import { format, startOfDay, endOfDay } from 'date-fns';
 import TodaySchedule from '../components/TodaySchedule';
 import PullToRefresh from '../components/PullToRefresh';
@@ -53,6 +54,8 @@ export default function Home() {
   const streak = 0; // placeholder — real streak would need history query
 
   useMissedDoseChecker(medications, todayLogs, queryClient);
+  // Fire-and-forget daily sync to clinician dashboard (only runs when consent is active)
+  useClinicSync(medications, todayLogs);
 
   return (
     <div style={{ overscrollBehavior: 'none', minHeight: '100vh', background: 'hsl(var(--background))' }}>

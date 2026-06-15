@@ -54,6 +54,7 @@ import Progress from './pages/Progress';
 import Settings from './pages/Settings';
 import Travel from './pages/Travel';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import ClinicShare from './pages/ClinicShare';
 import __Layout from './Layout.jsx';
 
 
@@ -65,6 +66,7 @@ export const PAGES = {
     "Settings": Settings,
     "Travel": Travel,
     "PrivacyPolicy": PrivacyPolicy,
+    "ClinicShare": ClinicShare,
 }
 
 export const pagesConfig = {

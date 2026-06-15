@@ -20,8 +20,20 @@
 
 import { LocalNotifications } from '@capacitor/local-notifications';
 
-/** How many days ahead to schedule individual alarms. */
-const SCHEDULE_DAYS = 14;
+/**
+ * How many days ahead to schedule individual alarms.
+ *
+ * Why 7 (not 14)?
+ *   iOS hard-limits an app to 64 pending local notifications. With 7-day
+ *   windows we stay under that cap for up to 9 medications × 1 dose/day, or
+ *   3 meds × 3 doses/day. Reschedule on every app open keeps the window
+ *   topped up — so 7 days of lead time is always available without ever
+ *   silently dropping alarms.
+ */
+const SCHEDULE_DAYS = 7;
+
+/** Safety cap matching iOS's hard limit on pending local notifications. */
+const MAX_NOTIFICATIONS_PER_APP = 60; // 64 minus a small safety margin
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -35,14 +47,37 @@ function notificationId(medicationId, time, dayOffset = 0) {
   return Math.abs(hash) % 2_000_000_000;
 }
 
-/** Build the Date for a given HH:MM time, N days from today. */
-function dateForTime(timeStr, dayOffset = 0) {
+/**
+ * Build the Date for a given HH:MM time, N days from today.
+ *
+ * Captures `now` once at entry so:
+ *   1. The "is this slot past today?" check and the day-increment see the
+ *      same moment — no midnight race.
+ *   2. day=0 (past) and day=1 don't both collapse to "tomorrow" — the result
+ *      is a unique calendar day per dayOffset value.
+ *
+ * NOTE on DST: this naive setHours+setDate approach can drift alarms by ±1
+ * hour for SCHEDULE_DAYS days after a DST transition, because setHours sets
+ * the wall clock at `now`'s TZ offset and setDate then carries that offset
+ * across the boundary. We accept that for now — twice-a-year drift in a
+ * subset of timezones is far less damaging than the regression caused by
+ * the alternative (the engine in Capacitor's Android WebView interpreted
+ * the rebuilt-from-components Date as immediate-fire, causing every alarm
+ * to push the moment scheduleAllMedicationNotifications ran).
+ */
+function dateForTime(timeStr, dayOffset, now) {
   const [hours, minutes] = timeStr.split(':').map(Number);
-  const date = new Date();
+  const date = new Date(now);
   date.setHours(hours, minutes, 0, 0);
-  if (dayOffset > 0 || date <= new Date()) date.setDate(date.getDate() + dayOffset + (date <= new Date() && dayOffset === 0 ? 1 : 0));
+  // If this slot is already past today, base off tomorrow instead.
+  if (date <= now) date.setDate(date.getDate() + 1);
+  // Then apply the requested day offset.
+  if (dayOffset > 0) date.setDate(date.getDate() + dayOffset);
   return date;
 }
+
+/** Defensive guard: never schedule an alarm to fire within MIN_LEAD_MS of now. */
+const MIN_LEAD_MS = 60 * 1000; // 1 minute
 
 /** Format HH:MM → "8:00 AM" style for notification body. */
 function formatTime(timeStr) {
@@ -152,68 +187,93 @@ export async function registerNotificationActions() {
  * Why individual instead of repeating?
  *   Android 12+ Doze mode aggressively defers inexact repeating alarms.
  *   Individual exact alarms (allowWhileIdle: true) fire reliably even in Doze.
+ *
+ * @param {object} medication
+ * @param {number} [budget=Infinity] — max notifications to schedule (iOS cap support)
+ * @returns {Promise<number>} how many notifications were actually scheduled
  */
-export async function scheduleMedicationNotifications(medication) {
-  if (!medication?.times?.length) return;
+export async function scheduleMedicationNotifications(medication, budget = Infinity) {
+  if (!medication?.times?.length) return 0;
+  if (budget <= 0) return 0;
 
   const hasPermission = await hasNotificationPermission();
-  if (!hasPermission) return;
+  if (!hasPermission) return 0;
 
   const isCritical = !!medication.critical;
   const channelId  = isCritical ? 'critical-medication-reminders' : 'medication-reminders';
   const actionTypeId = isCritical ? 'CRITICAL_MEDICATION_ACTIONS' : 'MEDICATION_ACTIONS';
 
   const notifications = [];
+  const now = new Date(); // single timestamp for the whole scheduling pass
 
+  // Build candidates in chronological order so we keep the soonest ones first
+  // when budget cuts us off.
+  //
+  // Two guards on each candidate:
+  //   1. fireAt > now            — never reschedule something in the past
+  //   2. fireAt - now >= MIN_LEAD_MS — never schedule something that fires
+  //      within the next minute. This protects against any future bug in
+  //      dateForTime: even if the calc were wrong, the worst case is the
+  //      alarm gets pushed by one day rather than firing immediately on
+  //      every app open.
+  const minFireTime = now.getTime() + MIN_LEAD_MS;
+  const candidates = [];
   for (const time of medication.times) {
     for (let day = 0; day < SCHEDULE_DAYS; day++) {
-      const fireAt = dateForTime(time, day);
-      // Skip times that are in the past (day 0, already-passed slot)
-      if (fireAt <= new Date()) continue;
-
-      const title = isCritical
-        ? `⚠️ ${medication.name} — Critical dose`
-        : `Medication reminder`;
-
-      const body = isCritical
-        ? `Do not skip — take ${medication.name}${medication.dosage ? ` ${medication.dosage}` : ''} now (${formatTime(time)})`
-        : `Time to take ${medication.name}${medication.dosage ? ` — ${medication.dosage}` : ''} (${formatTime(time)})`;
-
-      notifications.push({
-        id:           notificationId(medication.id, time, day),
-        title,
-        body,
-        actionTypeId,
-        channelId,
-        sound:        isCritical ? 'alarm' : undefined,
-        // ongoing: critical notifications persist until manually dismissed
-        ongoing:      isCritical,
-        // autoCancel: normal → tap to dismiss; critical → must open app or swipe
-        autoCancel:   !isCritical,
-        // timeoutAfter: how long until Android auto-cancels (ms)
-        // Critical: never auto-cancel (0 = no timeout); Normal: 30 min
-        timeoutAfter: isCritical ? 0 : 30 * 60 * 1000,
-        schedule: {
-          at:             fireAt,
-          allowWhileIdle: true, // fires in Android Doze — essential for reliability
-        },
-        smallIcon: 'ic_notification',
-        extra: {
-          medicationId:  medication.id,
-          scheduledTime: time,
-          dayOffset:     day,
-          critical:      isCritical,
-        },
-      });
+      const fireAt = dateForTime(time, day, now);
+      if (fireAt.getTime() < minFireTime) continue;
+      candidates.push({ time, day, fireAt });
     }
   }
+  candidates.sort((a, b) => a.fireAt.getTime() - b.fireAt.getTime());
 
-  if (notifications.length === 0) return;
+  for (const { time, day, fireAt } of candidates) {
+    if (notifications.length >= budget) break;
+
+    const title = isCritical
+      ? `⚠️ ${medication.name} — Critical dose`
+      : `Medication reminder`;
+
+    const body = isCritical
+      ? `Do not skip — take ${medication.name}${medication.dosage ? ` ${medication.dosage}` : ''} now (${formatTime(time)})`
+      : `Time to take ${medication.name}${medication.dosage ? ` — ${medication.dosage}` : ''} (${formatTime(time)})`;
+
+    notifications.push({
+      id:           notificationId(medication.id, time, day),
+      title,
+      body,
+      actionTypeId,
+      channelId,
+      sound:        isCritical ? 'alarm' : undefined,
+      // ongoing: critical notifications persist until manually dismissed
+      ongoing:      isCritical,
+      // autoCancel: normal → tap to dismiss; critical → must open app or swipe
+      autoCancel:   !isCritical,
+      // timeoutAfter: how long until Android auto-cancels (ms)
+      // Critical: never auto-cancel (0 = no timeout); Normal: 30 min
+      timeoutAfter: isCritical ? 0 : 30 * 60 * 1000,
+      schedule: {
+        at:             fireAt,
+        allowWhileIdle: true, // fires in Android Doze — essential for reliability
+      },
+      smallIcon: 'ic_notification',
+      extra: {
+        medicationId:  medication.id,
+        scheduledTime: time,
+        dayOffset:     day,
+        critical:      isCritical,
+      },
+    });
+  }
+
+  if (notifications.length === 0) return 0;
 
   try {
     await LocalNotifications.schedule({ notifications });
+    return notifications.length;
   } catch (e) {
     console.warn('Failed to schedule notifications for', medication.name, ':', e);
+    return 0;
   }
 }
 
@@ -223,9 +283,12 @@ export async function scheduleMedicationNotifications(medication) {
 export async function cancelMedicationNotifications(medication) {
   if (!medication?.times?.length) return;
 
+  // Cancel a wider window than SCHEDULE_DAYS so we clean up any leftover IDs
+  // from a previous app version that used a longer window (e.g. 14 days).
+  const CANCEL_HORIZON = 21;
   const toCancel = [];
   for (const time of medication.times) {
-    for (let day = 0; day < SCHEDULE_DAYS; day++) {
+    for (let day = 0; day < CANCEL_HORIZON; day++) {
       toCancel.push({ id: notificationId(medication.id, time, day) });
     }
   }
@@ -249,9 +312,9 @@ export async function rescheduleMedicationNotifications(oldMedication, newMedica
  * Schedule notifications for ALL active medications.
  * Call on app start to recover from: reinstall, OS alarm clear, device reboot.
  *
- * Strategy: cancel everything and rebuild from scratch.
- * With 14-day windows this is at most ~14 × times × medications notifications —
- * well within Android/iOS limits.
+ * Strategy: cancel everything, then re-schedule honouring the iOS 64-notification
+ * cap. If the budget is exhausted, critical medications are prioritised over
+ * normal ones, and earlier fire-times beat later ones.
  */
 export async function scheduleAllMedicationNotifications(medications) {
   const hasPermission = await hasNotificationPermission();
@@ -265,11 +328,33 @@ export async function scheduleAllMedicationNotifications(medications) {
     }
   } catch {}
 
-  // Re-schedule each active medication
-  for (const med of medications) {
-    if (med.active !== false) {
-      await scheduleMedicationNotifications(med);
-    }
+  // Sort so critical meds are scheduled first — they keep their slots if the
+  // total would exceed the iOS cap.
+  const active = medications
+    .filter(m => m.active !== false)
+    .sort((a, b) => (b.critical ? 1 : 0) - (a.critical ? 1 : 0));
+
+  if (active.length === 0) return;
+
+  // Fair share: every medication gets at least an equal slice of the budget,
+  // so a user with 5 meds × 3 times/day doesn't have meds 4 & 5 get zero
+  // notifications. Each med can schedule up to its fair share; any unused
+  // budget rolls over to the next med in priority order.
+  const fairShare = Math.max(
+    1,
+    Math.floor(MAX_NOTIFICATIONS_PER_APP / active.length),
+  );
+
+  let remaining = MAX_NOTIFICATIONS_PER_APP;
+  for (let i = 0; i < active.length; i++) {
+    if (remaining <= 0) break;
+    // For the last medication, give it whatever's left.
+    const medsRemaining = active.length - i;
+    const myBudget = i === active.length - 1
+      ? remaining
+      : Math.min(fairShare + Math.max(0, remaining - fairShare * medsRemaining), remaining);
+    const scheduled = await scheduleMedicationNotifications(active[i], myBudget);
+    remaining -= scheduled;
   }
 }
 

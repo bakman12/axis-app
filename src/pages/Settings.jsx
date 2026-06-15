@@ -8,8 +8,9 @@ import { Switch } from '@/components/ui/switch';
 import { MobileSelect } from '@/components/ui/mobile-select';
 import {
   Bell, Shield, Target, Download, User, Trash2, Lock, Timer,
-  ChevronRight, ChevronLeft, Monitor, Heart, Archive,
+  ChevronRight, ChevronLeft, Monitor, Heart, Archive, Share2,
 } from 'lucide-react';
+import { isConsentActive } from '@/lib/clinicSync';
 import HealthDataExport from '@/components/HealthDataExport';
 import EnhancedDataExport from '@/components/EnhancedDataExport';
 import HealthDataIntegration from '@/components/HealthDataIntegration';
@@ -852,6 +853,14 @@ export default function Settings() {
           </p>
           <div style={{ ...card, borderRadius: 14 }}>
             <SettingsRow icon={User} title="Account" subtitle={user?.email ?? 'Profile and data management'} onPress={() => setSection('account')} />
+            <div style={{ borderTop: '1px solid hsl(var(--border))' }}>
+              <SettingsRow
+                icon={Share2}
+                title="Share with Clinic"
+                subtitle={isConsentActive() ? 'Sharing active — tap to manage' : 'Share adherence data with your clinician'}
+                onPress={() => navigate(createPageUrl('ClinicShare'))}
+              />
+            </div>
           </div>
         </div>
 
